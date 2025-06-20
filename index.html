@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Japanese for Beginners!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Sand -->
+    <!-- Application Structure Plan: A single-page, vertically scrolling app with a sticky navigation header for quick access to thematic sections. The structure is designed for progressive learning: starting with basic sounds, moving to greetings (interactive flashcards), then writing systems (tabbed interface), essential phrases (more flashcards), and finally learning tips. This task-oriented flow is more engaging than a linear document, allowing users to focus on specific learning goals. Interactive elements like audio playback on click are central to making the learning process active rather than passive. -->
+    <!-- Visualization & Content Choices: Report Info: Greetings/Phrases table -> Goal: Practice/Memorize -> Viz/Presentation: Interactive Flashcards -> Interaction: Click to reveal English translation and play Japanese audio -> Justification: Transforms static data into an engaging, self-paced learning tool. Report Info: Writing Systems (Hiragana, Katakana, Kanji) -> Goal: Organize/Inform -> Viz/Presentation: Tabbed interface with character grids -> Interaction: Click tabs to switch systems, click characters to hear pronunciation -> Justification: Organizes a large amount of information cleanly and provides auditory reinforcement for character learning. This structure avoids overwhelming the user. Library/Method: Vanilla JS with Web Speech API for all interactions. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #FDFBF5;
+            color: #4A4A4A;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #C89F9C;
+        }
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.is-flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.75rem;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background-color: #f3eada;
+        }
+        .tab-button.active {
+            background-color: #C89F9C;
+            color: white;
+        }
+        .character-grid-item {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .character-grid-item:hover {
+            background-color: #f3eada;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-[#C89F9C]">Fun Japanese!</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#sounds" class="nav-link border-b-2 border-transparent">Sounds</a>
+                <a href="#greetings" class="nav-link border-b-2 border-transparent">Greetings</a>
+                <a href="#characters" class="nav-link border-b-2 border-transparent">Characters</a>
+                <a href="#phrases" class="nav-link border-b-2 border-transparent">Phrases</a>
+                <a href="#tips" class="nav-link border-b-2 border-transparent">Tips</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="bg-white border border-gray-300 rounded-md py-1 px-2">
+                    <option value="#sounds">Sounds</option>
+                    <option value="#greetings">Greetings</option>
+                    <option value="#characters">Characters</option>
+                    <option value="#phrases">Phrases</option>
+                    <option value="#tips">Tips</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section id="intro" class="text-center mb-24">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">日本語学習の旅へようこそ！</h1>
+            <h2 class="text-2xl md:text-3xl text-[#C89F9C] mb-6">Welcome to Your Japanese Learning Journey!</h2>
+            <p class="max-w-3xl mx-auto text-lg">この教材は、皆さんが楽しく日本語を学び、日本の文化に触れるきっかけとなるようにデザインされています。焦らず、楽しみながら学んでいきましょう！</p>
+            <p class="max-w-3xl mx-auto mt-2 text-lg">This material is designed to help you enjoy learning Japanese and get a glimpse into Japanese culture. Let's enjoy the process!</p>
+        </section>
+
+        <section id="sounds" class="mb-24">
+            <h2 class="text-3xl font-bold text-center mb-4">まずはここから！ - Getting Started!</h2>
+            <h3 class="text-2xl font-bold text-center mb-12 text-[#4A4A4A]">日本語の音 (Japanese Sounds)</h3>
+            <p class="text-center max-w-2xl mx-auto mb-8">日本語の母音はたった5つ！これらの音が全ての基本になります。カードをクリックして、音を聞いてみましょう。 (Japanese has only 5 vowels! These are the base of all sounds. Click the cards to listen.)</p>
+            <div id="vowel-cards" class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+            </div>
+        </section>
+
+        <section id="greetings" class="mb-24">
+            <h3 class="text-2xl font-bold text-center mb-12 text-[#4A4A4A]">挨拶をしてみよう！ (Let's Greet!)</h3>
+            <p class="text-center max-w-2xl mx-auto mb-8">カードをクリックすると、意味と発音のヒントが表示されます。もう一度クリックすると元に戻ります。(Click a card to see the meaning and pronunciation hint. Click again to flip back.)</p>
+            <div id="greeting-cards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            </div>
+        </section>
+
+        <section id="characters" class="mb-24">
+            <h3 class="text-2xl font-bold text-center mb-12 text-[#4A4A4A]">日本語の文字に触れてみよう！ (Japanese Characters)</h3>
+            <p class="text-center max-w-2xl mx-auto mb-8">日本語には主にひらがな、カタカナ、漢字の3種類の文字があります。タブを切り替えて、それぞれの文字を見てみましょう。(Japanese has three main writing systems: Hiragana, Katakana, and Kanji. Use the tabs to explore each.)</p>
+            <div class="w-full max-w-5xl mx-auto">
+                <div class="flex justify-center border-b-2 border-gray-200 mb-8">
+                    <button class="tab-button py-2 px-6 text-lg font-semibold" data-tab="hiragana">ひらがな</button>
+                    <button class="tab-button py-2 px-6 text-lg font-semibold" data-tab="katakana">カタカナ</button>
+                    <button class="tab-button py-2 px-6 text-lg font-semibold" data-tab="kanji">漢字</button>
+                </div>
+                <div id="character-content">
+                </div>
+            </div>
+        </section>
+
+        <section id="phrases" class="mb-24">
+            <h3 class="text-2xl font-bold text-center mb-12 text-[#4A4A4A]">これだけは覚えたい！ (Must-Know Phrases)</h3>
+            <p class="text-center max-w-2xl mx-auto mb-8">自己紹介や便利なフレーズを学びましょう。カードをクリックして練習してみてください。(Let's learn self-introductions and useful phrases. Click the cards to practice.)</p>
+            <div id="phrase-cards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            </div>
+        </section>
+
+        <section id="tips" class="mb-24">
+            <h3 class="text-2xl font-bold text-center mb-12 text-[#4A4A4A]">楽しく学ぶためのヒント (Tips for Fun Learning)</h3>
+            <div id="learning-tips" class="max-w-3xl mx-auto grid md:grid-cols-2 gap-6">
+            </div>
+        </section>
+        
+        <section id="next-steps" class="text-center">
+            <h3 class="text-2xl font-bold mb-6">次のステップへ (Next Steps)</h3>
+             <p class="max-w-3xl mx-auto text-lg">この旅は始まったばかりです。目標を設定し、毎日少しでも日本語に触れ、質問を恐れないでください。楽しく日本語を学んで、日本での生活をさらに豊かなものにしてくださいね！</p>
+            <p class="max-w-3xl mx-auto mt-2 text-lg">Your journey has just begun. Set goals, practice a little every day, and don't be afraid to ask questions. Enjoy learning Japanese!</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#f3eada] mt-24 py-6">
+        <div class="container mx-auto text-center text-[#4A4A4A]">
+            <p>Created for fun Japanese learning.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const speech = window.speechSynthesis;
+
+    function speak(text) {
+        if (speech.speaking) {
+            speech.cancel();
+        }
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.9;
+        speech.speak(utterance);
+    }
+
+    const vowels = [
+        { jp: 'あ', en: 'a', hint: 'as in "apple"' },
+        { jp: 'い', en: 'i', hint: 'as in "eat"' },
+        { jp: 'う', en: 'u', hint: 'as in "oops"' },
+        { jp: 'え', en: 'e', hint: 'as in "egg"' },
+        { jp: 'お', en: 'o', hint: 'as in "old"' }
+    ];
+
+    const greetings = [
+        { jp: 'こんにちは', en: 'Hello / Good afternoon', hint: 'kon-ni-chi-wa' },
+        { jp: 'おはようございます', en: 'Good morning', hint: 'o-ha-yoh go-zai-mas' },
+        { jp: 'こんばんは', en: 'Good evening', hint: 'kon-ban-wa' },
+        { jp: 'おやすみなさい', en: 'Good night', hint: 'o-ya-su-mi-na-sai' },
+        { jp: 'ありがとう', en: 'Thank you', hint: 'a-ri-ga-toh' },
+        { jp: 'すみません', en: 'Excuse me / Sorry', hint: 'su-mi-ma-sen' },
+        { jp: 'ごめんなさい', en: 'Sorry', hint: 'go-men-na-sai' },
+        { jp: 'どういたしまして', en: 'You\'re welcome', hint: 'doh-i-ta-shi-ma-shi-te' }
+    ];
+
+    const phrases = [
+        { jp: 'はじめまして', en: 'Nice to meet you', hint: 'ha-ji-me-ma-shi-te' },
+        { jp: '私 の 名前 は ... です', en: 'My name is ...', hint: 'watashi no namae wa ... desu' },
+        { jp: 'よろしくお願いします', en: 'Pleased to meet you', hint: 'yo-ro-shi-ku o-ne-gai-shi-mas' },
+        { jp: 'これ、いくらですか？', en: 'How much is this?', hint: 'kore, ikura desu ka?' },
+        { jp: 'おすすめは？', en: 'What do you recommend?', hint: 'o-susume wa?' },
+        { jp: 'おいしい！', en: 'Delicious!', hint: 'oishii!' },
+        { jp: 'トイレはどこですか？', en: 'Where is the restroom?', hint: 'toire wa doko desu ka?' },
+        { jp: 'はい、お願いします', en: 'Yes, please', hint: 'hai, o-ne-gai-shi-mas' }
+    ];
+    
+    const hiraganaChart = "あいうえお,かきくけこ,さしすせそ,たちつてと,なにぬねの,はひふへほ,まみむめも,やゆよ,らりるれろ,わをん".split(',');
+    const katakanaChart = "アイウエオ,カキクケコ,サシスセソ,タチツテト,ナニヌネノ,ハヒフヘホ,マミムメモ,ヤユヨ,ラリルレロ,ワヲン".split(',');
+    const kanjiList = [
+        { char: '山', reading: 'yama', meaning: 'mountain' },
+        { char: '川', reading: 'kawa', meaning: 'river' },
+        { char: '木', reading: 'ki', meaning: 'tree' },
+        { char: '日', reading: 'hi / nichi', meaning: 'sun, day' },
+        { char: '月', reading: 'tsuki / getsu', meaning: 'moon, month' },
+        { char: '火', reading: 'hi / ka', meaning: 'fire' },
+        { char: '水', reading: 'mizu / sui', meaning: 'water' },
+        { char: '金', reading: 'kane / kin', meaning: 'gold, money' },
+    ];
+
+    const learningTips = [
+        { icon: '🎬', text: 'Watch Japanese anime, dramas, and listen to music.' },
+        { icon: '📱', text: 'Use learning apps like Duolingo or Memrise.' },
+        { icon: '🤝', text: 'Make Japanese friends to practice speaking.' },
+        { icon: '🍣', text: 'Experience Japanese culture: food, festivals, travel.' },
+        { icon: '💪', text: 'Don\'t be afraid to make mistakes! It\'s part of learning.' },
+        { icon: '🎯', text: 'Set clear goals for your study.'}
+    ];
+
+    const vowelCardsContainer = document.getElementById('vowel-cards');
+    vowels.forEach(vowel => {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-md cursor-pointer text-center transform hover:scale-105 transition-transform';
+        card.innerHTML = `<p class="text-6xl font-bold mb-2">${vowel.jp}</p>
+                          <p class="text-2xl font-semibold">${vowel.en}</p>
+                          <p class="text-sm text-gray-500">${vowel.hint}</p>`;
+        card.addEventListener('click', () => speak(vowel.jp));
+        vowelCardsContainer.appendChild(card);
+    });
+
+    function createFlashcard(item) {
+        const cardContainer = document.createElement('div');
+        cardContainer.className = 'flashcard h-48';
+        cardContainer.innerHTML = `
+            <div class="flashcard-inner">
+                <div class="flashcard-front p-4">
+                    <span class="text-2xl md:text-3xl font-bold text-center">${item.jp}</span>
+                </div>
+                <div class="flashcard-back p-4 text-center">
+                    <h4 class="text-xl font-bold mb-2">${item.en}</h4>
+                    <p class="text-md text-gray-700">${item.hint}</p>
+                </div>
+            </div>`;
+        cardContainer.addEventListener('click', (e) => {
+             if (!e.target.classList.contains('speaker-icon')) {
+                cardContainer.classList.toggle('is-flipped');
+                if (!cardContainer.classList.contains('is-flipped')) {
+                     speak(item.jp);
+                }
+            }
+        });
+        return cardContainer;
+    }
+
+    const greetingCardsContainer = document.getElementById('greeting-cards');
+    greetings.forEach(item => greetingCardsContainer.appendChild(createFlashcard(item)));
+    
+    const phraseCardsContainer = document.getElementById('phrase-cards');
+    phrases.forEach(item => phraseCardsContainer.appendChild(createFlashcard(item)));
+
+    const learningTipsContainer = document.getElementById('learning-tips');
+    learningTips.forEach(tip => {
+        const tipEl = document.createElement('div');
+        tipEl.className = 'bg-white p-4 rounded-lg shadow-sm flex items-center';
+        tipEl.innerHTML = `<span class="text-3xl mr-4">${tip.icon}</span>
+                           <p class="text-md">${tip.text}</p>`;
+        learningTipsContainer.appendChild(tipEl);
+    });
+
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const characterContent = document.getElementById('character-content');
+    
+    function renderCharacterGrid(chart, type) {
+        let html = `<p class="text-center mb-6">Click on a character to hear its sound.</p><div class="grid grid-cols-5 gap-2 max-w-sm mx-auto">`;
+        chart.forEach(row => {
+            row.split('').forEach(char => {
+                html += `<div class="character-grid-item bg-white rounded-md shadow-sm h-16 flex justify-center items-center text-3xl font-bold cursor-pointer" data-char="${char}">${char}</div>`;
+            });
+        });
+        html += `</div>`;
+        return html;
+    }
+
+    function renderKanjiGrid() {
+        let html = `<p class="text-center mb-6">These are examples of Kanji. Each has its own meaning.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">`;
+        kanjiList.forEach(kanji => {
+            html += `<div class="bg-white rounded-lg shadow-sm p-4 text-center cursor-pointer character-grid-item" data-char="${kanji.char}">
+                        <p class="text-5xl font-bold mb-2">${kanji.char}</p>
+                        <p class="font-semibold">${kanji.reading}</p>
+                        <p class="text-sm text-gray-600">${kanji.meaning}</p>
+                     </div>`;
+        });
+        html += `</div>`;
+        return html;
+    }
+
+    function activateTab(tabName) {
+        tabButtons.forEach(btn => {
+            if (btn.dataset.tab === tabName) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        if (tabName === 'hiragana') {
+            characterContent.innerHTML = renderCharacterGrid(hiraganaChart);
+        } else if (tabName === 'katakana') {
+            characterContent.innerHTML = renderCharacterGrid(katakanaChart);
+        } else if (tabName === 'kanji') {
+            characterContent.innerHTML = renderKanjiGrid();
+        }
+    }
+    
+    characterContent.addEventListener('click', (e) => {
+        const target = e.target.closest('.character-grid-item');
+        if (target && target.dataset.char) {
+            speak(target.dataset.char);
+        }
+    });
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            activateTab(button.dataset.tab);
+        });
+    });
+
+    activateTab('hiragana');
+
+    const mobileNav = document.getElementById('mobile-nav');
+    mobileNav.addEventListener('change', (e) => {
+        const targetId = e.target.value;
+        document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+    });
+});
+</script>
+
+</body>
+</html>
