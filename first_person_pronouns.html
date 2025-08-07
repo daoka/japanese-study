@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ日本語一人称ガイド / Interactive Japanese Pronouns Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral -->
+    <!-- Application Structure Plan: The application is structured into three main thematic sections for a clear user journey. 1) An introduction to establish the core concept of pronoun diversity in Japanese vs. English. 2) An interactive "Pronoun Explorer" using a card grid. This encourages non-linear, user-driven exploration, which is more engaging than a simple list. Clicking a card reveals details in a modal, allowing for easy comparison. 3) A "Visual Comparison" section with a Chart.js bar chart. This synthesizes the information, providing a quick, comparative overview of the pronouns' formality levels. This structure guides the user from general concept to specific details and finally to a comparative summary, enhancing comprehension and retention. -->
+    <!-- Visualization & Content Choices: Report Info: List of Japanese pronouns and their nuances. -> Goal: Allow users to explore, compare, and understand the context of each pronoun. -> Viz/Presentation Method: 1) Interactive Cards (HTML/Tailwind/JS) for individual exploration. 2) A horizontal bar chart (Chart.js) to visually compare formality levels. -> Interaction: 1) Users click cards to open a modal with detailed information (image, features, examples). 2) The chart has tooltips on hover for quick data view. -> Justification: The card system breaks down complex information into digestible pieces and promotes active learning. The bar chart offers an immediate visual summary that is easier to grasp than a text table. -> Library/Method: Tailwind CSS for layout, Vanilla JS for interaction logic (modal), and Chart.js for the canvas-based chart. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+            background-color: #fdfcfb;
+            color: #333;
+        }
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            max-height: 70vh;
+        }
+        .lang-en {
+            font-family: 'Roboto', sans-serif;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <header class="text-center py-12 bg-white shadow-sm">
+        <h1 class="text-4xl md:text-5xl font-bold text-sky-800">「私」だけじゃない！</h1>
+        <p class="text-lg md:text-xl mt-2 text-stone-600 lang-en">A Guide to Japanese First-Person Pronouns</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <section id="intro" class="max-w-4xl mx-auto text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-sky-700">はじめに / Introduction</h2>
+            <p class="text-lg leading-relaxed mb-2">
+                日本語には、英語の "I" とは違い、非常に多くの「一人称」が存在します。これらは単なる言葉ではなく、話者の性別、年齢、相手との関係、そして自分をどう見せたいかという「キャラクター」を表現する重要な要素です。このガイドでは、その奥深く面白い世界をインタラクティブに探検します。
+            </p>
+            <p class="text-md leading-relaxed text-stone-600 lang-en">
+                Unlike English which mainly uses "I", Japanese has a rich variety of first-person pronouns. These are more than just words; they are crucial elements that express the speaker's gender, age, relationship with the listener, and the "character" they wish to portray. This guide will take you on an interactive journey through this deep and fascinating world.
+            </p>
+            <div class="bg-white p-6 rounded-lg shadow-md border border-stone-200 mt-8 text-left">
+                <h3 class="font-bold text-xl mb-3 text-stone-700">英語の "I" との大きな違い / The Big Difference from "I"</h3>
+                <p class="leading-relaxed mb-2">
+                    英語では、相手が誰であっても一人称は基本的に "I" です。丁寧さやニュアンスは、声のトーンや "I would like to..." vs "I wanna..." のような言葉選びで表現します。一方、日本語は「私」「僕」「俺」といった<strong class="text-sky-600">一人称の単語自体</strong>に、そのキャラクター情報が凝縮されているのが最大の特徴です。
+                </p>
+                <p class="leading-relaxed text-stone-600 lang-en">
+                    In English, the pronoun is almost always "I," regardless of who you're talking to. Politeness and nuance are conveyed through tone of voice or word choice, like "I would like to..." versus "I wanna...". In contrast, the most unique feature of Japanese is that the pronoun itself—such as <strong class="text-sky-600">私 (watashi), 僕 (boku), or 俺 (ore)</strong>—is packed with information about the speaker's character.
+                </p>
+            </div>
+        </section>
+
+        <section id="explorer" class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-sky-700">一人称エクスプローラー / Pronoun Explorer</h2>
+                <p class="text-lg mt-2 text-stone-600">気になるカードをクリックして、それぞれの特徴を見てみよう！</p>
+                <p class="text-md mt-1 text-stone-500 lang-en">Click on a card to see the characteristics of each pronoun!</p>
+            </div>
+            <div id="pronoun-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            </div>
+        </section>
+
+        <section id="comparison">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-sky-700">ニュアンスをチャートで比較 / Compare Nuances with a Chart</h2>
+                <p class="text-lg mt-2 text-stone-600">一人称ごとの「丁寧さ」の度合いを視覚的に比べてみましょう。</p>
+                <p class="text-md mt-1 text-stone-500 lang-en">Let's visually compare the level of "formality" for each pronoun.</p>
+            </div>
+            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
+                <div class="chart-container">
+                    <canvas id="formalityChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 bg-white mt-12 border-t">
+        <p class="text-stone-500">日本語の多様な表現の世界をお楽しみください。</p>
+        <p class="text-stone-400 text-sm lang-en">Enjoy the world of diverse expressions in Japanese.</p>
+    </footer>
+
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative transform transition-all duration-300 scale-95 opacity-0">
+            <button id="close-modal" class="absolute top-4 right-4 text-stone-500 hover:text-stone-800 text-3xl">&times;</button>
+            <h3 id="modal-title" class="text-4xl font-bold mb-2"></h3>
+            <p id="modal-category" class="text-sm text-white font-bold inline-block px-3 py-1 rounded-full mb-6"></p>
+            <div id="modal-body" class="text-base sm:text-lg leading-relaxed">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pronounData = {
+            watashi: {
+                name: "私", name_en: "Watashi",
+                category: "基本", category_en: "Basic",
+                color: "bg-sky-600", formality: 1,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">フォーマル、丁寧、大人</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>最も一般的で、公式な場面で使える丁寧な一人称です。</li><li>男女ともに使えますが、大人の女性が使うイメージが強いです。</li><li>ビジネスや目上の人との会話など、迷ったらこれを使えば間違いありません。</li></ul>`,
+                example: `「初めまして、私は田中です。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Formal, polite, adult</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>The most common and polite first-person pronoun for formal situations.</li><li>Used by all genders, but has a strong image of being used by adult women.</li><li>When in doubt in business or with superiors, using this is a safe bet.</li></ul>`,
+                example_en: `"Nice to meet you, I am Tanaka."`
+            },
+            boku: {
+                name: "僕", name_en: "Boku",
+                category: "基本", category_en: "Basic",
+                color: "bg-sky-600", formality: 0,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">男の子、優しい、少し丁寧</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>主に男性、特に少年〜青年が使います。</li><li>「俺」よりも柔らかく、謙虚な印象を与えます。</li><li>親しい友人との会話から、少し改まった場面まで幅広く使えます。</li></ul>`,
+                example: `「僕、この本が好きだな。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Boyish, gentle, semi-polite</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>Mainly used by males, especially boys and young men.</li><li>Softer and more humble-sounding than "Ore".</li><li>Can be used in a wide range of situations, from talking with close friends to slightly more formal settings.</li></ul>`,
+                example_en: `"I quite like this book."`
+            },
+            ore: {
+                name: "俺", name_en: "Ore",
+                category: "基本", category_en: "Basic",
+                color: "bg-sky-600", formality: -1,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">男性的、ワイルド、カジュアル</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>非常にカジュアルで、男性的な響きを持つ一人称です。</li><li>家族や親しい友人など、ごく親しい間柄で使われます。</li><li>公の場や目上の人に対して使うと失礼になる可能性が高いです。</li></ul>`,
+                example: `「おい、俺のピザ食べたの誰だ？」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Masculine, assertive, casual</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>A very casual and masculine-sounding pronoun.</li><li>Used only with very close people like family and best friends.</li><li>Using it in public or with superiors is likely to be considered rude.</li></ul>`,
+                example_en: `"Hey, who ate my pizza?"`
+            },
+            atashi: {
+                name: "あたし", name_en: "Atashi",
+                category: "カジュアル", category_en: "Casual",
+                color: "bg-pink-500", formality: -0.5,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">女性的、カジュアル、くだけた感じ</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>「わたし」が変化した、よりくだけた女性の言葉です。</li><li>友人との会話などで使われ、親しみやすい雰囲気を出します。</li><li>アニメや漫画の元気な女の子キャラクターがよく使うイメージです。</li></ul>`,
+                example: `「あたし、もう帰るね！」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Feminine, casual, informal</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>A more informal, feminine version of "watashi".</li><li>Used in conversations with friends, creating a friendly atmosphere.</li><li>Often used by energetic female characters in anime and manga.</li></ul>`,
+                example_en: `"I'm heading home now, 'kay!"`
+            },
+            uchi: {
+                name: "うち", name_en: "Uchi",
+                category: "カジュアル", category_en: "Casual",
+                color: "bg-pink-500", formality: -1.5,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">親しみやすい、関西弁、若い女性</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>もともとは関西地方の方言でしたが、最近では全国の若い女性の間で使われるようになりました。</li><li>「自分の属するグループ」というニュアンスがあり、仲間意識を感じさせます。</li></ul>`,
+                example: `「うち、明日バイトなんだ。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Friendly, Kansai dialect, young women</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>Originally a dialect from the Kansai region, it's now used by young women nationwide.</li><li>Carries a nuance of "my group/our side," creating a sense of camaraderie.</li></ul>`,
+                example_en: `"I've got my part-time job tomorrow."`
+            },
+            jibun: {
+                name: "自分", name_en: "Jibun",
+                category: "特別", category_en: "Special",
+                color: "bg-teal-600", formality: 0.5,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">体育会系、真面目、客観的</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>もともとは二人称（あなた）でしたが、一人称としても使われます。</li><li>特に、スポーツ選手や自衛隊・警察関係の人が使うイメージが強いです。</li><li>少し相手と距離を置いた、客観的な響きがあります。</li></ul>`,
+                example: `「自分は、この案に賛成です。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Sporty, serious, objective</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>Originally meant "oneself" or "you," but is now also used as a first-person pronoun.</li><li>Strongly associated with athletes, military personnel, and police officers.</li><li>Has an objective tone, creating a slight distance from the listener.</li></ul>`,
+                example_en: `"As for myself, I agree with this plan."`
+            },
+            watakushi: {
+                name: "わたくし", name_en: "Watakushi",
+                category: "特別", category_en: "Special",
+                color: "bg-teal-600", formality: 2,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">非常にフォーマル、謙虚、プロフェッショナル</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>「わたし」の最も丁寧な形で、非常に改まった場面で使われます。</li><li>政治家の演説、企業の重役、高級ホテルのスタッフなどが使うイメージです。</li><li>相手への深い敬意を示します。</li></ul>`,
+                example: `「わたくしがご案内いたします。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Extremely formal, humble, professional</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>The most polite form of "watashi," used in highly formal situations.</li><li>Associated with speeches by politicians, company executives, and high-end hotel staff.</li><li>Shows deep respect for the listener.</li></ul>`,
+                example_en: `"I shall be the one to guide you."`
+            },
+            sessha: {
+                name: "拙者", name_en: "Sessha",
+                category: "物語", category_en: "Fictional",
+                color: "bg-indigo-600", formality: 1.5,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">武士（サムライ）、古風、謙虚</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>時代劇などで武士が使う一人称。</li><li>「未熟な者ですが」という謙遜の意味が込められています。</li></ul>`,
+                example: `「拙者、お主の名を伺いたい。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Samurai, archaic, humble</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>A pronoun used by samurai in historical dramas.</li><li>Contains the humble meaning of "this unskilled one."</li></ul>`,
+                example_en: `"This humble one would like to ask your name."`
+            },
+            wagahai: {
+                name: "我輩", name_en: "Wagahai",
+                category: "物語", category_en: "Fictional",
+                color: "bg-indigo-600", formality: 1.8,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">尊大、古風、インテリ</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>夏目漱石の小説『吾輩は猫である』で有名。</li><li>少し偉そうで古風な響きがあります。学者や知識人が使うイメージ。</li></ul>`,
+                example: `「我輩は猫である。名前はまだ無い。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Pompous, archaic, intellectual</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>Famous from Natsume Soseki's novel "I Am a Cat."</li><li>Has a slightly pompous and old-fashioned sound. Associated with scholars and intellectuals.</li></ul>`,
+                example_en: `"I am a cat. As yet I have no name."`
+            },
+            washi: {
+                name: "わし", name_en: "Washi",
+                category: "物語", category_en: "Fictional",
+                color: "bg-indigo-600", formality: -0.2,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">老人、博士、権威</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>主に年配の男性が使う一人称。</li><li>物語では博士や仙人、長老のようなキャラクターがよく使います。</li></ul>`,
+                example: `「わしは、もう歳じゃからのう。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Old man, professor, authority figure</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>A pronoun mainly used by elderly men.</li><li>In stories, it's often used by characters like professors, sages, or village elders.</li></ul>`,
+                example_en: `"I'm an old man now, you see."`
+            },
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('pronoun-grid');
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalBtn = document.getElementById('close-modal');
+            
+            Object.keys(pronounData).forEach(key => {
+                const pronoun = pronounData[key];
+                const card = document.createElement('div');
+                card.className = 'card bg-white p-4 rounded-lg shadow-md cursor-pointer text-center flex flex-col justify-center items-center h-40';
+                card.innerHTML = `
+                    <h3 class="text-3xl font-bold">${pronoun.name}</h3>
+                    <p class="text-lg font-medium text-stone-600 lang-en">${pronoun.name_en}</p>
+                    <p class="text-xs ${pronoun.color.replace('bg-', 'text-')} font-semibold mt-2">${pronoun.category} / <span class="lang-en">${pronoun.category_en}</span></p>
+                `;
+                card.addEventListener('click', () => openModal(key));
+                grid.appendChild(card);
+            });
+
+            const openModal = (key) => {
+                const pronoun = pronounData[key];
+                document.getElementById('modal-title').innerHTML = `${pronoun.name} <span class="text-3xl text-stone-500 font-normal lang-en">/ ${pronoun.name_en}</span>`;
+                const categoryEl = document.getElementById('modal-category');
+                categoryEl.innerHTML = `${pronoun.category} / <span class="lang-en">${pronoun.category_en}</span>`;
+                categoryEl.className = `text-sm text-white font-bold inline-block px-3 py-1 rounded-full mb-6 ${pronoun.color}`;
+                document.getElementById('modal-body').innerHTML = `
+                    ${pronoun.content}
+                    <p class="font-bold mt-4 mb-2 text-stone-700">例文：</p>
+                    <p class="p-4 bg-stone-100 rounded-lg italic">“${pronoun.example}”</p>
+                    <hr class="my-6 border-stone-200">
+                    ${pronoun.content_en}
+                    <p class="font-bold mt-4 mb-2 text-stone-700 lang-en">Example:</p>
+                    <p class="p-4 bg-stone-100 rounded-lg italic lang-en">“${pronoun.example_en}”</p>
+                `;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            };
+
+            const closeModal = () => {
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            };
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            const ctx = document.getElementById('formalityChart').getContext('2d');
+            const chartData = {
+                labels: Object.values(pronounData).map(p => `${p.name} (${p.name_en})`),
+                datasets: [{
+                    label: '丁寧さレベル / Formality Level',
+                    data: Object.values(pronounData).map(p => p.formality),
+                    backgroundColor: Object.values(pronounData).map(p => {
+                        if (p.formality > 1) return 'rgba(2, 132, 199, 0.7)';
+                        if (p.formality > 0) return 'rgba(56, 189, 248, 0.7)';
+                        if (p.formality === 0) return 'rgba(100, 116, 139, 0.7)';
+                        return 'rgba(239, 68, 68, 0.7)';
+                    }),
+                    borderColor: Object.values(pronounData).map(p => {
+                        if (p.formality > 1) return 'rgb(2, 132, 199)';
+                        if (p.formality > 0) return 'rgb(56, 189, 248)';
+                        if (p.formality === 0) return 'rgb(100, 116, 139)';
+                        return 'rgb(239, 68, 68)';
+                    }),
+                    borderWidth: 1
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '← カジュアル / Casual ・ 丁寧 / Formal →',
+                                font: { size: 14 }
+                            },
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    const labels = {
+                                        '2': '非常に丁寧\nVery Formal',
+                                        '1': '丁寧\nFormal',
+                                        '0': '中間\nNeutral',
+                                        '-1': 'カジュアル\nCasual',
+                                    };
+                                    return labels[value.toString()] || '';
+                                }
+                            }
+                        },
+                        y: { ticks: { font: { size: 14 } } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    const val = context.raw;
+                                    if (val > 1.5) label += '非常に丁寧 / Very Formal';
+                                    else if (val > 0.5) label += '丁寧 / Formal';
+                                    else if (val >= 0) label += 'やや丁寧/中間 / Semi-Polite/Neutral';
+                                    else if (val > -1) label += 'カジュアル / Casual';
+                                    else label += '非常にカジュアル / Very Casual';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

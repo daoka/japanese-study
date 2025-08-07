@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ日本語レッスン：これは何ですか？</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (Stone, Sky) -->
+    <!-- Application Structure Plan: A tab-based interactive lesson with four sections: '単語' (interactive flashcards), '文型' (dynamic sentence builders), '練習' (multiple-choice/fill-in-the-blank exercises), and 'クイズ' (gamified multiple-choice quiz). This non-linear dashboard structure is chosen over a static document to empower the learner to navigate and practice at their own pace, promoting active engagement and better knowledge retention. -->
+    <!-- Visualization & Content Choices: Vocabulary -> Goal: Memorize -> Viz: Interactive flip-cards (HTML/CSS/JS) -> Interaction: Click-to-flip -> Justification: Active recall is superior to passive reading of a table. Sentence Patterns -> Goal: Understand -> Viz: Dynamic text blocks with dropdowns (HTML/JS) -> Interaction: Select vocabulary to see it in a sentence -> Justification: Demonstrates grammatical structure with various examples. Practice/Quiz -> Goal: Test & Apply -> Viz: Multiple-choice/input fields (HTML/JS) -> Interaction: Click answers, get immediate feedback -> Justification: Reinforces learning through instant validation and gamification. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+        }
+        .tab-button.active {
+            background-color: #0284c7; /* sky-600 */
+            color: white;
+            border-color: #0284c7; /* sky-600 */
+        }
+        .flashcard-container {
+            perspective: 1000px;
+        }
+        .flashcard {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-face {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+        .quiz-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .quiz-option.correct {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+            border-color: #16a34a; /* green-600 */
+        }
+        .quiz-option.incorrect {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-sky-800">第3回：これは なんですか？</h1>
+            <p class="text-lg text-stone-600 mt-2">Lesson 3: What is this?</p>
+        </header>
+
+        <nav class="flex justify-center border-b-2 border-stone-200 mb-8">
+            <button data-tab="tango" class="tab-button active text-lg font-bold py-3 px-6 -mb-0.5 border-b-4 border-transparent">単語</button>
+            <button data-tab="bunkei" class="tab-button text-lg font-bold py-3 px-6 -mb-0.5 border-b-4 border-transparent">文型</button>
+            <button data-tab="renshu" class="tab-button text-lg font-bold py-3 px-6 -mb-0.5 border-b-4 border-transparent">練習</button>
+            <button data-tab="quiz" class="tab-button text-lg font-bold py-3 px-6 -mb-0.5 border-b-4 border-transparent">クイズ</button>
+        </nav>
+
+        <main id="content-container">
+            
+            <!-- 単語セクション -->
+            <section id="tango" class="content-section">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-sky-700">新しい ことば</h2>
+                    <p class="text-stone-600 mt-1">カードをクリックして、意味を確認しましょう。</p>
+                </div>
+                <div id="flashcard-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                </div>
+            </section>
+
+            <!-- 文型セクション -->
+            <section id="bunkei" class="content-section hidden">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-sky-700">新しい 文型</h2>
+                    <p class="text-stone-600 mt-1">文の作り方を学びましょう。</p>
+                </div>
+                <div class="space-y-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-2 text-sky-800">「これ」「それ」「あれ」の使い方</h3>
+                        <p class="text-sm text-stone-500 mb-4">How to use "kore," "sore," and "are"</p>
+                        <ul class="space-y-3 text-stone-700">
+                            <li>
+                                <p><span class="font-bold text-lg">これ (kore):</span> 話している人<span class="font-bold text-sky-600">(あなた)</span>に近いもの。</p>
+                                <p class="text-sm text-stone-500 ml-6">An item close to the speaker <span class="font-bold text-sky-600">(you)</span>.</p>
+                            </li>
+                            <li>
+                                <p><span class="font-bold text-lg">それ (sore):</span> 聞いている人<span class="font-bold text-amber-600">(あいて)</span>に近いもの。</p>
+                                <p class="text-sm text-stone-500 ml-6">An item close to the listener <span class="font-bold text-amber-600">(the other person)</span>.</p>
+                            </li>
+                            <li>
+                                <p><span class="font-bold text-lg">あれ (are):</span> ２人から<span class="font-bold text-red-600">遠い</span>もの。</p>
+                                <p class="text-sm text-stone-500 ml-6">An item <span class="font-bold text-red-600">far</span> from both people.</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-2 text-sky-800">文型 1: Aは Bです。</h3>
+                        <p class="text-sm text-stone-500 mb-4">Pattern 1: A is B.</p>
+                        <p class="mb-2">「これは～です」の形で、ものの名前を言います。</p>
+                        <p class="text-sm text-stone-500 mb-4">Use "Kore wa ~ desu" to state the name of an object.</p>
+                        <div class="flex items-center space-x-4 bg-stone-100 p-4 rounded-md">
+                            <span class="text-lg">これは</span>
+                            <select id="bunkei1-select" class="flex-grow p-2 border rounded-md shadow-sm">
+                            </select>
+                            <span class="text-lg">です。</span>
+                        </div>
+                        <p id="bunkei1-result" class="mt-4 text-center text-xl font-bold text-sky-900 h-8"></p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-2 text-sky-800">文型 2: これは 何ですか。</h3>
+                        <p class="text-sm text-stone-500 mb-4">Pattern 2: What is this?</p>
+                        <p class="mb-2">ものの名前を質問するときの会話です。</p>
+                        <p class="text-sm text-stone-500 mb-4">This is a conversation for asking the name of an object.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-12 h-12 rounded-full bg-sky-200 flex items-center justify-center font-bold text-sky-700">A</div>
+                                <div class="bg-sky-100 p-4 rounded-lg rounded-tl-none">
+                                    <p class="font-semibold">これは 何ですか。</p>
+                                    <p class="text-sm text-stone-600">Kore wa nan desu ka?</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start justify-end space-x-3">
+                                <div class="bg-stone-100 p-4 rounded-lg rounded-tr-none text-right">
+                                    <p class="font-semibold">それは ほん です。</p>
+                                    <p class="text-sm text-stone-600">Sore wa hon desu.</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-stone-200 flex items-center justify-center font-bold text-stone-700">B</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 練習セクション -->
+            <section id="renshu" class="content-section hidden">
+                 <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-sky-700">練習</h2>
+                    <p class="text-stone-600 mt-1">学んだことを使ってみましょう。</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="font-bold text-xl mb-2 text-sky-800">練習 1: 正しい言葉を選びましょう</h3>
+                    <p class="text-sm text-stone-500 mb-4">Practice 1: Choose the correct word</p>
+                    <div id="renshu1-question" class="text-center text-lg font-semibold mb-4 p-4 bg-stone-100 rounded-md"></div>
+                    <div id="renshu1-options" class="flex justify-center space-x-4"></div>
+                    <div id="renshu1-feedback" class="text-center mt-4 font-bold h-6"></div>
+                    <div class="text-center mt-4">
+                        <button id="renshu1-next" class="bg-sky-500 text-white py-2 px-6 rounded-lg hover:bg-sky-600 transition">次の問題</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- クイズセクション -->
+            <section id="quiz" class="content-section hidden">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-sky-700">実力試しクイズ！</h2>
+                    <p class="text-stone-600 mt-1">ものの名前を当ててみよう！</p>
+                </div>
+                <div id="quiz-container" class="bg-white p-6 rounded-lg shadow-md">
+                    <div id="quiz-start-screen">
+                        <p class="text-center text-lg mb-4">準備ができたら、下のボタンを押してクイズを始めましょう。</p>
+                        <button id="start-quiz-btn" class="w-full bg-sky-600 text-white text-xl font-bold py-4 px-6 rounded-lg hover:bg-sky-700 transition">クイズ スタート！</button>
+                    </div>
+                    <div id="quiz-game-screen" class="hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <div id="quiz-progress" class="text-lg font-bold"></div>
+                            <div id="quiz-score" class="text-lg font-bold"></div>
+                        </div>
+                        <div class="text-center text-2xl font-bold mb-6 p-6 bg-stone-100 rounded-md">
+                            「<span id="quiz-question-item"></span>」
+                        </div>
+                        <p class="text-center text-xl mb-6">これは 何ですか。</p>
+                        <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    </div>
+                    <div id="quiz-end-screen" class="hidden text-center">
+                        <h3 class="text-2xl font-bold mb-4">クイズ終了！</h3>
+                        <p id="quiz-final-score" class="text-4xl font-bold text-sky-600 mb-6"></p>
+                        <p id="quiz-final-message" class="text-lg mb-6"></p>
+                        <button id="restart-quiz-btn" class="bg-sky-600 text-white text-xl font-bold py-3 px-8 rounded-lg hover:bg-sky-700 transition">もう一度挑戦</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const vocabulary = [
+            { hiragana: 'これ', romaji: 'kore', english: 'This' },
+            { hiragana: 'それ', romaji: 'sore', english: 'That' },
+            { hiragana: 'あれ', romaji: 'are', english: 'That (over there)' },
+            { hiragana: 'ほん', romaji: 'hon', english: 'Book' },
+            { hiragana: 'じしょ', romaji: 'jisho', english: 'Dictionary' },
+            { hiragana: 'ざっし', romaji: 'zasshi', english: 'Magazine' },
+            { hiragana: 'しんぶん', romaji: 'shinbun', english: 'Newspaper' },
+            { hiragana: 'ノート', romaji: 'nōto', english: 'Notebook' },
+            { hiragana: 'てちょう', romaji: 'techō', english: 'Pocket notebook' },
+            { hiragana: 'えんぴつ', romaji: 'enpitsu', english: 'Pencil' },
+            { hiragana: 'ペン', romaji: 'pen', english: 'Pen' },
+            { hiragana: 'かばん', romaji: 'kaban', english: 'Bag' },
+            { hiragana: 'とけい', romaji: 'tokei', english: 'Watch / Clock' },
+            { hiragana: 'かさ', romaji: 'kasa', english: 'Umbrella' },
+            { hiragana: 'つくえ', romaji: 'tsukue', english: 'Desk' },
+            { hiragana: 'いす', romaji: 'isu', english: 'Chair' },
+            { hiragana: 'なん', romaji: 'nan', english: 'What' },
+            { hiragana: 'だれ', romaji: 'dare', english: 'Who' },
+            { hiragana: '～の', romaji: '~no', english: "~'s (possession)" },
+        ];
+        
+        const objectWords = vocabulary.filter(v => !['これ', 'それ', 'あれ', 'なん', 'だれ', '～の'].includes(v.hiragana));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-button');
+            const sections = document.querySelectorAll('.content-section');
+            const flashcardGrid = document.getElementById('flashcard-grid');
+            const bunkeiSelect = document.getElementById('bunkei1-select');
+            const bunkeiResult = document.getElementById('bunkei1-result');
+
+            // Navigation
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const targetId = tab.dataset.tab;
+                    sections.forEach(section => {
+                        if (section.id === targetId) {
+                            section.classList.remove('hidden');
+                        } else {
+                            section.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Flashcards
+            function createFlashcards() {
+                flashcardGrid.innerHTML = '';
+                vocabulary.forEach(word => {
+                    const cardContainer = document.createElement('div');
+                    cardContainer.className = 'flashcard-container h-32';
+                    
+                    const card = document.createElement('div');
+                    card.className = 'flashcard relative w-full h-full cursor-pointer';
+                    
+                    const front = document.createElement('div');
+                    front.className = 'flashcard-face absolute w-full h-full bg-white rounded-lg shadow-md flex items-center justify-center p-2';
+                    front.innerHTML = `<span class="text-2xl font-bold text-center">${word.hiragana}</span>`;
+                    
+                    const back = document.createElement('div');
+                    back.className = 'flashcard-back flashcard-face absolute w-full h-full bg-sky-100 rounded-lg shadow-md flex flex-col items-center justify-center p-2';
+                    back.innerHTML = `
+                        <span class="text-lg font-semibold">${word.romaji}</span>
+                        <span class="text-md text-stone-600">${word.english}</span>
+                    `;
+                    
+                    card.appendChild(front);
+                    card.appendChild(back);
+                    cardContainer.appendChild(card);
+                    flashcardGrid.appendChild(cardContainer);
+
+                    card.addEventListener('click', () => {
+                        card.classList.toggle('is-flipped');
+                    });
+                });
+            }
+
+            // Bunkei
+            function setupBunkei() {
+                objectWords.forEach(word => {
+                    const option = document.createElement('option');
+                    option.value = word.hiragana;
+                    option.textContent = word.hiragana;
+                    bunkeiSelect.appendChild(option);
+                });
+
+                bunkeiSelect.addEventListener('change', (e) => {
+                    bunkeiResult.textContent = `これは ${e.target.value} です。`;
+                });
+                bunkeiResult.textContent = `これは ${bunkeiSelect.value} です。`;
+            }
+
+            // Renshu 1
+            const renshu1 = {
+                questions: [
+                    { context: "話している人に近い「かばん」を指して言います。", english_context: "You say this when pointing to a 'bag' close to the speaker.", answer: "これは", options: ["これは", "それは", "あれは"] },
+                    { context: "聞いている人に近い「かさ」を指して言います。", english_context: "You say this when pointing to an 'umbrella' close to the listener.", answer: "それは", options: ["これは", "それは", "あれは"] },
+                    { context: "二人から遠い「いす」を指して言います。", english_context: "You say this when pointing to a 'chair' far from both people.", answer: "あれは", options: ["これは", "それは", "あれは"] }
+                ],
+                current: 0,
+                loadQuestion: function() {
+                    const q = this.questions[this.current];
+                    const questionContainer = document.getElementById('renshu1-question');
+                    questionContainer.innerHTML = `
+                        <span>${q.context}</span>
+                        <br>
+                        <span class="text-sm text-stone-500">${q.english_context}</span>
+                    `;
+                    const optionsContainer = document.getElementById('renshu1-options');
+                    optionsContainer.innerHTML = '';
+                    q.options.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'quiz-option bg-white border-2 border-stone-300 py-2 px-6 rounded-lg hover:bg-stone-100 transition';
+                        btn.textContent = opt;
+                        btn.addEventListener('click', () => this.checkAnswer(opt));
+                        optionsContainer.appendChild(btn);
+                    });
+                    document.getElementById('renshu1-feedback').textContent = '';
+                },
+                checkAnswer: function(selected) {
+                    const feedback = document.getElementById('renshu1-feedback');
+                    if (selected === this.questions[this.current].answer) {
+                        feedback.textContent = '正解！ (Correct!)';
+                        feedback.className = 'text-center mt-4 font-bold h-6 text-green-600';
+                    } else {
+                        feedback.textContent = '残念！ (Incorrect!)';
+                        feedback.className = 'text-center mt-4 font-bold h-6 text-red-600';
+                    }
+                    document.querySelectorAll('#renshu1-options button').forEach(btn => btn.disabled = true);
+                },
+                nextQuestion: function() {
+                    this.current = (this.current + 1) % this.questions.length;
+                    this.loadQuestion();
+                    document.querySelectorAll('#renshu1-options button').forEach(btn => btn.disabled = false);
+                }
+            };
+            document.getElementById('renshu1-next').addEventListener('click', () => renshu1.nextQuestion());
+
+            // Quiz
+            const quiz = {
+                questions: [],
+                current: 0,
+                score: 0,
+                total: 5,
+                generateQuestions: function() {
+                    this.questions = [];
+                    const shuffledWords = [...objectWords].sort(() => 0.5 - Math.random());
+                    for (let i = 0; i < this.total; i++) {
+                        const correctWord = shuffledWords[i];
+                        const wrongOptions = [...objectWords]
+                            .filter(w => w.hiragana !== correctWord.hiragana)
+                            .sort(() => 0.5 - Math.random())
+                            .slice(0, 3)
+                            .map(w => w.hiragana);
+                        const options = [correctWord.hiragana, ...wrongOptions].sort(() => 0.5 - Math.random());
+                        this.questions.push({
+                            item: correctWord.hiragana,
+                            answer: correctWord.hiragana,
+                            options: options
+                        });
+                    }
+                },
+                start: function() {
+                    this.current = 0;
+                    this.score = 0;
+                    this.generateQuestions();
+                    document.getElementById('quiz-start-screen').classList.add('hidden');
+                    document.getElementById('quiz-end-screen').classList.add('hidden');
+                    document.getElementById('quiz-game-screen').classList.remove('hidden');
+                    this.loadQuestion();
+                },
+                loadQuestion: function() {
+                    if (this.current >= this.total) {
+                        this.end();
+                        return;
+                    }
+                    document.getElementById('quiz-progress').textContent = `問題 ${this.current + 1} / ${this.total}`;
+                    document.getElementById('quiz-score').textContent = `スコア: ${this.score}`;
+                    const q = this.questions[this.current];
+                    document.getElementById('quiz-question-item').textContent = q.item;
+                    const optionsContainer = document.getElementById('quiz-options');
+                    optionsContainer.innerHTML = '';
+                    q.options.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'quiz-option w-full bg-white border-2 border-stone-300 p-4 rounded-lg text-xl hover:bg-stone-100 transition duration-200';
+                        btn.textContent = opt;
+                        btn.addEventListener('click', () => this.checkAnswer(btn, opt === q.answer));
+                        optionsContainer.appendChild(btn);
+                    });
+                },
+                checkAnswer: function(button, isCorrect) {
+                    document.querySelectorAll('#quiz-options button').forEach(btn => btn.disabled = true);
+                    if (isCorrect) {
+                        this.score++;
+                        button.classList.add('correct');
+                    } else {
+                        button.classList.add('incorrect');
+                        document.querySelectorAll('#quiz-options button').forEach(btn => {
+                            if (btn.textContent === this.questions[this.current].answer) {
+                                btn.classList.add('correct');
+                            }
+                        });
+                    }
+                    setTimeout(() => {
+                        this.current++;
+                        this.loadQuestion();
+                    }, 1500);
+                },
+                end: function() {
+                    document.getElementById('quiz-game-screen').classList.add('hidden');
+                    document.getElementById('quiz-end-screen').classList.remove('hidden');
+                    document.getElementById('quiz-final-score').textContent = `${this.score} / ${this.total} 正解`;
+                    let message = '';
+                    const percentage = (this.score / this.total) * 100;
+                    if (percentage === 100) message = '素晴らしい！完璧です！ (Excellent! Perfect!)';
+                    else if (percentage >= 70) message = 'よくできました！ (Well done!)';
+                    else if (percentage >= 40) message = 'もう少し！復習しましょう。 (A little more! Let\'s review.)';
+                    else message = '頑張って！もう一度挑戦しましょう。 (Keep it up! Let\'s try again.)';
+                    document.getElementById('quiz-final-message').textContent = message;
+                }
+            };
+
+            document.getElementById('start-quiz-btn').addEventListener('click', () => quiz.start());
+            document.getElementById('restart-quiz-btn').addEventListener('click', () => quiz.start());
+
+
+            // Initial setup
+            createFlashcards();
+            setupBunkei();
+            renshu1.loadQuestion();
+        });
+    </script>
+</body>
+</html>
