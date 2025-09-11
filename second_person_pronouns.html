@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ日本語二人称ガイド / Interactive Japanese 'You' Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral -->
+    <!-- Application Structure Plan: The application follows the successful structure of the first-person guide for consistency and proven usability. It has three core sections: 1) An introduction comparing the single English 'you' to the nuanced variety in Japanese. 2) An interactive "Pronoun Explorer" with a card grid, promoting self-directed learning by allowing users to click and view details in a modal. 3) A "Visual Comparison" Chart.js chart that synthesizes the information by plotting each pronoun on a 'respect level' scale. This structure logically progresses from the general concept to specific examples and finally to a holistic comparison. -->
+    <!-- Visualization & Content Choices: Report Info: A list of Japanese second-person pronouns and their contexts. -> Goal: Enable users to explore and understand the appropriate use, nuance, and respect level of each pronoun. -> Viz/Presentation Method: 1) Interactive Cards (HTML/Tailwind/JS) for focused learning on each pronoun. 2) A horizontal bar chart (Chart.js) to visually map the respect level, from rude to highly respectful. -> Interaction: 1) Clicking a card opens a detailed modal with characteristics and examples. 2) The chart provides tooltips on hover for quick reference. -> Justification: This dual approach caters to different learning styles. The cards provide in-depth, contextual information, while the chart offers a quick, memorable visual summary of the relationships between the pronouns. -> Library/Method: Tailwind CSS, Vanilla JS, Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+            background-color: #fdfcfb;
+            color: #333;
+        }
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            max-height: 70vh;
+        }
+        .lang-en {
+            font-family: 'Roboto', sans-serif;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <header class="text-center py-12 bg-white shadow-sm">
+        <h1 class="text-4xl md:text-5xl font-bold text-emerald-800">「あなた」だけじゃない！</h1>
+        <p class="text-lg md:text-xl mt-2 text-stone-600 lang-en">A Guide to Japanese Second-Person Pronouns ('You')</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <section id="intro" class="max-w-4xl mx-auto text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-emerald-700">はじめに / Introduction</h2>
+            <p class="text-lg leading-relaxed mb-2">
+                日本語の「あなた」を表す言葉は、相手との関係性や場面によって様々に変化します。英語の "You" が一つであるのに対し、日本語では二人称を選ぶこと自体がコミュニケーションの重要な一部です。丁寧なものから非常に失礼なものまで、その豊かな世界を探検しましょう。
+            </p>
+            <p class="text-md leading-relaxed text-stone-600 lang-en">
+                Words for "you" in Japanese change dramatically depending on your relationship with the listener and the situation. While English has the all-purpose "you," choosing the right second-person pronoun in Japanese is a key part of communication. Let's explore this rich world, from the polite to the incredibly rude.
+            </p>
+        </section>
+
+        <section id="explorer" class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-emerald-700">二人称エクスプローラー / 'You' Explorer</h2>
+                <p class="text-lg mt-2 text-stone-600">気になるカードをクリックして、それぞれの使い方を見てみよう！</p>
+                <p class="text-md mt-1 text-stone-500 lang-en">Click on a card to see how each pronoun is used!</p>
+            </div>
+            <div id="pronoun-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            </div>
+        </section>
+
+        <section id="comparison">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-emerald-700">敬意レベルをチャートで比較 / Compare Respect Levels</h2>
+                <p class="text-lg mt-2 text-stone-600">二人称ごとの「敬意」の度合いを視覚的に比べてみましょう。</p>
+                <p class="text-md mt-1 text-stone-500 lang-en">Let's visually compare the level of "respect" for each pronoun.</p>
+            </div>
+            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
+                <div class="chart-container">
+                    <canvas id="respectChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 bg-white mt-12 border-t">
+        <p class="text-stone-500">相手を思いやる日本語の心を、二人称から感じてみてください。</p>
+        <p class="text-stone-400 text-sm lang-en">Experience the Japanese spirit of consideration through its second-person pronouns.</p>
+    </footer>
+
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative transform transition-all duration-300 scale-95 opacity-0">
+            <button id="close-modal" class="absolute top-4 right-4 text-stone-500 hover:text-stone-800 text-3xl">&times;</button>
+            <h3 id="modal-title" class="text-4xl font-bold mb-2"></h3>
+            <p id="modal-category" class="text-sm text-white font-bold inline-block px-3 py-1 rounded-full mb-6"></p>
+            <div id="modal-body" class="text-base sm:text-lg leading-relaxed">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pronounData = {
+            anata: {
+                name: "あなた", name_en: "Anata",
+                category: "基本", category_en: "Basic",
+                color: "bg-emerald-600", respectLevel: 1,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">標準的、丁寧、少し距離がある</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>最も標準的で丁寧な二人称です。</li><li>ただし、親しい相手に使うと少し冷たく、距離を置いているように聞こえることがあります。</li><li>妻が夫を呼ぶ時に使うこともあります。</li></ul>`,
+                example: `「あなたは、どのようにお考えですか？」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Standard, polite, slightly distant</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>The most standard and polite word for "you."</li><li>However, using it with someone close can sound a bit cold or distant.</li><li>It's also a common way for wives to address their husbands.</li></ul>`,
+                example_en: `"What is your opinion on this matter?"`
+            },
+            kimi: {
+                name: "君", name_en: "Kimi",
+                category: "基本", category_en: "Basic",
+                color: "bg-emerald-600", respectLevel: 0,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">対等、親しい、男性が使う</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>目上から目下へ、または親しい同僚や友人に対して使います。</li><li>主に男性が使います。ロマンチックな文脈で使われることも多いです。</li><li>「あなた」より親密ですが、目上の人には使えません。</li></ul>`,
+                example: `「君の意見を聞かせてほしい。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Equal, familiar, used by men</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>Used by superiors to subordinates, or towards close colleagues and friends.</li><li>Mainly used by men. It's often used in romantic contexts as well.</li><li>More intimate than "anata," but cannot be used for superiors.</li></ul>`,
+                example_en: `"I'd like to hear your opinion."`
+            },
+            omae: {
+                name: "お前", name_en: "Omae",
+                category: "カジュアル", category_en: "Casual",
+                color: "bg-amber-600", respectLevel: -1,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">非常にカジュアル、男性的、親密</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>男性が親しい友人や家族、または目下に対して使う非常にくだけた言葉です。</li><li>関係性がない相手に使うと、喧嘩腰で失礼に聞こえます。</li><li>愛情を込めて使われることも、見下して使われることもあります。</li></ul>`,
+                example: `「お前、最近元気か？」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Very casual, masculine, intimate</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>A very informal word used by men towards close friends, family, or subordinates.</li><li>Sounds confrontational and rude if used with strangers.</li><li>Can be used affectionately or contemptuously depending on the context.</li></ul>`,
+                example_en: `"Hey, have you been doing well lately?"`
+            },
+            anta: {
+                name: "あんた", name_en: "Anta",
+                category: "カジュアル", category_en: "Casual",
+                color: "bg-amber-600", respectLevel: -0.5,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">くだけた、少し見下した感じ</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>「あなた」が変化した言葉で、親しい間柄で使います。</li><li>男女ともに使いますが、少しぞんざいな印象を与え、軽蔑的なニュアンスを含むことがあります。</li><li>夫婦喧嘩などで使われるイメージがあります。</li></ul>`,
+                example: `「あんた、何してるの？」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Informal, slightly looking down</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>A contracted form of "anata," used among close people.</li><li>Used by both genders, but can sound rough and sometimes carries a contemptuous nuance.</li><li>Often associated with couples arguing.</li></ul>`,
+                example_en: `"What do you think you're doing?"`
+            },
+            sochira: {
+                name: "そちら", name_en: "Sochira",
+                category: "丁寧", category_en: "Polite",
+                color: "bg-sky-600", respectLevel: 2,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">ビジネス、敬意、間接的</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>「そっち」の丁寧な言い方で、相手を直接指さずに敬意を示す表現です。</li><li>ビジネスの電話応対やメールで、相手や相手の会社を指す時によく使われます。</li><li>「あなた」よりも丁寧でフォーマルな響きがあります。</li></ul>`,
+                example: `「そちらの会社では、いかがでしょうか。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Business, respectful, indirect</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>A polite version of "socchi" (that way), showing respect by not pointing directly at the person.</li><li>Often used in business calls and emails to refer to the other person or their company.</li><li>Sounds more polite and formal than "anata."</li></ul>`,
+                example_en: `"What is the situation at your company?"`
+            },
+             anatasama: {
+                name: "貴方様", name_en: "Anata-sama",
+                category: "丁寧", category_en: "Polite",
+                color: "bg-sky-600", respectLevel: 3,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">顧客、最高敬意、書き言葉</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>「あなた」に敬称の「様」をつけた、最も丁寧な二人称の一つです。</li><li>主に顧客への手紙やメールなどの書き言葉で使われます。</li><li>日常会話で使うと、過剰に丁寧で不自然に聞こえます。</li></ul>`,
+                example: `「貴方様のご来店を心よりお待ちしております。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Customer, highest respect, written language</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>One of the most respectful forms, adding the honorific "sama" to "anata."</li><li>Mainly used in written language, such as in letters or emails to customers.</li><li>Sounds overly formal and unnatural in daily conversation.</li></ul>`,
+                example_en: `"We sincerely look forward to your visit."`
+            },
+            kisama: {
+                name: "貴様", name_en: "Kisama",
+                category: "無礼/物語", category_en: "Rude/Fictional",
+                color: "bg-red-700", respectLevel: -2,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">敵、侮辱、攻撃的</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>もともとは敬意を表す言葉でしたが、現在では相手を侮辱する非常に攻撃的な言葉です。</li><li>絶対に日常会話で使ってはいけません。</li><li>漫画やアニメで、敵キャラクターが主人公を呼ぶ時などによく使われます。</li></ul>`,
+                example: `「貴様だけは許さない！」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Enemy, insulting, aggressive</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>Originally a term of respect, it is now a highly aggressive and insulting word.</li><li>NEVER use this in real-life conversation.</li><li>Often used in manga and anime when a villain addresses the hero.</li></ul>`,
+                example_en: `"You are the one person I will never forgive!"`
+            },
+            onushi: {
+                name: "お主", name_en: "Onushi",
+                category: "無礼/物語", category_en: "Rude/Fictional",
+                color: "bg-red-700", respectLevel: -0.2,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">古風、老人、ファンタジー</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>古い言葉で、時代劇やファンタジー作品で老人が若者を呼ぶ時などに使われます。</li><li>少し尊大な響きがありますが、親しみを込めて使われることもあります。</li><li>現代の日常会話では使われません。</li></ul>`,
+                example: `「お主、なかなかやるのう。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Archaic, old man, fantasy</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p<ul class="list-disc list-inside space-y-2 lang-en"><li>An archaic word used in historical dramas or fantasy settings, often by an elderly person to someone younger.</li><li>Can sound a bit condescending, but also can be used with affection.</li><li>Not used in modern daily conversation.</li></ul>`,
+                example_en: `"You're pretty skilled, young one."`
+            },
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('pronoun-grid');
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalBtn = document.getElementById('close-modal');
+            
+            Object.keys(pronounData).forEach(key => {
+                const pronoun = pronounData[key];
+                const card = document.createElement('div');
+                card.className = 'card bg-white p-4 rounded-lg shadow-md cursor-pointer text-center flex flex-col justify-center items-center h-40';
+                card.innerHTML = `
+                    <h3 class="text-3xl font-bold">${pronoun.name}</h3>
+                    <p class="text-lg font-medium text-stone-600 lang-en">${pronoun.name_en}</p>
+                    <p class="text-xs ${pronoun.color.replace('bg-', 'text-')} font-semibold mt-2">${pronoun.category} / <span class="lang-en">${pronoun.category_en}</span></p>
+                `;
+                card.addEventListener('click', () => openModal(key));
+                grid.appendChild(card);
+            });
+
+            const openModal = (key) => {
+                const pronoun = pronounData[key];
+                document.getElementById('modal-title').innerHTML = `${pronoun.name} <span class="text-3xl text-stone-500 font-normal lang-en">/ ${pronoun.name_en}</span>`;
+                const categoryEl = document.getElementById('modal-category');
+                categoryEl.innerHTML = `${pronoun.category} / <span class="lang-en">${pronoun.category_en}</span>`;
+                categoryEl.className = `text-sm text-white font-bold inline-block px-3 py-1 rounded-full mb-6 ${pronoun.color}`;
+                document.getElementById('modal-body').innerHTML = `
+                    ${pronoun.content}
+                    <p class="font-bold mt-4 mb-2 text-stone-700">例文：</p>
+                    <p class="p-4 bg-stone-100 rounded-lg italic">“${pronoun.example}”</p>
+                    <hr class="my-6 border-stone-200">
+                    ${pronoun.content_en}
+                    <p class="font-bold mt-4 mb-2 text-stone-700 lang-en">Example:</p>
+                    <p class="p-4 bg-stone-100 rounded-lg italic lang-en">“${pronoun.example_en}”</p>
+                `;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            };
+
+            const closeModal = () => {
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            };
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            const ctx = document.getElementById('respectChart').getContext('2d');
+            const chartData = {
+                labels: Object.values(pronounData).map(p => `${p.name} (${p.name_en})`),
+                datasets: [{
+                    label: '敬意レベル / Respect Level',
+                    data: Object.values(pronounData).map(p => p.respectLevel),
+                    backgroundColor: Object.values(pronounData).map(p => {
+                        if (p.respectLevel > 1) return 'rgba(14, 165, 233, 0.7)'; // Polite (sky-500)
+                        if (p.respectLevel > 0) return 'rgba(16, 185, 129, 0.7)'; // Basic (emerald-500)
+                        if (p.respectLevel >= 0) return 'rgba(245, 158, 11, 0.7)'; // Casual (amber-500)
+                        return 'rgba(220, 38, 38, 0.7)'; // Rude (red-600)
+                    }),
+                    borderColor: Object.values(pronounData).map(p => {
+                       if (p.respectLevel > 1) return 'rgb(14, 165, 233)';
+                        if (p.respectLevel > 0) return 'rgb(16, 185, 129)';
+                        if (p.respectLevel >= 0) return 'rgb(245, 158, 11)';
+                        return 'rgb(220, 38, 38)';
+                    }),
+                    borderWidth: 1
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '← 無礼 / Rude ・ 丁寧 / Respectful →',
+                                font: { size: 14 }
+                            },
+                             ticks: {
+                                callback: function(value, index, values) {
+                                    const labels = {
+                                        '3': '最高敬意\nHighest',
+                                        '2': '丁寧\nPolite',
+                                        '1': '標準\nStandard',
+                                        '0': '対等\nEqual',
+                                        '-1': 'カジュアル\nCasual',
+                                        '-2': '無礼\nRude'
+                                    };
+                                    return labels[value.toString()] || '';
+                                }
+                            }
+                        },
+                        y: { ticks: { font: { size: 14 } } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    const val = context.raw;
+                                    if (val > 2) label += '最高敬意 / Highest Respect';
+                                    else if (val > 1) label += '丁寧 / Polite';
+                                    else if (val > 0) label += '標準 / Standard';
+                                    else if (val >= 0) label += '対等・親しい / Equal/Familiar';
+                                    else if (val > -2) label += 'カジュアル・無礼 / Casual/Rude';
+                                    else label += '侮辱的 / Insulting';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
