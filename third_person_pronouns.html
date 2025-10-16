@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ日本語三人称ガイド / Interactive Japanese 'He/She/They' Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral -->
+    <!-- Application Structure Plan: To maintain a consistent and effective learning experience, this guide adopts the three-section structure from the previous pronoun lessons. It begins with 1) An introduction explaining the nuances of Japanese third-person pronouns compared to English 'he/she/they', including the common use of names. 2) The "Pronoun Explorer" uses the interactive card grid and modal system, allowing for focused, user-driven study of each term. 3) The "Visual Comparison" section features a Chart.js bar chart that maps each pronoun's politeness level, offering a quick comparative overview. This structure ensures a logical flow from concept to detail to synthesis. -->
+    <!-- Visualization & Content Choices: Report Info: A list of Japanese third-person pronouns and their usage contexts. -> Goal: Help users understand the politeness and specific connotations of each pronoun to use them appropriately. -> Viz/Presentation Method: 1) Interactive Cards (HTML/Tailwind/JS) to present detailed information for each pronoun. 2) A horizontal bar chart (Chart.js) to visualize the spectrum of politeness from informal to highly formal. -> Interaction: 1) Users click cards to open a modal with descriptions and example sentences. 2) The chart's tooltips provide instant feedback on politeness levels. -> Justification: This combined approach serves both detailed study and quick review. The cards offer depth, while the chart provides an easily digestible summary of the social hierarchy embedded in the language. -> Library/Method: Tailwind CSS, Vanilla JS, Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+            background-color: #fdfcfb;
+            color: #333;
+        }
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            max-height: 70vh;
+        }
+        .lang-en {
+            font-family: 'Roboto', sans-serif;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <header class="text-center py-12 bg-white shadow-sm">
+        <h1 class="text-4xl md:text-5xl font-bold text-violet-800">「彼」や「彼女」だけじゃない！</h1>
+        <p class="text-lg md:text-xl mt-2 text-stone-600 lang-en">A Guide to Japanese Third-Person Pronouns</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <section id="intro" class="max-w-4xl mx-auto text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-violet-700">はじめに / Introduction</h2>
+            <p class="text-lg leading-relaxed mb-2">
+                日本語で第三者（その場にいない人）を指す言葉も、一人称や二人称と同じように、相手への敬意や関係性によって使い分けられます。特に、名前を知っている場合は代名詞を使わずに「田中さん」のように名前で呼ぶのが一般的です。代名詞の選び方が、話者の品格を示すこともあります。
+            </p>
+            <p class="text-md leading-relaxed text-stone-600 lang-en">
+                Just like first and second-person pronouns, words referring to a third person in Japanese are chosen based on respect and relationship. Notably, if you know the person's name, it's most common to use it (e.g., "Tanaka-san") instead of a pronoun. Your choice of pronoun can often reflect your own character.
+            </p>
+        </section>
+
+        <section id="explorer" class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-violet-700">三人称エクスプローラー / Third-Person Explorer</h2>
+                <p class="text-lg mt-2 text-stone-600">気になるカードをクリックして、それぞれのニュアンスを学ぼう！</p>
+                <p class="text-md mt-1 text-stone-500 lang-en">Click on a card to learn the nuance of each pronoun!</p>
+            </div>
+            <div id="pronoun-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            </div>
+        </section>
+
+        <section id="comparison">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-violet-700">丁寧さをチャートで比較 / Compare Politeness Levels</h2>
+                <p class="text-lg mt-2 text-stone-600">三人称ごとの「丁寧さ」の度合いを視覚的に比べてみましょう。</p>
+                <p class="text-md mt-1 text-stone-500 lang-en">Let's visually compare the level of "politeness" for each pronoun.</p>
+            </div>
+            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
+                <div class="chart-container">
+                    <canvas id="politenessChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 bg-white mt-12 border-t">
+        <p class="text-stone-500">適切な言葉選びで、円滑な人間関係を築きましょう。</p>
+        <p class="text-stone-400 text-sm lang-en">Build smooth relationships with appropriate word choice.</p>
+    </footer>
+
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative transform transition-all duration-300 scale-95 opacity-0">
+            <button id="close-modal" class="absolute top-4 right-4 text-stone-500 hover:text-stone-800 text-3xl">&times;</button>
+            <h3 id="modal-title" class="text-4xl font-bold mb-2"></h3>
+            <p id="modal-category" class="text-sm text-white font-bold inline-block px-3 py-1 rounded-full mb-6"></p>
+            <div id="modal-body" class="text-base sm:text-lg leading-relaxed">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pronounData = {
+            kare: {
+                name: "彼", name_en: "Kare",
+                category: "基本", category_en: "Basic",
+                color: "bg-violet-600", politenessLevel: 0,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">標準的、男性、恋人</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>男性を指す最も一般的な三人称です。</li><li>文脈によっては「恋人（ボーイフレンド）」という意味にもなります。</li><li>親しい友人から少しフォーマルな文脈まで幅広く使えます。</li></ul>`,
+                example: `「彼は私の大学の友人です。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Standard, male, boyfriend</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>The most common third-person pronoun for a male.</li><li>Depending on the context, it can also mean "boyfriend."</li><li>Used in a wide range of situations, from friends to semi-formal contexts.</li></ul>`,
+                example_en: `"He is a friend from my university."`
+            },
+            kanojo: {
+                name: "彼女", name_en: "Kanojo",
+                category: "基本", category_en: "Basic",
+                color: "bg-violet-600", politenessLevel: 0,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">標準的、女性、恋人</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>女性を指す最も一般的な三人称です。</li><li>「彼」と同様に、「恋人（ガールフレンド）」という意味で使われることが多いです。</li><li>日常会話で多用すると少し不自然に聞こえることもあります。</li></ul>`,
+                example: `「彼女は最近、新しい仕事を始めました。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Standard, female, girlfriend</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>The most common third-person pronoun for a female.</li><li>Like "kare," it is very often used to mean "girlfriend."</li><li>Overusing it in daily conversation can sometimes sound unnatural.</li></ul>`,
+                example_en: `"She started a new job recently."`
+            },
+            anohito: {
+                name: "あの人", name_en: "Ano hito",
+                category: "丁寧", category_en: "Polite",
+                color: "bg-sky-600", politenessLevel: 1,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">丁寧、中立、少し距離がある</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>「あの人」は性別を問わず使える丁寧な表現です。</li><li>相手の名前がわからない時や、少し距離を置きたい時に便利です。</li><li>「彼/彼女」よりも客観的で丁寧な響きがあります。</li></ul>`,
+                example: `「受付にいたあの人は、どなたですか？」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Polite, neutral, slightly distant</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>"Ano hito" is a polite expression that can be used for any gender.</li><li>It's useful when you don't know the person's name or want to keep some distance.</li><li>Sounds more objective and polite than "kare/kanojo."</li></ul>`,
+                example_en: `"Who was that person at the reception desk?"`
+            },
+            anokata: {
+                name: "あの方", name_en: "Ano kata",
+                category: "丁寧", category_en: "Polite",
+                color: "bg-sky-600", politenessLevel: 2,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">非常に丁寧、敬意、ビジネス</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>「あの人」の尊敬語で、非常に高い敬意を示します。</li><li>目上の人や顧客など、敬うべき相手に対して使います。</li><li>ビジネスシーンやフォーマルな場で頻繁に使われます。</li></ul>`,
+                example: `「あの方が、新しい部長でいらっしゃいます。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Very polite, respectful, business</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p><ul class="list-disc list-inside space-y-2 lang-en"><li>The honorific version of "ano hito," showing a high degree of respect.</li><li>Used for people you should respect, such as superiors or clients.</li><li>Frequently used in business and other formal settings.</li></ul>`,
+                example_en: `"That person is our new department head."`
+            },
+            karera: {
+                name: "彼ら", name_en: "Karera",
+                category: "複数", category_en: "Plural",
+                color: "bg-teal-600", politenessLevel: 0.5,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">複数、男性グループ、中立</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>複数の人々を指す言葉です。「彼」の複数形。</li><li>主に男性のグループ、または男女混合のグループを指します。</li><li>書き言葉でよく使われます。</li></ul>`,
+                example: `「彼らはプロジェクトの成功を祝った。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Plural, male group, neutral</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p<ul class="list-disc list-inside space-y-2 lang-en"><li>A word for multiple people; the plural of "kare."</li><li>Refers mainly to a group of men or a mixed-gender group.</li><li>Commonly used in written language.</li></ul>`,
+                example_en: `"They celebrated the success of the project."`
+            },
+            kanojora: {
+                name: "彼女ら", name_en: "Kanojora",
+                category: "複数", category_en: "Plural",
+                color: "bg-teal-600", politenessLevel: 0.5,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">複数、女性グループ</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>女性だけのグループを指す時に使います。「彼女」の複数形。</li><li>「彼ら」に比べると、使われる頻度はやや低いです。</li><li>文脈によっては少し堅苦しい印象を与えることもあります。</li></ul>`,
+                example: `「彼女らはカフェでおしゃべりしていた。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Plural, female group</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p<ul class="list-disc list-inside space-y-2 lang-en"><li>Used to refer to a group of only women; the plural of "kanojo."</li><li>Used somewhat less frequently than "karera."</li><li>Can sound a bit stiff depending on the context.</li></ul>`,
+                example_en: `"They (the women) were chatting at the cafe."`
+            },
+            aitsu: {
+                name: "あいつ", name_en: "Aitsu",
+                category: "無礼", category_en: "Rude",
+                color: "bg-amber-600", politenessLevel: -1,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">カジュアル、ぞんざい、親しい/見下した</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>非常にくだけた言い方で、同等か目下の相手に使います。</li><li>親しい友人に対して親しみを込めて使うこともありますが、基本的にはぞんざいな言葉です。</li><li>知らない人や目上の人に使うと非常に失礼です。</li></ul>`,
+                example: `「あいつ、また遅刻だよ。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Casual, rough, familiar/looking down</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p<ul class="list-disc list-inside space-y-2 lang-en"><li>A very informal term used for peers or subordinates.</li><li>Can be used affectionately with close friends, but is generally a rough word.</li><li>Extremely rude to use with strangers or superiors.</li></ul>`,
+                example_en: `"That guy is late again."`
+            },
+            yatsu: {
+                name: "奴", name_en: "Yatsu",
+                category: "無礼", category_en: "Rude",
+                color: "bg-amber-600", politenessLevel: -2,
+                content: `<p class="font-bold mb-2 text-stone-700">イメージ：</p><p class="mb-4">侮辱的、見下した、乱暴</p><p class="font-bold mb-2 text-stone-700">特徴：</p><ul class="list-disc list-inside space-y-2"><li>人を物のように扱う、非常に乱暴で見下した言葉です。</li><li>相手への強い軽蔑や敵意を示します。</li><li>日常会話で使うべきではありません。フィクションの悪役などが使う言葉です。</li></ul>`,
+                example: `「あの奴の顔は二度と見たくない。」`,
+                content_en: `<p class="font-bold mb-2 text-stone-700 lang-en">Image:</p><p class="mb-4 lang-en">Insulting, contemptuous, vulgar</p><p class="font-bold mb-2 text-stone-700 lang-en">Characteristics:</p<ul class="list-disc list-inside space-y-2 lang-en"><li>A very vulgar and contemptuous word that treats a person like a thing.</li><li>Shows strong disdain or hostility towards someone.</li><li>Should not be used in daily conversation. It's a word for villains in fiction.</li></ul>`,
+                example_en: `"I never want to see that jerk's face again."`
+            },
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('pronoun-grid');
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalBtn = document.getElementById('close-modal');
+            
+            Object.keys(pronounData).forEach(key => {
+                const pronoun = pronounData[key];
+                const card = document.createElement('div');
+                card.className = 'card bg-white p-4 rounded-lg shadow-md cursor-pointer text-center flex flex-col justify-center items-center h-40';
+                card.innerHTML = `
+                    <h3 class="text-3xl font-bold">${pronoun.name}</h3>
+                    <p class="text-lg font-medium text-stone-600 lang-en">${pronoun.name_en}</p>
+                    <p class="text-xs ${pronoun.color.replace('bg-', 'text-')} font-semibold mt-2">${pronoun.category} / <span class="lang-en">${pronoun.category_en}</span></p>
+                `;
+                card.addEventListener('click', () => openModal(key));
+                grid.appendChild(card);
+            });
+
+            const openModal = (key) => {
+                const pronoun = pronounData[key];
+                document.getElementById('modal-title').innerHTML = `${pronoun.name} <span class="text-3xl text-stone-500 font-normal lang-en">/ ${pronoun.name_en}</span>`;
+                const categoryEl = document.getElementById('modal-category');
+                categoryEl.innerHTML = `${pronoun.category} / <span class="lang-en">${pronoun.category_en}</span>`;
+                categoryEl.className = `text-sm text-white font-bold inline-block px-3 py-1 rounded-full mb-6 ${pronoun.color}`;
+                document.getElementById('modal-body').innerHTML = `
+                    ${pronoun.content}
+                    <p class="font-bold mt-4 mb-2 text-stone-700">例文：</p>
+                    <p class="p-4 bg-stone-100 rounded-lg italic">“${pronoun.example}”</p>
+                    <hr class="my-6 border-stone-200">
+                    ${pronoun.content_en}
+                    <p class="font-bold mt-4 mb-2 text-stone-700 lang-en">Example:</p>
+                    <p class="p-4 bg-stone-100 rounded-lg italic lang-en">“${pronoun.example_en}”</p>
+                `;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            };
+
+            const closeModal = () => {
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            };
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            const ctx = document.getElementById('politenessChart').getContext('2d');
+            const chartData = {
+                labels: Object.values(pronounData).map(p => `${p.name} (${p.name_en})`),
+                datasets: [{
+                    label: '丁寧さレベル / Politeness Level',
+                    data: Object.values(pronounData).map(p => p.politenessLevel),
+                    backgroundColor: Object.values(pronounData).map(p => {
+                        if (p.politenessLevel > 1) return 'rgba(14, 165, 233, 0.7)'; // Polite (sky-500)
+                        if (p.politenessLevel > 0) return 'rgba(14, 165, 233, 0.7)'; // Polite (sky-500)
+                        if (p.politenessLevel === 0) return 'rgba(139, 92, 246, 0.7)'; // Basic (violet-500)
+                        return 'rgba(245, 158, 11, 0.7)'; // Rude (amber-500)
+                    }),
+                    borderColor: Object.values(pronounData).map(p => {
+                        if (p.politenessLevel > 1) return 'rgb(14, 165, 233)';
+                        if (p.politenessLevel > 0) return 'rgb(14, 165, 233)';
+                        if (p.politenessLevel === 0) return 'rgb(139, 92, 246)';
+                        return 'rgb(245, 158, 11)';
+                    }),
+                    borderWidth: 1
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '← 無礼 / Rude ・ 丁寧 / Polite →',
+                                font: { size: 14 }
+                            },
+                             ticks: {
+                                callback: function(value, index, values) {
+                                    const labels = {
+                                        '2': '非常に丁寧\nVery Polite',
+                                        '1': '丁寧\nPolite',
+                                        '0': '標準\nStandard',
+                                        '-1': 'カジュアル\nCasual',
+                                        '-2': '無礼\nRude'
+                                    };
+                                    return labels[value.toString()] || '';
+                                }
+                            }
+                        },
+                        y: { ticks: { font: { size: 14 } } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    const val = context.raw;
+                                    if (val > 1) label += '非常に丁寧 / Very Polite';
+                                    else if (val > 0) label += '丁寧 / Polite';
+                                    else if (val === 0) label += '標準 / Standard';
+                                    else if (val > -2) label += 'カジュアル・ぞんざい / Casual/Rough';
+                                    else label += '侮辱的 / Insulting';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

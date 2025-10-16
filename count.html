@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ日本語の数え方ガイド / Interactive Japanese Counters Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Earthy Green -->
+    <!-- Application Structure Plan: The application is structured around a tabbed interface to clearly separate the different counting categories (general items, birds, days). This is more effective than a single grid for this topic. The structure is: 1) An introduction explaining the concept of Japanese counters (助数詞). 2) An interactive "Counter Explorer" with tabs. Clicking a tab dynamically displays the relevant list of counters. 3) Each list shows the number, kanji, reading, and an example sentence, highlighting irregularities. This tabbed structure allows users to focus on one counting system at a time, preventing confusion and facilitating comparative learning. -->
+    <!-- Visualization & Content Choices: Report Info: Different systems for counting in Japanese. -> Goal: Teach users how to count different categories of items, focusing on irregular readings. -> Viz/Presentation Method: A tabbed layout (HTML/Tailwind/JS) to switch between categories. Within each tab, a structured list or grid presents the numbers 1-10 and key exceptions. -> Interaction: Users click tabs to reveal the content for that category. This is a clear, intuitive navigation method for segmented information. No charts are needed as the data is primarily descriptive and sequential, not comparative in a way that a chart would clarify. -> Justification: The tabbed layout is a standard and highly effective UI pattern for presenting distinct but related sets of information. It avoids overwhelming the user with all counters at once. -> Library/Method: Tailwind CSS for styling, Vanilla JS for tab functionality and dynamic content rendering. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .tab-button.active {
+            border-color: #16a34a;
+            background-color: #16a34a;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .counter-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border-left: 5px solid #16a34a;
+        }
+         .lang-en {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="text-center py-12 bg-white shadow-sm">
+        <h1 class="text-4xl md:text-5xl font-bold text-green-800">数え方いろいろ！</h1>
+        <p class="text-lg md:text-xl mt-2 text-gray-600 lang-en">A Guide to Japanese Counters</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <section id="intro" class="max-w-4xl mx-auto text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-green-700">はじめに / Introduction</h2>
+            <p class="text-lg leading-relaxed mb-2">
+                日本語では、ものを数える時に数字の後ろに「助数詞（じょすうし）」という言葉をつけます。この助数詞は、数えるものの形や種類によって変わるのが大きな特徴です。例えば、英語では "two apples", "two birds" のように数字は同じですが、日本語では「りんご<strong class="text-green-600">二つ</strong>」「鳥<strong class="text-green-600">二羽</strong>」のように数え方が変わります。このガイドで、代表的な数え方を学びましょう。
+            </p>
+            <p class="text-md leading-relaxed text-gray-600 lang-en">
+                In Japanese, when you count things, you add a special word called a "counter" (助数詞, josuushi) after the number. A key feature is that this counter changes depending on the shape and type of the item. For example, in English you say "two apples" and "two birds" with the same number, but in Japanese, the way you count changes: "ringo <strong class="text-green-600">futatsu</strong>" (2 apples), "tori <strong class="text-green-600">niwa</strong>" (2 birds). Let's learn some typical counters with this guide.
+            </p>
+        </section>
+
+        <section id="explorer">
+            <div class="max-w-5xl mx-auto">
+                <div id="tabs" class="flex justify-center flex-wrap gap-2 md:gap-4 mb-8">
+                </div>
+                <div id="content" class="bg-white p-4 sm:p-8 rounded-lg shadow-lg">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 bg-white mt-12 border-t">
+        <p class="text-gray-500">日本語の豊かさを、数の世界からも感じてみましょう。</p>
+        <p class="text-gray-400 text-sm lang-en">Let's experience the richness of Japanese, even from the world of numbers.</p>
+    </footer>
+
+    <script>
+        const countingData = {
+            general: {
+                title: "もの / General Things (〜つ)",
+                description: "特定の助数詞がない、一般的なものを数える時に使います。1から10まで不規則な読み方をするのが特徴です。",
+                description_en: "Used for counting general items that don't have a specific counter. Note the irregular readings from 1 to 10.",
+                items: [
+                    { num: '1', kanji: '一つ', reading: 'ひとつ (hitotsu)', example: 'りんごを一つください。', example_en: 'One apple, please.' },
+                    { num: '2', kanji: '二つ', reading: 'ふたつ (futatsu)', example: '椅子が二つあります。', example_en: 'There are two chairs.' },
+                    { num: '3', kanji: '三つ', reading: 'みっつ (mittsu)', example: '角を三つ曲がります。', example_en: 'Turn three corners.' },
+                    { num: '4', kanji: '四つ', reading: 'よっつ (yottsu)', example: 'パンを四つ買いました。', example_en: 'I bought four breads.' },
+                    { num: '5', kanji: '五つ', reading: 'いつつ (itsutsu)', example: '星が五つ見えます。', example_en: 'I can see five stars.' },
+                    { num: '6', kanji: '六つ', reading: 'むっつ (muttsu)', example: '卵を六つ使います。', example_en: 'Use six eggs.' },
+                    { num: '7', kanji: '七つ', reading: 'ななつ (nanatsu)', example: '七つの海を冒険する。', example_en: 'Adventure across the seven seas.' },
+                    { num: '8', kanji: '八つ', reading: 'やっつ (yattsu)', example: 'クッキーが八つ残っています。', example_en: 'There are eight cookies left.' },
+                    { num: '9', kanji: '九つ', reading: 'ここのつ (kokonotsu)', example: '箱が九つ届きました。', example_en: 'Nine boxes have arrived.' },
+                    { num: '10', kanji: '十', reading: 'とお (too)', example: '指は十あります。', example_en: 'There are ten fingers.' },
+                ]
+            },
+            birds: {
+                title: "鳥 / Birds (〜羽)",
+                description: "鳥やウサギを数える時に使います。「わ」と読みますが、数字によっては「ば」や「ぱ」と音が変わることに注意しましょう。",
+                description_en: "Used for counting birds and rabbits. The reading is 'wa,' but be careful as the sound can change to 'ba' or 'pa' with certain numbers.",
+                items: [
+                    { num: '1', kanji: '一羽', reading: 'いちわ (ichiwa)', example: '木に一羽の鳥がいます。', example_en: 'There is one bird in the tree.' },
+                    { num: '2', kanji: '二羽', reading: 'にわ (niwa)', example: '池に二羽のアヒルが泳いでいます。', example_en: 'Two ducks are swimming in the pond.' },
+                    { num: '3', kanji: '三羽', reading: 'さんば (sanba)', example: '三羽のペンギンが歩いています。', example_en: 'Three penguins are walking.' },
+                    { num: '4', kanji: '四羽', reading: 'よんわ (yonwa)', example: '鳩が四羽飛んでいきました。', example_en: 'Four pigeons flew away.' },
+                    { num: '5', kanji: '五羽', reading: 'ごわ (gowa)', example: 'カラスが五羽とまっています。', example_en: 'Five crows are perched.' },
+                    { num: '6', kanji: '六羽', reading: 'ろっぱ (roppa)', example: '鶏を六羽飼っています。', example_en: 'I am raising six chickens.' },
+                    { num: '7', kanji: '七羽', reading: 'ななわ (nanawa)', example: '七羽のツバメが巣を作っています。', example_en: 'Seven swallows are building a nest.' },
+                    { num: '8', kanji: '八羽', reading: 'はっぱ / はちわ (happa / hachiwa)', example: 'インコが八羽います。', example_en: 'There are eight parakeets.' },
+                    { num: '9', kanji: '九羽', reading: 'きゅうわ (kyuuwa)', example: '九羽の白鳥がいました。', example_en: 'There were nine swans.' },
+                    { num: '10', kanji: '十羽', reading: 'じゅっぱ (juppa)', example: '雀が十羽、電線にいます。', example_en: 'Ten sparrows are on the power line.' },
+                ]
+            },
+            days: {
+                title: "日付 / Days of the Month (〜日)",
+                description: "カレンダーの日付の数え方です。特に1日から10日までは特別な読み方をするので、覚えることが重要です。",
+                description_en: "This is how to count the days of the month. It's especially important to memorize the special readings for the 1st through the 10th.",
+                items: [
+                    { num: '1日', kanji: '一日', reading: 'ついたち (tsuitachi)', example: '四月一日はエイプリルフールです。', example_en: 'April 1st is April Fools\' Day.' },
+                    { num: '2日', kanji: '二日', reading: 'ふつか (futsuka)', example: '会議は二日です。', example_en: 'The meeting is on the 2nd.' },
+                    { num: '3日', kanji: '三日', reading: 'みっか (mikka)', example: '三日坊主にならないように頑張る。', example_en: 'I\'ll try not to give up after three days.' },
+                    { num: '4日', kanji: '四日', reading: 'よっか (yokka)', example: '旅行は四日からです。', example_en: 'The trip starts on the 4th.' },
+                    { num: '5日', kanji: '五日', reading: 'いつか (itsuka)', example: 'こどもの日は五月五日です。', example_en: 'Children\'s Day is May 5th.' },
+                    { num: '6日', kanji: '六日', reading: 'むいか (muika)', example: '六日に荷物が届きます。', example_en: 'The package will arrive on the 6th.' },
+                    { num: '7日', kanji: '七日', reading: 'なのか (nanoka)', example: '七夕は七月七日です。', example_en: 'Tanabata is on July 7th.' },
+                    { num: '8日', kanji: '八日', reading: 'ようか (yooka)', example: '彼の誕生日は八日です。', example_en: 'His birthday is on the 8th.' },
+                    { num: '9日', kanji: '九日', reading: 'ここのか (kokonoka)', example: '九日に試験があります。', example_en: 'There is an exam on the 9th.' },
+                    { num: '10日', kanji: '十日', reading: 'とおか (tooka)', example: '締め切りは十日です。', example_en: 'The deadline is the 10th.' },
+                    { num: '14日', kanji: '十四日', reading: 'じゅうよっか (juuyokka)', example: '十四日はバレンタインデーです。', example_en: 'The 14th is Valentine\'s Day.' },
+                    { num: '20日', kanji: '二十日', reading: 'はつか (hatsuka)', example: '二十日は給料日です。', example_en: 'The 20th is payday.' },
+                ]
+            },
+            people: {
+                title: "人 / People (〜人)",
+                description: "人を数える時に使います。ただし、「一人」と「二人」は特別な読み方をするので注意が必要です。",
+                description_en: "Used for counting people. Be careful, as 'one person' and 'two people' have special readings.",
+                items: [
+                    { num: '1', kanji: '一人', reading: 'ひとり (hitori)', example: '教室に学生が一人います。', example_en: 'There is one student in the classroom.' },
+                    { num: '2', kanji: '二人', reading: 'ふたり (futari)', example: '二人のシェフが料理しています。', example_en: 'Two chefs are cooking.' },
+                    { num: '3', kanji: '三人', reading: 'さんにん (sannin)', example: '私たちは三人兄弟です。', example_en: 'We are three siblings.' },
+                    { num: '4', kanji: '四人', reading: 'よにん (yonin)', example: '四人家族です。', example_en: 'We are a family of four.' },
+                    { num: '5', kanji: '五人', reading: 'ごにん (gonin)', example: '五人の選手がチームに加わった。', example_en: 'Five players joined the team.' },
+                    { num: '6', kanji: '六人', reading: 'ろくにん (rokunin)', example: 'エレベーターには六人まで乗れます。', example_en: 'Up to six people can ride the elevator.' },
+                    { num: '7', kanji: '七人', reading: 'しちにん / ななにん (shichinin / nananin)', example: '七人の侍という映画を見た。', example_en: 'I watched a movie called Seven Samurai.' },
+                    { num: '8', kanji: '八人', reading: 'はちにん (hachinin)', example: '八人でテーブルを囲んだ。', example_en: 'Eight people sat around the table.' },
+                    { num: '9', kanji: '九人', reading: 'きゅうにん / くにん (kyuunin / kunin)', example: 'そのバンドは九人組です。', example_en: 'That band is a nine-member group.' },
+                    { num: '10', kanji: '十人', reading: 'じゅうにん (juunin)', example: '十人十色という言葉があります。', example_en: 'There is a saying, "ten people, ten colors."' },
+                ]
+            },
+            long_objects: {
+                title: "細長いもの / Long Objects (〜本)",
+                description: "鉛筆、瓶、傘、ネクタイなど、細長いものを数える時に使います。数字によって「ほん」「ぼん」「ぽん」と読み方が変わります。",
+                description_en: "Used for counting long, thin objects like pencils, bottles, umbrellas, and ties. The reading changes to 'hon,' 'bon,' or 'pon' depending on the number.",
+                items: [
+                    { num: '1', kanji: '一本', reading: 'いっぽん (ippon)', example: '映画を一本見ました。', example_en: 'I watched one movie.' },
+                    { num: '2', kanji: '二本', reading: 'にほん (nihon)', example: 'ビールを二本ください。', example_en: 'Two bottles of beer, please.' },
+                    { num: '3', kanji: '三本', reading: 'さんぼん (sanbon)', example: '彼は三本の矢を放った。', example_en: 'He shot three arrows.' },
+                    { num: '4', kanji: '四本', reading: 'よんほん (yonhon)', example: 'ニンジンを四本買いました。', example_en: 'I bought four carrots.' },
+                    { num: '5', kanji: '五本', reading: 'ごほん (gohon)', example: '指が五本あります。', example_en: 'There are five fingers.' },
+                    { num: '6', kanji: '六本', reading: 'ろっぽん (roppon)', example: '六本の柱が屋根を支えている。', example_en: 'Six pillars support the roof.' },
+                    { num: '7', kanji: '七本', reading: 'ななほん (nanahon)', example: '木に七本のバナナがなっている。', example_en: 'There are seven bananas on the tree.' },
+                    { num: '8', kanji: '八本', reading: 'はっぽん / はちほん (happon / hachihon)', example: '傘を八本も持っています。', example_en: 'I have as many as eight umbrellas.' },
+                    { num: '9', kanji: '九本', reading: 'きゅうほん (kyuuhon)', example: 'バラを九本プレゼントした。', example_en: 'I gave nine roses as a present.' },
+                    { num: '10', kanji: '十本', reading: 'じゅっぽん (juppon)', example: '鉛筆を十本削りました。', example_en: 'I sharpened ten pencils.' },
+                ]
+            },
+            flat_objects: {
+                title: "平たいもの / Flat Objects (〜枚)",
+                description: "紙、皿、シャツ、CDなど、平たくて薄いものを数える時に使います。読み方は比較的規則的です。",
+                description_en: "Used for counting flat, thin objects like paper, plates, shirts, and CDs. The reading is relatively regular.",
+                items: [
+                    { num: '1', kanji: '一枚', reading: 'いちまい (ichimai)', example: '紙を一枚ください。', example_en: 'One sheet of paper, please.' },
+                    { num: '2', kanji: '二枚', reading: 'にまい (nimai)', example: 'お皿を二枚重ねてください。', example_en: 'Please stack two plates.' },
+                    { num: '3', kanji: '三枚', reading: 'さんまい (sanmai)', example: '彼はシャツを三枚持っている。', example_en: 'He has three shirts.' },
+                    { num: '4', kanji: '四枚', reading: 'よんまい (yonmai)', example: '写真を四枚撮りました。', example_en: 'I took four photos.' },
+                    { num: '5', kanji: '五枚', reading: 'ごまい (gomai)', example: 'クッキーを五枚食べました。', example_en: 'I ate five cookies.' },
+                    { num: '6', kanji: '六枚', reading: 'ろくまい (rokumai)', example: 'CDを六枚買いました。', example_en: 'I bought six CDs.' },
+                    { num: '7', kanji: '七枚', reading: 'ななまい (nanamai)', example: 'タオルの在庫は七枚です。', example_en: 'There are seven towels in stock.' },
+                    { num: '8', kanji: '八枚', reading: 'はちまい (hachimai)', example: 'チケットが八枚あります。', example_en: 'There are eight tickets.' },
+                    { num: '9', kanji: '九枚', reading: 'きゅうまい (kyuumai)', example: 'カードを九枚引いてください。', example_en: 'Please draw nine cards.' },
+                    { num: '10', kanji: '十枚', reading: 'じゅうまい (juumai)', example: 'レポートは十枚です。', example_en: 'The report is ten pages long.' },
+                ]
+            },
+            small_objects: {
+                title: "小さいもの / Small Objects (〜個)",
+                description: "消しゴム、石、箱など、比較的小さくて丸みのあるものを数える時に使う便利な助数詞です。音の変化があります。",
+                description_en: "A useful counter for relatively small, roundish objects like erasers, stones, or boxes. There are sound changes.",
+                items: [
+                    { num: '1', kanji: '一個', reading: 'いっこ (ikko)', example: '消しゴムを一個貸してください。', example_en: 'Please lend me one eraser.' },
+                    { num: '2', kanji: '二個', reading: 'にこ (niko)', example: 'ボールが二個あります。', example_en: 'There are two balls.' },
+                    { num: '3', kanji: '三個', reading: 'さんこ (sanko)', example: 'おにぎりを三個食べました。', example_en: 'I ate three rice balls.' },
+                    { num: '4', kanji: '四個', reading: 'よんこ (yonko)', example: 'サイコロを四個振ります。', example_en: 'Roll four dice.' },
+                    { num: '5', kanji: '五個', reading: 'ごこ (goko)', example: '箱が五個あります。', example_en: 'There are five boxes.' },
+                    { num: '6', kanji: '六個', reading: 'ろっこ (rokko)', example: '机の上にリンゴが六個あります。', example_en: 'There are six apples on the desk.' },
+                    { num: '7', kanji: '七個', reading: 'ななこ (nanako)', example: 'チョコレートを七個もらいました。', example_en: 'I received seven chocolates.' },
+                    { num: '8', kanji: '八個', reading: 'はっこ / はちこ (hakko / hachiko)', example: 'ポケットに飴が八個入っています。', example_en: 'There are eight candies in my pocket.' },
+                    { num: '9', kanji: '九個', reading: 'きゅうこ (kyuuko)', example: 'ボタンが九個ついています。', example_en: 'It has nine buttons.' },
+                    { num: '10', kanji: '十個', reading: 'じゅっこ (jukko)', example: 'いちごを十個収穫した。', example_en: 'I harvested ten strawberries.' },
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabsContainer = document.getElementById('tabs');
+            const contentContainer = document.getElementById('content');
+            let activeTab = 'general';
+
+            const renderContent = () => {
+                const data = countingData[activeTab];
+                let contentHTML = `
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-800">${data.title.split('/')[0]} / <span class="lang-en">${data.title.split('/')[1]}</span></h3>
+                        <p class="mt-2 text-gray-600">${data.description}</p>
+                        <p class="mt-1 text-sm text-gray-500 lang-en">${data.description_en}</p>
+                    </div>
+                    <div class="space-y-4">
+                `;
+                data.items.forEach(item => {
+                    contentHTML += `
+                        <div class="counter-item">
+                            <div class="flex-shrink-0 w-12 text-center">
+                                <span class="text-2xl font-bold text-green-700">${item.num}</span>
+                            </div>
+                            <div class="flex-grow ml-4">
+                                <p class="text-xl font-bold">${item.kanji} <span class="text-lg font-normal text-gray-500">${item.reading}</span></p>
+                                <p class="text-sm text-gray-700 mt-1">例：${item.example}</p>
+                                <p class="text-sm text-gray-500 lang-en">Ex: ${item.example_en}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                contentHTML += `</div>`;
+                contentContainer.innerHTML = contentHTML;
+            };
+
+            const renderTabs = () => {
+                let tabsHTML = '';
+                Object.keys(countingData).forEach(key => {
+                    const titleParts = countingData[key].title.split('/');
+                    tabsHTML += `
+                        <button data-tab="${key}" class="tab-button text-lg px-4 py-2 rounded-md border-2 border-transparent ${key === activeTab ? 'active' : 'bg-white hover:bg-green-50'}">
+                            ${titleParts[0]} / <span class="lang-en">${titleParts[1]}</span>
+                        </button>
+                    `;
+                });
+                tabsContainer.innerHTML = tabsHTML;
+                
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        activeTab = button.dataset.tab;
+                        renderTabs();
+                        renderContent();
+                    });
+                });
+            };
+
+            renderTabs();
+            renderContent();
+        });
+    </script>
+</body>
+</html>
