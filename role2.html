@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ・ロールプレイ【道案内編】</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cool and Clear Blue -->
+    <!-- Application Structure Plan: A chat-style interface, similar to the restaurant scenario, to simulate asking for directions. Structure: 1) Introduction setting the scene (at a station, looking for a museum). 2) A "chat window" for the dialogue. 3) "User action" buttons for the student's dialogue choices. This guides the user through the social interaction of politely getting someone's attention, asking for the location, understanding the directions (with an option to ask again), and thanking the person. -->
+    <!-- Visualization & Content Choices: Report Info: Role-play scenario for asking directions. -> Goal: Teach polite phrases for asking for help, understanding directions, and expressing gratitude. -> Viz/Presentation Method: Dynamic chat-bubble interface (HTML/Tailwind/JS). -> Interaction: Users click buttons to select their response at each stage of the conversation. The chat log updates to show the full interaction. -> Justification: The "guided chat" format is highly effective for practicing conversational flow, especially for a potentially nerve-wracking situation like talking to a stranger. It allows students to see the direct consequences of their choices (e.g., polite vs. slightly abrupt). -> Library/Method: Tailwind CSS for styling, Vanilla JS for dialogue flow. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+            background-color: #f0f9ff;
+            color: #1e3a8a;
+        }
+        .chat-bubble {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            border-radius: 1.25rem;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .chat-staff {
+            background-color: #ffffff;
+            border: 1px solid #dbeafe;
+            align-self: flex-start;
+        }
+        .chat-customer {
+            background-color: #dbeafe;
+            border: 1px solid #bfdbfe;
+            align-self: flex-end;
+        }
+        .action-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+         .lang-en {
+            font-family: 'Roboto', sans-serif;
+         }
+    </style>
+</head>
+<body class="bg-blue-50 text-blue-900">
+
+    <header class="text-center py-12 bg-white shadow-sm">
+        <h1 class="text-4xl md:text-5xl font-bold text-blue-700">道を尋ねてみよう！</h1>
+        <p class="text-lg md:text-xl mt-2 text-gray-600 lang-en">Let's Ask for Directions! (Role-Play)</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <section id="intro" class="max-w-3xl mx-auto text-center mb-12">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">ロールプレイ・スタート！ / Role-Play Start!</h2>
+            <p class="text-lg leading-relaxed mb-2">
+                あなたは今、駅の前にいます。「さくら美術館」に行きたいのですが、道がわかりません。親切そうな人に声をかけて、道を尋ねてみましょう。
+            </p>
+            <p class="text-md leading-relaxed text-gray-600 lang-en">
+                You are in front of the station. You want to go to the "Sakura Museum," but you don't know the way. Let's ask a kind-looking person for directions.
+            </p>
+        </section>
+
+        <section id="scenario" class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-xl">
+            <div id="chat-window" class="h-96 overflow-y-auto p-4 mb-6 bg-blue-50 border border-blue-100 rounded-lg flex flex-col space-y-3">
+            </div>
+            <div id="action-panel">
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 bg-white mt-12 border-t">
+        <p class="text-gray-500">目的地にたどり着けそうですか？</p>
+        <p class="text-gray-400 text-sm lang-en">Does it seem like you can reach your destination?</p>
+    </footer>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const actionPanel = document.getElementById('action-panel');
+        let currentStep = 'start';
+
+        const scenario = {
+            start: {
+                staff: "（親切そうな人が歩いています）<br><span class='text-sm lang-en'>(A kind-looking person is walking by)</span>",
+                choices: [
+                    { text: "あの、すみません…", text_en: "Um, excuse me...", next: "askPolitely" },
+                    { text: "ねえ、ちょっと！", text_en: "Hey, a moment!", next: "askRudely" }
+                ]
+            },
+            askRudely: {
+                staff: "…はい？（少し驚いている）<br><span class='text-sm lang-en'>...Yes? (A little surprised)</span>",
+                choices: [
+                    { text: "さくら美術館はどこ？", text_en: "Where is Sakura Museum? (informal)", next: "giveDirectionsInformal" },
+                    { text: "すみません、道を尋ねてもいいですか？", text_en: "Excuse me, may I ask for directions?", next: "askPolitely" }
+                ]
+            },
+            askPolitely: {
+                staff: "はい、何でしょうか？<br><span class='text-sm lang-en'>Yes, what is it?</span>",
+                choices: [
+                    { text: "道を教えてください。", text_en: "Please tell me the way.", next: "askWhere" },
+                    { text: "さくら美術館に行きたいんですが…", text_en: "I'd like to go to the Sakura Museum...", next: "giveDirections" }
+                ]
+            },
+            askWhere: {
+                staff: "はい、どちらまで行かれますか？<br><span class='text-sm lang-en'>Yes, where are you heading?</span>",
+                choices: [
+                    { text: "さくら美術館です。", text_en: "The Sakura Museum.", next: "giveDirections" }
+                ]
+            },
+            giveDirections: {
+                staff: "ああ、さくら美術館ですね。ここから近いですよ。まず、この道をまっすぐ行ってください。<br><span class'text-sm lang-en'>Ah, the Sakura Museum. It's close from here. First, please go straight down this street.</span>",
+                choices: [
+                    { text: "はい、まっすぐですね。", text_en: "OK, straight.", next: "giveDirections2" }
+                ]
+            },
+            giveDirectionsInformal: {
+                staff: "さくら美術館？あそこをまっすぐ行って、二つ目の角を右だよ。<br><span class'text-sm lang-en'>Sakura Museum? Go straight there, and turn right at the second corner.</span>",
+                choices: [
+                    { text: "あ、どうも。", text_en: "Ah, thanks.", next: "endNeutral" }
+                ]
+            },
+            giveDirections2: {
+                staff: "はい。二つ目の角を右に曲がると、大きな郵便局があります。<br><span class'text-sm lang-en'>Yes. When you turn right at the second corner, there's a big post office.</span>",
+                choices: [
+                    { text: "二つ目の角を右… 郵便局ですね。", text_en: "Second corner right... post office. Got it.", next: "giveDirections3" },
+                    { text: "すみません、もう一度お願いします。", text_en: "Sorry, one more time please.", next: "repeatDirections" }
+                ]
+            },
+            repeatDirections: {
+                staff: "この道をまっすぐ行って、二つ目の角を右です。郵便局がありますよ。<br><span class'text-sm lang-en'>Go straight down this street, and turn right at the second corner. You'll see a post office.</span>",
+                choices: [
+                    { text: "わかりました！ありがとうございます。", text_en: "I understand! Thank you.", next: "giveDirections3" }
+                ]
+            },
+            giveDirections3: {
+                staff: "美術館は、その郵便局の隣ですよ。<br><span class'text-sm lang-en'>The museum is right next to that post office.</span>",
+                choices: [
+                    { text: "そうですか！助かりました。ありがとうございます！", text_en: "Oh, really! That's a big help. Thank you very much!", next: "endPolite" },
+                ]
+            },
+            endPolite: {
+                staff: "どういたしまして。お気をつけて。<br><span class'text-sm lang-en'>You're welcome. Take care.</span>",
+                choices: [
+                    { text: "（もう一度最初から）", text_en: "(Start over)", next: "start" }
+                ]
+            },
+            endNeutral: {
+                staff: "はい、どうぞ。<br><span class'text-sm lang-en'>Yep, you're welcome.</span>",
+                choices: [
+                    { text: "（もう一度最初から）", text_en: "(Start over)", next: "start" }
+                ]
+            }
+        };
+
+        function addChatBubble(text, speaker) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${speaker === 'staff' ? 'chat-staff' : 'chat-customer'}`;
+            bubble.innerHTML = text;
+            chatWindow.appendChild(bubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function displayStep(stepKey) {
+            const step = scenario[stepKey];
+            currentStep = stepKey;
+            
+            if (step.staff) {
+                addChatBubble(step.staff, 'staff');
+            }
+
+            actionPanel.innerHTML = '';
+            if (step.choices) {
+                const choicesWrapper = document.createElement('div');
+                choicesWrapper.className = 'flex flex-col sm:flex-row flex-wrap justify-center gap-3';
+                
+                step.choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'action-button w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-lg shadow-md';
+                    button.innerHTML = `${choice.text}<br><span class'text-xs font-normal opacity-90 lang-en'>${choice.text_en}</span>`;
+                    button.onclick = () => {
+                        addChatBubble(button.innerHTML, 'customer');
+                        if(choice.next === 'start') {
+                            chatWindow.innerHTML = '';
+                        }
+                        displayStep(choice.next);
+                    };
+                    choicesWrapper.appendChild(button);
+                });
+                actionPanel.appendChild(choicesWrapper);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayStep('start');
+        });
+    </script>
+</body>
+</html>

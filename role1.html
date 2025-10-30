@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ・ロールプレイ【レストラン編】</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm and Friendly -->
+    <!-- Application Structure Plan: A chat-style interface to simulate a real-time restaurant conversation. The structure is 1) An introduction setting the scene. 2) A "chat window" where the staff's (bot) dialogue appears. 3) A "user action" area where the student, as the customer, is presented with multiple-choice buttons for their lines. This choice-based dialogue tree guides the user through the entire process from entering the restaurant to leaving, making it a highly engaging and practical role-play exercise. -->
+    <!-- Visualization & Content Choices: Report Info: Role-play scenario for ordering at a restaurant. -> Goal: Teach students practical, polite Japanese phrases for a common situation. -> Viz/Presentation Method: A dynamic, chat-bubble interface (HTML/Tailwind/JS). -> Interaction: Users click buttons to choose their dialogue. The chat log updates sequentially, showing both the staff's lines and the user's chosen lines, simulating a real conversation. -> Justification: This "guided chat" format is more interactive than a static script. It forces the user to actively choose the correct/appropriate response at each step, reinforcing learning in context. -> Library/Method: Tailwind CSS for chat bubble styling, Vanilla JS for managing the dialogue flow and updating the UI. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+            background-color: #fffaf0;
+            color: #3d2c2c;
+        }
+        .chat-bubble {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            border-radius: 1.25rem;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .chat-staff {
+            background-color: #ffffff;
+            border: 1px solid #f0e6da;
+            align-self: flex-start;
+        }
+        .chat-customer {
+            background-color: #fff3bf;
+            border: 1px solid #f6e09f;
+            align-self: flex-end;
+        }
+        .action-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+         .lang-en {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-orange-50 text-amber-900">
+
+    <header class="text-center py-12 bg-white shadow-sm">
+        <h1 class="text-4xl md:text-5xl font-bold text-orange-700">レストランで注文しよう！</h1>
+        <p class="text-lg md:text-xl mt-2 text-gray-600 lang-en">Let's Order at a Restaurant! (Role-Play)</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <section id="intro" class="max-w-3xl mx-auto text-center mb-12">
+            <h2 class="text-3xl font-bold mb-4 text-orange-600">ロールプレイ・スタート！ / Role-Play Start!</h2>
+            <p class="text-lg leading-relaxed mb-2">
+                あなたは今、レストランにやってきました。店員さんと会話しながら、食事を注文してみましょう。下の選択肢から、あなたが言いたいセリフを選んでください。
+            </p>
+            <p class="text-md leading-relaxed text-gray-600 lang-en">
+                You've just arrived at a restaurant. Let's try to order a meal by talking with the staff. Choose the line you want to say from the options below.
+            </p>
+        </section>
+
+        <section id="scenario" class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-xl">
+            <div id="chat-window" class="h-96 overflow-y-auto p-4 mb-6 bg-orange-50 border border-orange-100 rounded-lg flex flex-col space-y-3">
+            </div>
+            <div id="action-panel">
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 bg-white mt-12 border-t">
+        <p class="text-gray-500">上手に注文できましたか？</p>
+        <p class="text-gray-400 text-sm lang-en">Were you able to order well?</p>
+    </footer>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const actionPanel = document.getElementById('action-panel');
+        let currentStep = 'start';
+        let order = '';
+
+        const scenario = {
+            start: {
+                staff: "いらっしゃいませ！何名様ですか？<br><span class='text-sm lang-en'>Welcome! How many people?</span>",
+                choices: [
+                    { text: "1人です。", text_en: "Just one.", next: "seating" },
+                    { text: "2人です。", text_en: "Two people.", next: "seating" },
+                    { text: "3人です。", text_en: "Three people.", next: "seating" }
+                ]
+            },
+            seating: {
+                staff: "かしこまりました。おタバコは吸われますか？<br><span class='text-sm lang-en'>Understood. Do you smoke?</span>",
+                choices: [
+                    { text: "吸います。", text_en: "Yes, I do.", next: "goToSeat" },
+                    { text: "吸いません。", text_en: "No, I don't.", next: "goToSeat" }
+                ]
+            },
+            goToSeat: {
+                staff: "では、お席へどうぞ。こちらがメニューでございます。<br><span class='text-sm lang-en'>Then, right this way. Here is the menu.</span>",
+                choices: [
+                    { text: "（メニューを見る）", text_en: "(Look at the menu)", next: "readyToOrderPrompt" }
+                ]
+            },
+            readyToOrderPrompt: {
+                staff: "ご注文がお決まりになりましたら、こちらのボタンでお呼びください。<br><span class='text-sm lang-en'>When you're ready, please press this button to call me.</span>",
+                choices: [
+                    { text: "すみません、お水ください。", text_en: "Excuse me, water please.", next: "getWater" },
+                    { text: "（ボタンを押して注文する）", text_en: "(Press the button to order)", next: "takeOrder" }
+                ]
+            },
+            getWater: {
+                staff: "はい、かしこまりました。お水をお持ちします。<br><span class='text-sm lang-en'>Yes, certainly. I'll bring you some water.</span>",
+                choices: [
+                    { text: "（ボタンを押して注文する）", text_en: "(Press the button to order)", next: "takeOrder" }
+                ]
+            },
+            takeOrder: {
+                staff: "お伺いいたします。<br><span class='text-sm lang-en'>May I take your order?</span>",
+                choices: [
+                    { text: "ラーメンをください。", text_en: "Ramen, please.", next: "confirmOrder", order: "ラーメン" },
+                    { text: "カレーをください。", text_en: "Curry, please.", next: "confirmOrder", order: "カレー" },
+                    { text: "オムライスをください。", text_en: "Omelette rice, please.", next: "confirmOrder", order: "オムライス" }
+                ]
+            },
+            confirmOrder: {
+                staffDynamic: (order) => `かしこまりました。「${order}」ですね。少々お待ちください。<br><span class'text-sm lang-en'>Understood. One "${order}". Please wait a moment.</span>`,
+                choices: [
+                    { text: "（待つ）", text_en: "(Wait)", next: "serveFood" }
+                ]
+            },
+            serveFood: {
+                staffDynamic: (order) => `お待たせいたしました。「${order}」でございます。<br><span class='text-sm lang-en'>Thank you for waiting. Here is your "${order}".</span>`,
+                choices: [
+                    { text: "（食事をする）", text_en: "(Eat the meal)", next: "afterMeal" }
+                ]
+            },
+            afterMeal: {
+                staff: null,
+                choices: [
+                    { text: "お会計をお願いします。", text_en: "The check, please.", next: "check" },
+                    { text: "すみません、トイレはどこですか？", text_en: "Excuse me, where is the restroom?", next: "restroom" }
+                ]
+            },
+            restroom: {
+                staff: "あちらの奥にございます。<br><span class='text-sm lang-en'>It's in the back over there.</span>",
+                choices: [
+                    { text: "お会計をお願いします。", text_en: "The check, please.", next: "check" }
+                ]
+            },
+            check: {
+                staff: "かしこまりました。お会計は800円です。<br><span class='text-sm lang-en'>Certainly. Your total is 800 yen.</span>",
+                choices: [
+                    { text: "ごちそうさまでした。", text_en: "Thank you for the meal.", next: "leave" }
+                ]
+            },
+            leave: {
+                staff: "ありがとうございました！またお越しくださいませ。<br><span class='text-sm lang-en'>Thank you very much! Please come again.</span>",
+                choices: [
+                    { text: "（もう一度最初から）", text_en: "(Start over)", next: "start" }
+                ]
+            }
+        };
+
+        function addChatBubble(text, speaker) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${speaker === 'staff' ? 'chat-staff' : 'chat-customer'}`;
+            bubble.innerHTML = text;
+            chatWindow.appendChild(bubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function displayStep(stepKey) {
+            const step = scenario[stepKey];
+            currentStep = stepKey;
+            
+            if (step.staff) {
+                addChatBubble(step.staff, 'staff');
+            } else if (step.staffDynamic) {
+                addChatBubble(step.staffDynamic(order), 'staff');
+            }
+
+            actionPanel.innerHTML = '';
+            if (step.choices) {
+                const choicesWrapper = document.createElement('div');
+                choicesWrapper.className = 'flex flex-col sm:flex-row flex-wrap justify-center gap-3';
+                
+                step.choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'action-button w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-5 rounded-lg shadow-md';
+                    button.innerHTML = `${choice.text}<br><span class='text-xs font-normal opacity-90 lang-en'>${choice.text_en}</span>`;
+                    button.onclick = () => {
+                        if (choice.order) {
+                            order = choice.order;
+                        }
+                        addChatBubble(button.innerHTML, 'customer');
+                        if(choice.next === 'start') {
+                            chatWindow.innerHTML = '';
+                        }
+                        displayStep(choice.next);
+                    };
+                    choicesWrapper.appendChild(button);
+                });
+                actionPanel.appendChild(choicesWrapper);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayStep('start');
+        });
+    </script>
+</body>
+</html>
