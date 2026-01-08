@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Year's Greeting Lesson</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #fdf2f2; /* Light reddish background */
+            background-image: radial-gradient(#ffe4e4 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .japanese-font {
+            font-family: 'Shippori Mincho', serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #f3e5ab 50%, #d4af37 100%);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Icons
+        const VolumeIcon = () => <i data-lucide="volume-2" className="w-5 h-5"></i>;
+        const UserIcon = () => <i data-lucide="user" className="w-6 h-6"></i>;
+        const NeighborIcon = () => <i data-lucide="smile" className="w-6 h-6"></i>;
+        const RefreshIcon = () => <i data-lucide="rotate-ccw" className="w-5 h-5"></i>;
+        const SunIcon = () => <i data-lucide="sun" className="w-6 h-6"></i>;
+        const FlowerIcon = () => <i data-lucide="flower-2" className="w-5 h-5"></i>;
+
+        // Scenario Data for New Year
+        const scenarioData = [
+            {
+                id: 1,
+                stage: "遭遇 (Encounter)",
+                npc: {
+                    jp: "あ、田中さん！おはようございます。",
+                    romaji: "A, Tanaka-san! Ohayō gozaimasu.",
+                    en: "Ah, Mr./Ms. Tanaka! Good morning."
+                },
+                vocab: [
+                    { jp: "おはようございます", en: "Good morning" }
+                ],
+                options: [
+                    { label: "おはようございます。あけましておめでとうございます。", romaji: "Ohayō gozaimasu. Akemashite omedetō gozaimasu.", en: "Good morning. Happy New Year.", nextId: 2 },
+                    { label: "あ、どうも。おめでとうございます。", romaji: "A, dōmo. Omedetō gozaimasu.", en: "Ah, hello. Happy New Year. (Slightly casual)", nextId: 2 }
+                ]
+            },
+            {
+                id: 2,
+                stage: "新年の挨拶 (New Year's Greeting)",
+                npc: {
+                    jp: "あけましておめでとうございます。昨年はお世話になりました。",
+                    romaji: "Akemashite omedetō gozaimasu. Sakunen wa osewa ni narimashita.",
+                    en: "Happy New Year. Thank you for your help last year."
+                },
+                vocab: [
+                    { jp: "あけましておめでとう", en: "Happy New Year" },
+                    { jp: "昨年 (さくねん)", en: "Last year (Formal)" },
+                    { jp: "お世話になりました", en: "Thank you for your help/support" }
+                ],
+                options: [
+                    { label: "こちらこそ、昨年はお世話になりました。", romaji: "Kochira koso, sakunen wa osewa ni narimashita.", en: "Likewise, thank you for your help last year.", nextId: 3 },
+                    { label: "いいえ、こちらこそ。", romaji: "Iie, kochira koso.", en: "No, likewise (It was me who should thank you).", nextId: 3 }
+                ]
+            },
+            {
+                id: 3,
+                stage: "お正月の話題 (Small Talk)",
+                npc: {
+                    jp: "お正月はゆっくりできましたか？",
+                    romaji: "Oshōgatsu wa yukkuri dekimashita ka?",
+                    en: "Were you able to relax during the New Year holidays?"
+                },
+                vocab: [
+                    { jp: "お正月 (おしょうがつ)", en: "New Year's period" },
+                    { jp: "ゆっくりする", en: "To relax / take it easy" }
+                ],
+                options: [
+                    { label: "はい、実家に帰っていました。", romaji: "Hai, jikka ni kaette imashita.", en: "Yes, I went back to my parents' home.", nextId: 4 },
+                    { label: "はい、家でのんびりしました。", romaji: "Hai, ie de nonbiri shimashita.", en: "Yes, I relaxed at home.", nextId: 4 },
+                    { label: "実は、仕事でした…。", romaji: "Jitsu wa, shigoto deshita...", en: "Actually, I was working...", nextId: 3.5 }
+                ]
+            },
+            {
+                id: 3.5,
+                stage: "仕事だった場合 (Working)",
+                npc: {
+                    jp: "えっ、そうなんですか！それは大変でしたね。",
+                    romaji: "E, sō nan desu ka! Sore wa taihen deshita ne.",
+                    en: "Oh, really? That must have been tough."
+                },
+                vocab: [
+                    { jp: "大変 (たいへん)", en: "Tough / Hard" }
+                ],
+                options: [
+                    { label: "ええ、でも今は落ち着きました。", romaji: "Ee, demo ima wa ochitsukimashita.", en: "Yes, but things have calmed down now.", nextId: 4 }
+                ]
+            },
+            {
+                id: 4,
+                stage: "結びの挨拶 (Closing)",
+                npc: {
+                    jp: "そうですか。では、本年もどうぞよろしくお願いいたします。",
+                    romaji: "Sō desu ka. Dewa, honnen mo dōzo yoroshiku onegai itashimasu.",
+                    en: "I see. Well, I look forward to working with you this year as well."
+                },
+                vocab: [
+                    { jp: "本年 (ほんねん)", en: "This year (Formal)" },
+                    { jp: "よろしくお願いいたします", en: "Best regards / Please treat me well" }
+                ],
+                options: [
+                    { label: "こちらこそ、よろしくお願いいたします。", romaji: "Kochira koso, yoroshiku onegai itashimasu.", en: "Likewise, best regards.", nextId: 5 },
+                    { label: "はい、よろしくお願いします！", romaji: "Hai, yoroshiku onegaishimasu!", en: "Yes, best regards! (Standard polite)", nextId: 5 }
+                ]
+            },
+            {
+                id: 5,
+                stage: "別れ (Parting)",
+                npc: {
+                    jp: "では、また！",
+                    romaji: "Dewa, mata!",
+                    en: "See you later!"
+                },
+                vocab: [
+                    { jp: "失礼します (しつれいします)", en: "Excuse me / Goodbye (Formal)" }
+                ],
+                options: [
+                    { label: "失礼します。", romaji: "Shitsurei shimasu.", en: "Goodbye (Excuse me).", nextId: 'end' },
+                    { label: "では、また。", romaji: "Dewa, mata.", en: "See you.", nextId: 'end' }
+                ]
+            }
+        ];
+
+        const App = () => {
+            const [currentStepId, setCurrentStepId] = useState(1);
+            const [isSpeaking, setIsSpeaking] = useState(false);
+
+            useEffect(() => {
+                lucide.createIcons();
+            }, [currentStepId]);
+
+            const currentScenario = scenarioData.find(s => s.id === currentStepId);
+
+            const speakText = (text) => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ja-JP';
+                    utterance.rate = 0.9; 
+                    utterance.onstart = () => setIsSpeaking(true);
+                    utterance.onend = () => setIsSpeaking(false);
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    alert("音声読み上げに対応していないブラウザです。");
+                }
+            };
+
+            const handleOptionClick = (nextId) => {
+                if (nextId === 'end') {
+                    setCurrentStepId('end');
+                } else {
+                    setCurrentStepId(nextId);
+                }
+            };
+
+            const restart = () => {
+                setCurrentStepId(1);
+                window.speechSynthesis.cancel();
+            };
+
+            // Completed View
+            if (currentStepId === 'end') {
+                return (
+                    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-red-50">
+                        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-lg w-full text-center border-4 border-red-200">
+                            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 text-red-600">
+                                <SunIcon />
+                            </div>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-2 japanese-font">素晴らしい！</h2>
+                            <p className="text-xl text-red-600 mb-6 font-bold">Excellent!</p>
+                            <p className="text-gray-600 mb-8">
+                                新年の挨拶が完璧にできました。<br/>
+                                これで今年一年も良い関係が築けますね。
+                            </p>
+                            <button 
+                                onClick={restart}
+                                className="flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200"
+                            >
+                                <RefreshIcon />
+                                最初から練習する
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen pb-20">
+                    {/* Header */}
+                    <header className="bg-red-700 text-white p-4 shadow-md sticky top-0 z-10 border-b-4 border-yellow-400">
+                        <div className="max-w-2xl mx-auto flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-white p-1.5 rounded-full text-red-600">
+                                    <SunIcon size={24} />
+                                </div>
+                                <div>
+                                    <h1 className="font-bold text-xl leading-tight japanese-font">新年の挨拶</h1>
+                                    <p className="text-xs text-red-100 opacity-90">New Year's Greeting Roleplay</p>
+                                </div>
+                            </div>
+                            <div className="text-xs md:text-sm bg-red-800 px-3 py-1 rounded-full border border-red-400">
+                                {currentScenario.stage}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-2xl mx-auto p-4 flex flex-col gap-6">
+                        
+                        {/* NPC Section */}
+                        <section className="fade-in">
+                            <div className="flex items-start gap-3 mb-2">
+                                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white shrink-0 mt-1 border-2 border-gray-600">
+                                    <NeighborIcon size={24} />
+                                </div>
+                                <span className="text-sm font-bold text-gray-600 mt-2">Neighbor/Colleague (相手)</span>
+                            </div>
+
+                            <div className="bg-white rounded-2xl rounded-tl-none p-6 shadow-lg border-l-4 border-red-500 relative ml-4">
+                                <button 
+                                    onClick={() => speakText(currentScenario.npc.jp)}
+                                    className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${isSpeaking ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                                    title="Listen"
+                                >
+                                    <VolumeIcon />
+                                </button>
+
+                                <p className="text-xl md:text-2xl font-bold text-gray-800 mb-3 pr-10 leading-relaxed japanese-font">
+                                    {currentScenario.npc.jp}
+                                </p>
+                                <p className="text-red-700 font-medium mb-1 text-sm md:text-base">
+                                    {currentScenario.npc.romaji}
+                                </p>
+                                <p className="text-gray-500 text-sm border-t border-gray-100 pt-2 mt-2">
+                                    {currentScenario.npc.en}
+                                </p>
+                            </div>
+                        </section>
+
+                        {/* Vocabulary Card */}
+                        <section className="bg-white border-2 border-yellow-200 rounded-xl p-4 fade-in shadow-sm">
+                            <h3 className="text-xs font-bold text-yellow-700 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                <FlowerIcon className="w-4 h-4 text-red-500" />
+                                Key Vocabulary (重要単語)
+                            </h3>
+                            <div className="grid grid-cols-1 gap-2">
+                                {currentScenario.vocab.map((word, idx) => (
+                                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-yellow-50 p-2 px-3 rounded border border-yellow-100">
+                                        <span className="font-bold text-gray-800 japanese-font text-lg">{word.jp}</span>
+                                        <span className="text-xs sm:text-sm text-gray-600">{word.en}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* User Response Section */}
+                        <section className="fade-in mt-4">
+                            <div className="flex items-center justify-end gap-3 mb-2">
+                                <span className="text-sm font-bold text-gray-600">You (あなた)</span>
+                                <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white shrink-0 shadow-md">
+                                    <UserIcon size={24} />
+                                </div>
+                            </div>
+                            
+                            <div className="grid gap-4">
+                                {currentScenario.options.map((option, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleOptionClick(option.nextId)}
+                                        className="text-left bg-white hover:bg-red-50 border-2 border-gray-100 hover:border-red-300 rounded-xl p-5 shadow-sm transition-all duration-200 group relative overflow-hidden"
+                                    >
+                                        <div className="absolute left-0 top-0 h-full w-1 bg-red-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        <div>
+                                            <p className="font-bold text-lg text-gray-800 group-hover:text-red-800 mb-2 japanese-font">
+                                                {option.label}
+                                            </p>
+                                            <p className="text-sm text-red-600 font-medium mb-1">
+                                                {option.romaji}
+                                            </p>
+                                            <p className="text-xs text-gray-400">
+                                                {option.en}
+                                            </p>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

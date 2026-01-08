@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramen Shop Roleplay Lesson</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #FFF5E6; /* Warm noodle color */
+        }
+        .title-font {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Icons
+        const VolumeIcon = () => <i data-lucide="volume-2" className="w-5 h-5"></i>;
+        const UtensilsIcon = () => <i data-lucide="utensils" className="w-6 h-6"></i>;
+        const UserIcon = () => <i data-lucide="user" className="w-6 h-6"></i>;
+        const StoreIcon = () => <i data-lucide="store" className="w-6 h-6"></i>;
+        const RefreshIcon = () => <i data-lucide="rotate-ccw" className="w-5 h-5"></i>;
+        const CheckIcon = () => <i data-lucide="check-circle" className="w-5 h-5"></i>;
+
+        // Scenario Data
+        const scenarioData = [
+            {
+                id: 1,
+                stage: "入店 (Entering)",
+                shopkeeper: {
+                    jp: "いらっしゃいませ！何名様ですか？",
+                    romaji: "Irasshaimase! Nan-mei sama desu ka?",
+                    en: "Welcome! How many people?"
+                },
+                vocab: [
+                    { jp: "いらっしゃいませ", en: "Welcome (Standard greeting)" },
+                    { jp: "何名様 (なんめいさま)", en: "How many people (Polite)" }
+                ],
+                options: [
+                    { label: "一人です。", romaji: "Hitori desu.", en: "One person.", nextId: 2 },
+                    { label: "二人です。", romaji: "Futari desu.", en: "Two people.", nextId: 2 },
+                    { label: "三人です。", romaji: "Sannin desu.", en: "Three people.", nextId: 2 }
+                ]
+            },
+            {
+                id: 2,
+                stage: "着席 (Seating)",
+                shopkeeper: {
+                    jp: "カウンター席へどうぞ。ご注文はお決まりですか？",
+                    romaji: "Kauntā seki e douzo. Gochūmon wa okimari desu ka?",
+                    en: "Please sit at the counter. Are you ready to order?"
+                },
+                vocab: [
+                    { jp: "カウンター席", en: "Counter seat" },
+                    { jp: "ご注文 (ごちゅうもん)", en: "Order" },
+                    { jp: "お決まり (おきまり)", en: "Decided / Ready" }
+                ],
+                options: [
+                    { label: "はい、醤油ラーメンをお願いします。", romaji: "Hai, shōyu rāmen o onegaishimasu.", en: "Yes, I'll have the soy sauce ramen.", nextId: 3 },
+                    { label: "はい、豚骨ラーメンをください。", romaji: "Hai, tonkotsu rāmen o kudasai.", en: "Yes, tonkotsu ramen please.", nextId: 3 },
+                    { label: "おすすめは何ですか？", romaji: "Osusume wa nan desu ka?", en: "What do you recommend?", nextId: 2.5 } // Branch
+                ]
+            },
+            {
+                id: 2.5,
+                stage: "おすすめを聞く (Recommendation)",
+                shopkeeper: {
+                    jp: "当店のおすすめは味噌ラーメンです！",
+                    romaji: "Tōten no osusume wa miso rāmen desu!",
+                    en: "Our recommendation is the Miso Ramen!"
+                },
+                vocab: [
+                    { jp: "当店 (とうてん)", en: "This shop / Our shop" },
+                    { jp: "おすすめ", en: "Recommendation" }
+                ],
+                options: [
+                    { label: "じゃあ、それでお願いします。", romaji: "Jā, sore de onegaishimasu.", en: "Okay, I'll take that then.", nextId: 3 },
+                    { label: "やっぱり、醤油ラーメンにします。", romaji: "Yappari, shōyu rāmen ni shimasu.", en: "Actually, I'll have the soy sauce ramen.", nextId: 3 }
+                ]
+            },
+            {
+                id: 3,
+                stage: "好みを伝える (Preferences)",
+                shopkeeper: {
+                    jp: "麺の硬さはどうしますか？",
+                    romaji: "Men no katasa wa dō shimasu ka?",
+                    en: "How would you like the noodle firmness?"
+                },
+                vocab: [
+                    { jp: "麺 (めん)", en: "Noodles" },
+                    { jp: "硬さ (かたさ)", en: "Firmness / Hardness" }
+                ],
+                options: [
+                    { label: "硬めでお願いします。", romaji: "Katame de onegaishimasu.", en: "Firm (Hard), please.", nextId: 4 },
+                    { label: "普通でいいです。", romaji: "Futsū de ii desu.", en: "Normal is fine.", nextId: 4 },
+                    { label: "柔らかめで。", romaji: "Yawarakame de.", en: "Soft, please.", nextId: 4 }
+                ]
+            },
+            {
+                id: 4,
+                stage: "提供 (Serving)",
+                shopkeeper: {
+                    jp: "お待たせしました。ラーメンです。ごゆっくりどうぞ。",
+                    romaji: "Omatase shimashita. Rāmen desu. Goyukkuri dōzo.",
+                    en: "Here is your ramen. Please take your time and enjoy."
+                },
+                vocab: [
+                    { jp: "お待たせしました", en: "Thank you for waiting" },
+                    { jp: "ごゆっくり", en: "Take your time / Enjoy" }
+                ],
+                options: [
+                    { label: "いただきます！", romaji: "Itadakimasu!", en: "Let's eat! (Thanks for the meal)", nextId: 4.2 },
+                    { label: "美味しそうですね。", romaji: "Oishisō desu ne.", en: "It looks delicious.", nextId: 4.2 }
+                ]
+            },
+            {
+                id: 4.2,
+                stage: "食事中 (Eating)",
+                shopkeeper: {
+                    jp: "（しばらくして…）何か追加のご注文はありますか？",
+                    romaji: "(Shibaraku shite...) Nanika tsuika no gochūmon wa arimasu ka?",
+                    en: "(After a while...) Would you like to order anything else?"
+                },
+                vocab: [
+                    { jp: "追加 (ついか)", en: "Additional / Extra" },
+                    { jp: "替え玉 (かえだま)", en: "Noodle refill" }
+                ],
+                options: [
+                    { label: "すみません、替え玉お願いします！", romaji: "Sumimasen, kaedama onegaishimasu!", en: "Excuse me, noodle refill please!", nextId: 4.3 },
+                    { label: "いいえ、大丈夫です。", romaji: "Iie, daijōbu desu.", en: "No, I'm fine.", nextId: 5 }
+                ]
+            },
+            {
+                id: 4.3,
+                stage: "替え玉注文 (Ordering Refill)",
+                shopkeeper: {
+                    jp: "ありがとうございます。替え玉の硬さはどうしますか？",
+                    romaji: "Arigatō gozaimashita. Kaedama no katasa wa dō shimasu ka?",
+                    en: "Thank you. How would you like the firmness of the refill?"
+                },
+                vocab: [
+                    { jp: "バリカタ", en: "Very hard (Expert style)" },
+                    { jp: "カタ / 硬め", en: "Firm / Hard" }
+                ],
+                options: [
+                    { label: "バリカタで！", romaji: "Barikata de!", en: "Very hard/firm, please!", nextId: 4.4 },
+                    { label: "普通で。", romaji: "Futsū de.", en: "Normal firmness.", nextId: 4.4 },
+                    { label: "お腹いっぱいです…やめます。", romaji: "Onaka ippai desu... Yamemasu.", en: "I'm full... actually never mind.", nextId: 5 }
+                ]
+            },
+            {
+                id: 4.4,
+                stage: "替え玉提供 (Refill Served)",
+                shopkeeper: {
+                    jp: "はい、替え玉お待たせしました。ラーメンのタレもどうぞ。",
+                    romaji: "Hai, kaedama omatase shimashita. Rāmen no tare mo dōzo.",
+                    en: "Here is your noodle refill. Here is some extra sauce too."
+                },
+                vocab: [
+                    { jp: "タレ", en: "Sauce / Seasoning" },
+                    { jp: "入れる (いれる)", en: "To put in / add" }
+                ],
+                options: [
+                    { label: "ありがとう。いただきます。", romaji: "Arigatō. Itadakimasu.", en: "Thank you. Let's eat.", nextId: 5 }
+                ]
+            },
+            {
+                id: 5,
+                stage: "会計 (Payment)",
+                shopkeeper: {
+                    jp: "ありがとうございました。お会計は900円になります。",
+                    romaji: "Arigatō gozaimashita. Okaikei wa kyūhyaku-en ni narimasu.",
+                    en: "Thank you. The total is 900 yen."
+                },
+                vocab: [
+                    { jp: "お会計 (おかいけい)", en: "Bill / Check" },
+                    { jp: "〜円 (えん)", en: "Yen" }
+                ],
+                options: [
+                    { label: "はい、1000円で。", romaji: "Hai, sen-en de.", en: "Here is 1000 yen.", nextId: 6 },
+                    { label: "カードは使えますか？", romaji: "Kādo wa tsukaemasu ka?", en: "Can I use a credit card?", nextId: 5.5 }
+                ]
+            },
+            {
+                id: 5.5,
+                stage: "支払い方法 (Payment Method)",
+                shopkeeper: {
+                    jp: "すみません、現金のみとなっております。",
+                    romaji: "Sumimasen, genkin nomi to natte orimasu.",
+                    en: "I'm sorry, we only accept cash."
+                },
+                vocab: [
+                    { jp: "現金 (げんきん)", en: "Cash" },
+                    { jp: "〜のみ", en: "Only..." }
+                ],
+                options: [
+                    { label: "わかりました。じゃあ現金で。", romaji: "Wakarimashita. Jā genkin de.", en: "Understood. Cash then.", nextId: 6 }
+                ]
+            },
+            {
+                id: 6,
+                stage: "退店 (Leaving)",
+                shopkeeper: {
+                    jp: "ちょうどお預かりします。ありがとうございました！またお越しください！",
+                    romaji: "Chōdo oazukari shimasu. Arigatō gozaimashita! Mata okoshi kudasai!",
+                    en: "Exact change received. Thank you very much! Please come again!"
+                },
+                vocab: [
+                    { jp: "ごちそうさまでした", en: "Thank you for the meal (said by customer)" },
+                    { jp: "またお越しください", en: "Please come again (polite)" }
+                ],
+                options: [
+                    { label: "ごちそうさまでした。", romaji: "Gochisōsama deshita.", en: "Thank you for the meal.", nextId: 'end' }
+                ]
+            }
+        ];
+
+        const App = () => {
+            const [currentStepId, setCurrentStepId] = useState(1);
+            const [history, setHistory] = useState([]);
+            const [isSpeaking, setIsSpeaking] = useState(false);
+
+            useEffect(() => {
+                lucide.createIcons();
+            }, [currentStepId, history]);
+
+            const currentScenario = scenarioData.find(s => s.id === currentStepId);
+
+            const speakText = (text) => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); // Stop previous
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ja-JP';
+                    utterance.rate = 0.9; // Slightly slower for learners
+                    utterance.onstart = () => setIsSpeaking(true);
+                    utterance.onend = () => setIsSpeaking(false);
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    alert("Your browser does not support text-to-speech.");
+                }
+            };
+
+            const handleOptionClick = (option) => {
+                // Add current interaction to history
+                setHistory([...history, {
+                    role: 'shop',
+                    text: currentScenario.shopkeeper.jp,
+                    romaji: currentScenario.shopkeeper.romaji,
+                    en: currentScenario.shopkeeper.en
+                }, {
+                    role: 'user',
+                    text: option.label,
+                    romaji: option.romaji,
+                    en: option.en
+                }]);
+
+                if (option.nextId === 'end') {
+                    setCurrentStepId('end');
+                } else {
+                    setCurrentStepId(option.nextId);
+                }
+            };
+
+            const restart = () => {
+                setCurrentStepId(1);
+                setHistory([]);
+                window.speechSynthesis.cancel();
+            };
+
+            // Completed View
+            if (currentStepId === 'end') {
+                return (
+                    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+                        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-lg w-full text-center border-4 border-orange-200">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <UtensilsIcon />
+                            </div>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-4 title-font">Great Job!</h2>
+                            <p className="text-gray-600 mb-8">
+                                You successfully ordered ramen in Japanese. <br/>
+                                <span className="text-sm">ラーメンを注文できましたね！</span>
+                            </p>
+                            <button 
+                                onClick={restart}
+                                className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200"
+                            >
+                                <RefreshIcon />
+                                Try Again (もう一度)
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-orange-50 pb-20">
+                    {/* Header */}
+                    <header className="bg-orange-600 text-white p-4 shadow-md sticky top-0 z-10">
+                        <div className="max-w-2xl mx-auto flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="bg-white p-1.5 rounded-full text-orange-600">
+                                    <UtensilsIcon size={20} />
+                                </div>
+                                <div>
+                                    <h1 className="font-bold text-lg leading-tight">Ramen Shop Roleplay</h1>
+                                    <p className="text-xs text-orange-100 opacity-90">ラーメン屋で注文しよう</p>
+                                </div>
+                            </div>
+                            <div className="text-sm bg-orange-700 px-3 py-1 rounded-full">
+                                {currentScenario.stage}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-2xl mx-auto p-4 flex flex-col gap-6">
+                        
+                        {/* Shopkeeper Section */}
+                        <section className="fade-in">
+                            <div className="flex items-start gap-3 mb-2">
+                                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white shrink-0 mt-1">
+                                    <StoreIcon size={20} />
+                                </div>
+                                <span className="text-sm font-bold text-gray-600 mt-2">Shopkeeper (店員)</span>
+                            </div>
+
+                            <div className="bg-white rounded-2xl rounded-tl-none p-5 shadow-lg border-l-4 border-orange-400 relative ml-4">
+                                <button 
+                                    onClick={() => speakText(currentScenario.shopkeeper.jp)}
+                                    className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${isSpeaking ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                                    title="Listen"
+                                >
+                                    <VolumeIcon />
+                                </button>
+
+                                <p className="text-xl md:text-2xl font-bold text-gray-800 mb-2 pr-10 leading-relaxed">
+                                    {currentScenario.shopkeeper.jp}
+                                </p>
+                                <p className="text-orange-600 font-medium mb-1 text-sm md:text-base">
+                                    {currentScenario.shopkeeper.romaji}
+                                </p>
+                                <p className="text-gray-500 text-sm border-t border-gray-100 pt-2 mt-2">
+                                    {currentScenario.shopkeeper.en}
+                                </p>
+                            </div>
+                        </section>
+
+                        {/* Vocabulary Card */}
+                        <section className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 fade-in">
+                            <h3 className="text-xs font-bold text-yellow-800 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                <i data-lucide="book-open" className="w-4 h-4"></i>
+                                Key Vocabulary (単語)
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                {currentScenario.vocab.map((word, idx) => (
+                                    <div key={idx} className="flex flex-col bg-white p-2 rounded border border-yellow-100">
+                                        <span className="font-bold text-gray-800">{word.jp}</span>
+                                        <span className="text-xs text-gray-500">{word.en}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* User Response Section */}
+                        <section className="fade-in mt-4">
+                            <div className="flex items-center justify-end gap-3 mb-2">
+                                <span className="text-sm font-bold text-gray-600">You (あなた)</span>
+                                <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white shrink-0">
+                                    <UserIcon size={20} />
+                                </div>
+                            </div>
+                            
+                            <div className="grid gap-3">
+                                {currentScenario.options.map((option, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleOptionClick(option)}
+                                        className="text-left bg-white hover:bg-orange-50 border-2 border-transparent hover:border-orange-300 rounded-xl p-4 shadow-sm transition-all duration-200 group"
+                                    >
+                                        <div className="flex items-start justify-between">
+                                            <div>
+                                                <p className="font-bold text-lg text-gray-800 group-hover:text-orange-700 mb-1">
+                                                    {option.label}
+                                                </p>
+                                                <p className="text-sm text-orange-600 font-medium mb-1">
+                                                    {option.romaji}
+                                                </p>
+                                                <p className="text-xs text-gray-400">
+                                                    {option.en}
+                                                </p>
+                                            </div>
+                                            <div className="opacity-0 group-hover:opacity-100 text-orange-500 transition-opacity mt-2">
+                                                <CheckIcon />
+                                            </div>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
