@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 1 - Noun Sentence Basics</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .answer-reveal:hover .answer-text { color: #1e3a8a; } /* text-blue-900 */
+        .answer-reveal:hover .answer-particles { color: #60a5fa; } /* text-blue-400 */
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col min-h-[600px]">
+        
+        <!-- ヘッダー -->
+        <div class="bg-indigo-600 p-6 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-indigo-200 text-sm font-bold uppercase tracking-widest">Japanese Lesson 101</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold">Introduction</h1>
+                </div>
+                <div class="text-right">
+                    <p class="text-3xl font-mono"><span id="current-step-num">1</span>/<span id="total-steps-num">5</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="h-1 w-full bg-indigo-100">
+            <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-300" style="width: 20%"></div>
+        </div>
+
+        <!-- コンテンツセクション -->
+        <div id="content-area" class="flex-grow p-8">
+            <!-- サブタイトル (JSから操作) -->
+            <h2 id="step-subtitle" class="text-xl font-semibold text-indigo-600 border-b pb-2 mb-6"></h2>
+            
+            <!-- ステップ 1: 導入 -->
+            <div class="step-content active" data-title="Introduction" data-subtitle="Welcome to Japanese Grammar Mastery">
+                <div class="space-y-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg shadow-sm">
+                        <h3 class="text-2xl font-bold text-blue-900 mb-2">Today's Goal: "The A is B" Formula</h3>
+                        <p class="text-blue-800">Learn how to introduce yourself and identify things using the most fundamental Japanese sentence structure.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-white rounded-lg border shadow-sm">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Japanese</span>
+                            <p class="text-xl font-semibold mt-2">1週目：名詞文の基本</p>
+                            <p class="text-gray-600">「AはBです」の形をマスターしましょう。</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-lg border shadow-sm">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">English</span>
+                            <p class="text-xl font-semibold mt-2">Week 1: Noun Sentence Basics</p>
+                            <p class="text-gray-600">Master the "A is B" sentence pattern.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ステップ 2: 論理構成 -->
+            <div class="step-content" data-title="The Logic" data-subtitle="Building the Foundation">
+                <div class="space-y-8">
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-4 uppercase tracking-widest">The Formula / 公式</p>
+                        <div class="flex flex-wrap justify-center items-center gap-2 text-3xl font-bold">
+                            <div class="bg-gray-100 px-6 py-4 rounded-xl border-2 border-gray-300">A</div>
+                            <div class="text-blue-600 bg-blue-50 px-4 py-4 rounded-full border-2 border-blue-200">は (wa)</div>
+                            <div class="bg-gray-100 px-6 py-4 rounded-xl border-2 border-gray-300">B</div>
+                            <div class="text-red-600 bg-red-50 px-4 py-4 rounded-xl border-2 border-red-200">です</div>
+                            <div class="text-red-600">。</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+                        <div class="space-y-4">
+                            <h4 class="font-bold flex items-center gap-2"><i data-lucide="info" class="text-blue-500 w-5 h-5"></i> Topic Marker: は</h4>
+                            <ul class="list-disc ml-5 space-y-2 text-gray-700">
+                                <li>Written as <span class="font-bold">は (ha)</span> but pronounced as <span class="font-bold text-blue-600">"wa"</span>.</li>
+                                <li>It acts like a flag, saying: "As for A..." or "Speaking of A..."</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="font-bold flex items-center gap-2"><i data-lucide="check-circle" class="text-red-500 w-5 h-5"></i> The Copula: です</h4>
+                            <ul class="list-disc ml-5 space-y-2 text-gray-700">
+                                <li>Acts like the English verb <span class="font-bold">"is/am/are"</span>.</li>
+                                <li>It makes the sentence polite.</li>
+                                <li>The "u" in "desu" is almost silent (pronounced <span class="font-bold">"dess"</span>).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ステップ 3: 例文 -->
+            <div class="step-content" data-title="Real Examples" data-subtitle="Let's See it in Action">
+                <div class="grid gap-6">
+                    <div class="p-6 bg-white rounded-xl border-2 border-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="space-y-2">
+                                <p class="text-sm font-bold text-indigo-400">#1 Self Introduction</p>
+                                <p class="text-2xl font-bold">わたし <span class="text-blue-600">は</span> ジョン <span class="text-red-600">です</span>。</p>
+                                <p class="text-gray-500 italic">Watashi wa John desu.</p>
+                            </div>
+                            <div class="bg-indigo-50 p-4 rounded-lg text-indigo-900 text-lg">I am John.</div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-white rounded-xl border-2 border-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="space-y-2">
+                                <p class="text-sm font-bold text-indigo-400">#2 Nationality</p>
+                                <p class="text-2xl font-bold">マイクさん <span class="text-blue-600">は</span> アメリカじん <span class="text-red-600">です</span>。</p>
+                                <p class="text-gray-500 italic">Mike-san wa Amerikajin desu.</p>
+                            </div>
+                            <div class="bg-indigo-50 p-4 rounded-lg text-indigo-900 text-lg">Mr. Mike is American.</div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-white rounded-xl border-2 border-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="space-y-2">
+                                <p class="text-sm font-bold text-indigo-400">#3 Profession</p>
+                                <p class="text-2xl font-bold">わたし <span class="text-blue-600">は</span> エンジニア <span class="text-red-600">です</span>。</p>
+                                <p class="text-gray-500 italic">Watashi wa enjinia desu.</p>
+                            </div>
+                            <div class="bg-indigo-50 p-4 rounded-lg text-indigo-900 text-lg">I am an engineer.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ステップ 4: 疑問形 -->
+            <div class="step-content" data-title="Question Form" data-subtitle="Asking with 'ka'">
+                <div class="space-y-8">
+                    <div class="bg-yellow-50 p-6 rounded-xl border border-yellow-200">
+                        <h4 class="text-xl font-bold text-yellow-800 mb-4 flex items-center gap-2">
+                            <i data-lucide="message-square" class="w-6 h-6"></i> Rules for Questions
+                        </h4>
+                        <div class="flex flex-wrap items-center gap-3 text-2xl">
+                            <span class="bg-white px-4 py-2 rounded border">A は B です</span>
+                            <span class="text-yellow-600 text-4xl font-black">+</span>
+                            <span class="bg-orange-500 text-white px-6 py-2 rounded-full font-bold">か</span>
+                            <span class="text-2xl font-bold">?</span>
+                        </div>
+                        <p class="mt-6 text-yellow-900">
+                            In Japanese, you don't need to change the word order to ask a question. 
+                            Simply add <span class="font-bold">か (ka)</span> at the end with a rising intonation.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-gray-50 rounded-lg text-lg">
+                            <p class="text-sm font-bold text-gray-400">Question:</p>
+                            <p class="text-xl font-bold">あなたは 学生 <span class="text-orange-600">ですか</span>？</p>
+                            <p class="text-gray-500 italic text-base">Anata wa gakusei desu ka?</p>
+                            <p class="mt-2">Are you a student?</p>
+                        </div>
+                        <div class="p-4 bg-green-50 rounded-lg border border-green-100 text-lg">
+                            <p class="text-sm font-bold text-green-400">Answer (Yes):</p>
+                            <p class="text-xl font-bold">はい、学生 です。</p>
+                            <p class="text-gray-500 italic text-base">Hai, gakusei desu.</p>
+                            <p class="mt-2">Yes, I am a student.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ステップ 5: インタラクティブ練習 -->
+            <div class="step-content" data-title="Interactive Practice" data-subtitle="Your Turn!">
+                <div class="space-y-6">
+                    <p class="text-lg font-medium text-gray-700">How would you say these in Japanese? (Hover to see answer)</p>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-white border-2 border-dashed border-gray-300 rounded-lg answer-reveal group transition-all">
+                            <p class="text-gray-400 text-sm">Task 1: "She is a teacher."</p>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-xl font-bold text-gray-200 answer-text transition-all duration-300">
+                                    かのじょ <span class="text-gray-200 answer-particles">は</span> せんせい <span class="text-gray-200 answer-text">です</span>。
+                                </p>
+                                <span class="text-xs bg-gray-100 px-2 py-1 rounded">Hover to see answer</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-white border-2 border-dashed border-gray-300 rounded-lg answer-reveal group transition-all">
+                            <p class="text-gray-400 text-sm">Task 2: "Is that a cat?"</p>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-xl font-bold text-gray-200 answer-text transition-all duration-300">
+                                    それは ねこ <span class="text-gray-200 answer-particles">ですか</span>？
+                                </p>
+                                <span class="text-xs bg-gray-100 px-2 py-1 rounded">Hover to see answer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 p-4 bg-indigo-900 text-white rounded-lg">
+                        <h5 class="font-bold flex items-center gap-2 mb-2"><i data-lucide="book-open" class="w-5 h-5"></i> Homework / しゅくだい</h5>
+                        <p class="text-indigo-200">1. Prepare your self-introduction (Name & Occupation).</p>
+                        <p class="text-indigo-200">2. Memorize Hiragana for: 「わたし」「です」「は」「か」</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- フッターナビゲーション -->
+        <div class="p-6 bg-gray-50 border-t flex justify-between items-center">
+            <button id="prev-btn" class="flex items-center gap-2 px-6 py-2 rounded-full font-bold transition-all">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i> Previous
+            </button>
+            
+            <div id="step-indicators" class="hidden md:flex gap-2">
+                <!-- JSでドットを生成可能 -->
+            </div>
+
+            <button id="next-btn" class="flex items-center gap-2 px-8 py-2 rounded-full font-bold transition-all">
+                Next Step <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- クイックジャンプメニュー -->
+    <div class="max-w-4xl mx-auto mt-6 flex gap-2 overflow-x-auto pb-4" id="nav-dots">
+        <!-- JSでボタンを生成 -->
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const steps = document.querySelectorAll('.step-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const titleEl = document.getElementById('step-title');
+        const subtitleEl = document.getElementById('step-subtitle'); // IDで取得するように修正
+        const currentStepNum = document.getElementById('current-step-num');
+        const totalStepsNum = document.getElementById('total-steps-num');
+        const progressBar = document.getElementById('progress-bar');
+        const navDotsContainer = document.getElementById('nav-dots');
+
+        if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+        // アイコンの初期化
+        lucide.createIcons();
+
+        // ナビゲーションボタンの生成
+        steps.forEach((step, index) => {
+            const btn = document.createElement('button');
+            btn.className = `flex-shrink-0 px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${index === 0 ? 'bg-indigo-600 text-white' : 'bg-white text-gray-400 hover:bg-gray-200'}`;
+            btn.innerText = step.getAttribute('data-title');
+            btn.onclick = () => goToStep(index);
+            navDotsContainer.appendChild(btn);
+        });
+
+        function updateUI() {
+            steps.forEach((step, index) => {
+                step.classList.toggle('active', index === currentStep);
+            });
+
+            // タイトルとサブタイトルの更新
+            const activeStep = steps[currentStep];
+            if (activeStep) {
+                if (titleEl) titleEl.innerText = activeStep.getAttribute('data-title');
+                if (subtitleEl) subtitleEl.innerText = activeStep.getAttribute('data-subtitle');
+                if (currentStepNum) currentStepNum.innerText = currentStep + 1;
+                
+                // プログレスバーの更新
+                if (progressBar) progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+            }
+
+            // ボタンの状態更新
+            if (currentStep === 0) {
+                prevBtn.classList.add('text-gray-300', 'cursor-not-allowed');
+                prevBtn.classList.remove('text-indigo-600', 'hover:bg-indigo-100');
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.classList.remove('text-gray-300', 'cursor-not-allowed');
+                prevBtn.classList.add('text-indigo-600', 'hover:bg-indigo-100');
+                prevBtn.disabled = false;
+            }
+
+            if (currentStep === steps.length - 1) {
+                nextBtn.innerHTML = 'Finish <i data-lucide="check" class="w-5 h-5"></i>';
+                nextBtn.className = "flex items-center gap-2 px-8 py-2 rounded-full font-bold bg-green-600 text-white hover:bg-green-700 shadow-lg active:scale-95 transition-all";
+            } else {
+                nextBtn.innerHTML = 'Next Step <i data-lucide="chevron-right" class="w-5 h-5"></i>';
+                nextBtn.className = "flex items-center gap-2 px-8 py-2 rounded-full font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg active:scale-95 transition-all";
+            }
+
+            // ナビゲーションボタンのスタイル更新
+            const navBtns = navDotsContainer.querySelectorAll('button');
+            navBtns.forEach((btn, idx) => {
+                if (idx === currentStep) {
+                    btn.classList.add('bg-indigo-600', 'text-white');
+                    btn.classList.remove('bg-white', 'text-gray-400');
+                } else {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('bg-white', 'text-gray-400');
+                }
+            });
+
+            // アイコンの再レンダリング
+            lucide.createIcons();
+        }
+
+        function goToStep(index) {
+            currentStep = index;
+            updateUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        prevBtn.onclick = () => {
+            if (currentStep > 0) goToStep(currentStep - 1);
+        };
+
+        nextBtn.onclick = () => {
+            if (currentStep < steps.length - 1) goToStep(currentStep + 1);
+        };
+
+        // 初期化実行
+        updateUI();
+    </script>
+</body>
+</html>
