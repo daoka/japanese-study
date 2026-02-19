@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 4 - Numbers & Questions</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text { color: #1e3a8a; opacity: 1; }
+        .number-grid div { @apply p-3 border rounded-xl text-center font-bold bg-white; transition: background 0.2s; }
+        .number-grid div:hover { @apply bg-indigo-50 border-indigo-200; }
+        .special-read { @apply text-rose-600; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        
+        /* Interactive Number Builder Styles */
+        .num-btn { @apply px-3 py-2 rounded-lg border font-bold transition-all active:scale-95; }
+        .num-btn.active { @apply bg-indigo-600 text-white border-indigo-600 shadow-md; }
+        .num-btn:not(.active) { @apply bg-white text-slate-600 hover:bg-slate-50; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[680px] border border-slate-200">
+        
+        <!-- Header -->
+        <div class="bg-indigo-800 p-8 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-indigo-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Learning Module 104</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">Numbers & Information</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20">
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-indigo-400 mx-1">/</span><span id="total-steps-num">5</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-amber-400" style="width: 20%"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-indigo-700 mb-8 flex items-center gap-3"></h2>
+            
+            <!-- Step 1: Review -->
+            <div class="step-content active" data-title="Review" data-subtitle="Particles Recap: Mo & No">
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="logic-card p-6 bg-indigo-50 rounded-2xl border border-indigo-100">
+                            <p class="text-xs font-black text-indigo-400 uppercase mb-2">Addition: も (mo)</p>
+                            <p class="text-xl font-bold italic">Tanaka-san <span class="text-indigo-600">も</span> gakusei desu.</p>
+                            <p class="text-slate-500 text-sm mt-1">"Tanaka is also a student."</p>
+                        </div>
+                        <div class="logic-card p-6 bg-indigo-50 rounded-2xl border border-indigo-100">
+                            <p class="text-xs font-black text-indigo-400 uppercase mb-2">Possession: の (no)</p>
+                            <p class="text-xl font-bold italic">Watashi <span class="text-indigo-600">の</span> sumaho desu.</p>
+                            <p class="text-slate-500 text-sm mt-1">"It is my smartphone."</p>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-slate-900 rounded-2xl text-white text-center shadow-lg">
+                        <p class="italic text-slate-300">"Now we have the particles. Let's add **Numbers** to build practical sentences for shopping and daily life."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Number Logic (1-99) -->
+            <div class="step-content" data-title="The Math Logic" data-subtitle="Counting 1 to 99">
+                <div class="space-y-6">
+                    <!-- Base Reference Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 number-grid text-sm mb-6">
+                        <div>1: いち</div><div>2: に</div><div>3: さん</div><div class="special-read">4: よん</div><div>5: ご</div>
+                        <div>6: ろく</div><div class="special-read">7: なな</div><div>8: はち</div><div class="special-read">9: きゅう</div><div class="bg-indigo-600 text-white border-none">10: じゅう</div>
+                    </div>
+
+                    <!-- Interactive Number Builder -->
+                    <div class="bg-indigo-50 rounded-2xl p-6 border border-indigo-100">
+                        <h4 class="text-indigo-900 font-bold mb-4 flex items-center gap-2">
+                            <i data-lucide="play-circle" class="w-5 h-5"></i> 1-99 Interactive Builder
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Input Side -->
+                            <div class="lg:col-span-2 space-y-4">
+                                <div>
+                                    <p class="text-[10px] uppercase font-black text-indigo-400 mb-2">Tens / 十の位</p>
+                                    <div class="flex flex-wrap gap-2" id="tens-btns">
+                                        <button class="num-btn active" data-val="0">0</button>
+                                        <button class="num-btn" data-val="10">10</button>
+                                        <button class="num-btn" data-val="20">20</button>
+                                        <button class="num-btn" data-val="30">30</button>
+                                        <button class="num-btn" data-val="40">40</button>
+                                        <button class="num-btn" data-val="50">50</button>
+                                        <button class="num-btn" data-val="60">60</button>
+                                        <button class="num-btn" data-val="70">70</button>
+                                        <button class="num-btn" data-val="80">80</button>
+                                        <button class="num-btn" data-val="90">90</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] uppercase font-black text-indigo-400 mb-2">Units / 一の位</p>
+                                    <div class="flex flex-wrap gap-2" id="units-btns">
+                                        <button class="num-btn" data-val="0">0</button>
+                                        <button class="num-btn active" data-val="1">1</button>
+                                        <button class="num-btn" data-val="2">2</button>
+                                        <button class="num-btn" data-val="3">3</button>
+                                        <button class="num-btn" data-val="4">4</button>
+                                        <button class="num-btn" data-val="5">5</button>
+                                        <button class="num-btn" data-val="6">6</button>
+                                        <button class="num-btn" data-val="7">7</button>
+                                        <button class="num-btn" data-val="8">8</button>
+                                        <button class="num-btn" data-val="9">9</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Display Side -->
+                            <div class="bg-white rounded-xl p-4 flex flex-col justify-center items-center text-center shadow-inner border border-indigo-100 min-h-[120px]">
+                                <p class="text-4xl font-black text-slate-800" id="builder-num">1</p>
+                                <p class="text-xl font-bold text-indigo-600 mt-2" id="builder-reading">いち</p>
+                                <p class="text-xs text-slate-400 mt-1 font-mono italic" id="builder-romaji">(Ichi)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 text-xs text-slate-500">
+                        <p><span class="font-bold">Logic:</span> [Prefix] + [Base Unit]. <br>Example: 45 is 4 (Yon) + 10 (Ju) + 5 (Go) = <span class="text-indigo-600 font-bold italic">Yon-ju-go</span>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Big Units (Man) -->
+            <div class="step-content" data-title="Big Numbers" data-subtitle="The 4-Digit Rule: MAN">
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 bg-white border-2 border-slate-100 rounded-2xl text-center shadow-sm">
+                            <p class="text-xs font-bold text-slate-400 mb-1">100</p>
+                            <p class="text-2xl font-black text-indigo-700">ひゃく</p>
+                            <p class="text-xs text-slate-400 font-mono italic">(Hyaku)</p>
+                        </div>
+                        <div class="p-5 bg-white border-2 border-slate-100 rounded-2xl text-center shadow-sm">
+                            <p class="text-xs font-bold text-slate-400 mb-1">1,000</p>
+                            <p class="text-2xl font-black text-indigo-700">せん</p>
+                            <p class="text-xs text-slate-400 font-mono italic">(Sen)</p>
+                        </div>
+                        <div class="p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl text-center shadow-md">
+                            <p class="text-xs font-bold text-amber-600 mb-1">10,000</p>
+                            <p class="text-3xl font-black text-amber-700 underline decoration-amber-300 underline-offset-4">まん</p>
+                            <p class="text-xs text-amber-600 font-mono italic font-bold">(MAN)</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-6 rounded-2xl text-white shadow-xl">
+                        <h4 class="font-bold flex items-center gap-2 mb-4 text-amber-400 uppercase tracking-widest text-sm">
+                            <i data-lucide="alert-triangle"></i> English vs Japanese Logic
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div class="space-y-2">
+                                <p class="text-xs text-slate-400 uppercase">English (3 digits)</p>
+                                <p class="text-2xl font-mono"><span class="bg-slate-700 px-1 rounded">10</span>,000</p>
+                                <p class="text-sm italic">"Ten Thousand"</p>
+                            </div>
+                            <div class="space-y-2 border-t md:border-t-0 md:border-l border-slate-700 pt-4 md:pt-0 md:pl-8">
+                                <p class="text-xs text-amber-400 uppercase font-bold">Japanese (4 digits)</p>
+                                <p class="text-2xl font-mono text-amber-400"><span class="bg-amber-900/50 px-1 rounded">1</span>,0000</p>
+                                <p class="text-sm italic text-amber-200">"Ichi-MAN"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Question Word Nan -->
+            <div class="step-content" data-title="Asking 'What?'" data-subtitle="The Power of 何 (Nan/Nani)">
+                <div class="space-y-6">
+                    <div class="p-6 bg-indigo-50 border-l-8 border-indigo-600 rounded-r-2xl">
+                        <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-1">Grammar Formula</p>
+                        <p class="text-3xl font-bold">Target <span class="text-indigo-600">は</span> なん <span class="text-indigo-600">ですか</span>？</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-5 border-2 border-slate-100 rounded-2xl logic-box bg-white">
+                            <div class="flex items-center gap-3 mb-2 text-indigo-400">
+                                <i data-lucide="tag" class="w-5 h-5"></i>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Price</span>
+                            </div>
+                            <p class="text-xl font-bold italic">いくら ですか？</p>
+                            <p class="text-slate-400 text-xs mt-1">"How much is it?"</p>
+                        </div>
+                        <div class="p-5 border-2 border-slate-100 rounded-2xl logic-box bg-white">
+                            <div class="flex items-center gap-3 mb-2 text-indigo-400">
+                                <i data-lucide="phone" class="w-5 h-5"></i>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Phone</span>
+                            </div>
+                            <p class="text-xl font-bold italic">なんばん ですか？</p>
+                            <p class="text-slate-400 text-xs mt-1">"What is the number?"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Practice -->
+            <div class="step-content" data-title="Practice" data-subtitle="Challenge: Read & Answer">
+                <div class="space-y-6">
+                    <p class="text-lg font-bold text-slate-700">Can you say these? (Hover to Reveal)</p>
+                    
+                    <div class="space-y-4">
+                        <!-- Q1: Price -->
+                        <div class="p-6 bg-white border-2 border-dashed border-slate-200 rounded-2xl answer-reveal group cursor-help transition-all">
+                            <p class="text-slate-500 text-sm mb-2 font-bold">Q1: "How much is this phone?"</p>
+                            <div class="flex flex-col gap-2">
+                                <p class="text-xl font-bold text-slate-200 answer-text transition-all duration-500 italic">
+                                    Q: この スマホ <span class="answer-particles">は</span> いくら ですか？
+                                </p>
+                                <div class="h-px bg-slate-100 w-full group-hover:bg-slate-200 transition-all"></div>
+                                <p class="text-xl font-bold text-slate-200 answer-text transition-all duration-500 italic">
+                                    A: <span class="text-rose-400">よんまん ごせん</span> えん です。 (¥ 45,000)
+                                </p>
+                            </div>
+                            <div class="mt-4 flex justify-end">
+                                <span class="text-[8px] bg-slate-100 px-2 py-1 rounded text-slate-500 font-black uppercase">Hover to reveal all</span>
+                            </div>
+                        </div>
+
+                        <!-- Q2: Phone Number -->
+                        <div class="p-6 bg-white border-2 border-dashed border-slate-200 rounded-2xl answer-reveal group cursor-help transition-all">
+                            <p class="text-slate-500 text-sm mb-2 font-bold">Q2: "What is your phone number?"</p>
+                            <div class="flex flex-col gap-2">
+                                <p class="text-xl font-bold text-slate-200 answer-text transition-all duration-500 italic">
+                                    Q: でんわばんごう <span class="answer-particles">は</span> なんばん ですか？
+                                </p>
+                                <div class="h-px bg-slate-100 w-full group-hover:bg-slate-200 transition-all"></div>
+                                <p class="text-xl font-bold text-slate-200 answer-text transition-all duration-500 italic">
+                                    A: 090 <span class="answer-particles text-blue-400 underline font-black">の</span> 1234 <span class="answer-particles text-blue-400 underline font-black">の</span> 5678 です。
+                                </p>
+                            </div>
+                            <p class="text-[10px] text-slate-300 group-hover:text-slate-500 mt-2 italic transition-all">
+                                *Tip: Use the particle "no" for hyphens (-).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 p-6 bg-indigo-900 rounded-2xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="hash" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-yellow-400 uppercase tracking-widest text-sm">
+                            Homework / しゅくだい
+                        </h5>
+                        <ul class="text-sm space-y-3 font-medium text-indigo-100">
+                            <li>1. Say 5 prices in your local currency using Japanese logic.</li>
+                            <li>2. Count from 10,000 to 100,000 in steps of 10,000.</li>
+                            <li>3. Practice saying your own phone number using "no".</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-indigo-600 hover:bg-white transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-xl shadow-indigo-100 active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Jump Menu -->
+    <div class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('.step-content');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+            // Generate dots
+            steps.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-indigo-600 w-12' : 'bg-slate-300 w-3'}`;
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                
+                const activeStep = steps[currentStep];
+                if (activeStep) {
+                    if (titleEl) titleEl.innerText = activeStep.getAttribute('data-title');
+                    if (subtitleEl) subtitleEl.innerText = activeStep.getAttribute('data-subtitle');
+                    if (currentStepNum) currentStepNum.innerText = currentStep + 1;
+                    if (progressBar) progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                }
+
+                prevBtn.disabled = (currentStep === 0);
+                
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                    nextBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                    nextBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                }
+
+                const dots = dotsContainer.querySelectorAll('button');
+                dots.forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-indigo-600 w-12' : 'bg-slate-300 w-3'}`;
+                });
+
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            // --- Number Builder Logic ---
+            let selectedTen = 0;
+            let selectedUnit = 1;
+
+            const baseReadings = {
+                0: { k: "", r: "" },
+                1: { k: "いち", r: "Ichi" },
+                2: { k: "に", r: "Ni" },
+                3: { k: "さん", r: "San" },
+                4: { k: "よん", r: "Yon" },
+                5: { k: "ご", r: "Go" },
+                6: { k: "ろく", r: "Roku" },
+                7: { k: "なな", r: "Nana" },
+                8: { k: "はち", r: "Hachi" },
+                9: { k: "きゅう", r: "Kyuu" }
+            };
+
+            const tenReadings = {
+                10: { k: "じゅう", r: "Juu" },
+                20: { k: "にじゅう", r: "Ni-juu" },
+                30: { k: "さんじゅう", r: "San-juu" },
+                40: { k: "よんじゅう", r: "Yon-juu" },
+                50: { k: "ごじゅう", r: "Go-juu" },
+                60: { k: "ろくじゅう", r: "Roku-juu" },
+                70: { k: "ななじゅう", r: "Nana-juu" },
+                80: { k: "はちじゅう", r: "Hachi-juu" },
+                90: { k: "きゅうじゅう", r: "Kyuu-juu" }
+            };
+
+            function updateBuilder() {
+                const total = selectedTen + selectedUnit;
+                const displayNum = document.getElementById('builder-num');
+                const displayReading = document.getElementById('builder-reading');
+                const displayRomaji = document.getElementById('builder-romaji');
+
+                displayNum.innerText = total === 0 ? "0" : total;
+
+                if (total === 0) {
+                    displayReading.innerText = "ぜろ";
+                    displayRomaji.innerText = "(Zero)";
+                } else if (selectedTen === 0) {
+                    displayReading.innerText = baseReadings[selectedUnit].k;
+                    displayRomaji.innerText = `(${baseReadings[selectedUnit].r})`;
+                } else {
+                    const tenPart = tenReadings[selectedTen];
+                    const unitPart = selectedUnit === 0 ? {k:"", r:""} : baseReadings[selectedUnit];
+                    displayReading.innerText = tenPart.k + unitPart.k;
+                    displayRomaji.innerText = `(${tenPart.r}${unitPart.r ? "-" + unitPart.r.toLowerCase() : ""})`;
+                }
+            }
+
+            document.querySelectorAll('#tens-btns .num-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    document.querySelectorAll('#tens-btns .num-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    selectedTen = parseInt(e.target.dataset.val);
+                    updateBuilder();
+                }
+            });
+
+            document.querySelectorAll('#units-btns .num-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    document.querySelectorAll('#units-btns .num-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    selectedUnit = parseInt(e.target.dataset.val);
+                    updateBuilder();
+                }
+            });
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
