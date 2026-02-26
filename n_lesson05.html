@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 5 - The Ko-So-A-Do System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text { color: #1e3a8a; opacity: 1; }
+        .answer-reveal:hover .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        
+        /* Ko-So-A-Do Colors */
+        .color-ko { @apply text-rose-600 bg-rose-50 border-rose-200; }
+        .color-so { @apply text-blue-600 bg-blue-50 border-blue-200; }
+        .color-a { @apply text-emerald-600 bg-emerald-50 border-emerald-200; }
+        .color-do { @apply text-amber-600 bg-amber-50 border-amber-200; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+        
+        <!-- Header -->
+        <div class="bg-slate-800 p-8 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-1">Learning Module 105</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">The Ko-So-A-Do System</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-slate-300"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-slate-500 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-emerald-500" style="width: 16.6%"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-slate-700 mb-8 flex items-center gap-3"></h2>
+            
+            <!-- Step 1: Review -->
+            <div class="step-content active" data-title="Review" data-subtitle="Numbers & Questions Recap">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Let's check your math and logic from last week.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="logic-card p-6 bg-slate-50 rounded-2xl border border-slate-200 answer-reveal cursor-help relative overflow-hidden">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Number Check</p>
+                            <p class="text-2xl font-bold mb-4">¥ 45,000</p>
+                            <div class="border-t border-slate-200 pt-3 relative">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-slate-200 px-2 py-1 rounded text-slate-500 font-black uppercase">Hover to reveal</span>
+                                </div>
+                                <p class="text-xl font-bold text-slate-800 italic">よんまん ごせん えん</p>
+                            </div>
+                        </div>
+                        <div class="logic-card p-6 bg-slate-50 rounded-2xl border border-slate-200 answer-reveal cursor-help relative overflow-hidden">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Question Check</p>
+                            <p class="text-lg font-bold italic mb-4">"How much is it?"</p>
+                            <div class="border-t border-slate-200 pt-3 relative">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-slate-200 px-2 py-1 rounded text-slate-500 font-black uppercase">Hover to reveal</span>
+                                </div>
+                                <p class="text-xl font-bold text-slate-800 italic">いくら ですか？</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: The Logic of Distance -->
+            <div class="step-content" data-title="Spatial Logic" data-subtitle="The 3 Distances in Japanese">
+                <div class="space-y-8">
+                    <p class="text-slate-600 leading-relaxed">
+                        In English, you have "This" and "That". Japanese uses a highly logical 3-way system based on the distance between the Speaker and the Listener.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-6 border-2 rounded-2xl color-ko text-center logic-card relative">
+                            <div class="absolute -top-3 -right-3 w-8 h-8 bg-white border-2 border-rose-200 rounded-full flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-rose-500"></i></div>
+                            <div class="w-12 h-12 mx-auto rounded-full bg-rose-200 text-rose-700 flex items-center justify-center font-black text-xl mb-3">こ</div>
+                            <p class="text-sm font-bold uppercase mb-2">Near Me</p>
+                            <p class="text-3xl font-black mb-1 text-slate-800">これ</p>
+                            <p class="text-xs font-mono">(Kore / This)</p>
+                        </div>
+                        
+                        <div class="p-6 border-2 rounded-2xl color-so text-center logic-card relative">
+                            <div class="absolute -top-3 -right-3 w-8 h-8 bg-white border-2 border-blue-200 rounded-full flex items-center justify-center"><i data-lucide="users" class="w-4 h-4 text-blue-500"></i></div>
+                            <div class="w-12 h-12 mx-auto rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-black text-xl mb-3">そ</div>
+                            <p class="text-sm font-bold uppercase mb-2">Near You</p>
+                            <p class="text-3xl font-black mb-1 text-slate-800">それ</p>
+                            <p class="text-xs font-mono">(Sore / That)</p>
+                        </div>
+
+                        <div class="p-6 border-2 rounded-2xl color-a text-center logic-card relative">
+                            <div class="absolute -top-3 -right-3 w-8 h-8 bg-white border-2 border-emerald-200 rounded-full flex items-center justify-center"><i data-lucide="mountain" class="w-4 h-4 text-emerald-500"></i></div>
+                            <div class="w-12 h-12 mx-auto rounded-full bg-emerald-200 text-emerald-700 flex items-center justify-center font-black text-xl mb-3">あ</div>
+                            <p class="text-sm font-bold uppercase mb-2">Far from Both</p>
+                            <p class="text-3xl font-black mb-1 text-slate-800">あれ</p>
+                            <p class="text-xs font-mono">(Are / That over there)</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50 p-6 rounded-2xl border border-amber-200 flex items-center gap-6">
+                        <div class="w-16 h-16 shrink-0 rounded-full bg-amber-200 text-amber-700 flex items-center justify-center font-black text-3xl">ど</div>
+                        <div>
+                            <p class="text-sm font-bold text-amber-700 uppercase mb-1">Question Word</p>
+                            <p class="text-2xl font-black text-slate-800">どれ <span class="text-sm font-normal text-slate-500 ml-2">(Dore / Which one?)</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Things in Action (NEW) -->
+            <div class="step-content" data-title="Things in Action" data-subtitle="Using Kore, Sore, Are">
+                <div class="space-y-6">
+                    <div class="p-6 bg-slate-50 border-l-8 border-slate-800 rounded-r-2xl">
+                        <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Sentence Builder</p>
+                        <p class="text-2xl font-bold">[Kore / Sore / Are] <span class="text-blue-600">は</span> [Item] <span class="text-red-500">です</span>。</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="p-5 border border-rose-200 bg-rose-50/30 rounded-2xl flex items-center gap-6 logic-card">
+                            <div class="w-14 h-14 bg-white border-2 border-rose-200 rounded-full flex items-center justify-center shrink-0">
+                                <i data-lucide="pen" class="w-6 h-6 text-rose-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-rose-500 uppercase mb-1">Holding the item</p>
+                                <p class="text-xl font-bold text-slate-800">これ <span class="text-slate-400">は</span> ペン です。</p>
+                                <p class="text-sm text-slate-500 italic">This is a pen.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 border border-blue-200 bg-blue-50/30 rounded-2xl flex items-center gap-6 logic-card">
+                            <div class="w-14 h-14 bg-white border-2 border-blue-200 rounded-full flex items-center justify-center shrink-0">
+                                <i data-lucide="briefcase" class="w-6 h-6 text-blue-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-blue-500 uppercase mb-1">Item is near the listener</p>
+                                <p class="text-xl font-bold text-slate-800">それ <span class="text-slate-400">は</span> かばん ですか？</p>
+                                <p class="text-sm text-slate-500 italic">Is that a bag?</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 border border-emerald-200 bg-emerald-50/30 rounded-2xl flex items-center gap-6 logic-card">
+                            <div class="w-14 h-14 bg-white border-2 border-emerald-200 rounded-full flex items-center justify-center shrink-0">
+                                <i data-lucide="car" class="w-6 h-6 text-emerald-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-emerald-500 uppercase mb-1">Item is far away</p>
+                                <p class="text-xl font-bold text-slate-800">あれ <span class="text-slate-400">は</span> くるま です。</p>
+                                <p class="text-sm text-slate-500 italic">That is a car.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Expanding to Locations -->
+            <div class="step-content" data-title="Locations" data-subtitle="Where am I? Where are you?">
+                <div class="space-y-6">
+                    <p class="text-slate-600">The exact same logic applies to places! Just change the ending.</p>
+                    
+                    <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
+                        <table class="w-full text-left border-collapse bg-white">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="p-4 border-b font-bold text-slate-400 uppercase text-xs">Prefix</th>
+                                    <th class="p-4 border-b font-bold text-rose-600">こ (Near Me)</th>
+                                    <th class="p-4 border-b font-bold text-blue-600">そ (Near You)</th>
+                                    <th class="p-4 border-b font-bold text-emerald-600">あ (Far)</th>
+                                    <th class="p-4 border-b font-bold text-amber-600">ど (Question)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="p-4 font-bold bg-slate-50 text-slate-500 text-sm">Things (-re)</td>
+                                    <td class="p-4 font-bold text-lg">これ</td>
+                                    <td class="p-4 font-bold text-lg">それ</td>
+                                    <td class="p-4 font-bold text-lg">あれ</td>
+                                    <td class="p-4 font-bold text-lg text-slate-400">どれ</td>
+                                </tr>
+                                <tr class="bg-indigo-50/50">
+                                    <td class="p-4 font-bold bg-indigo-50 text-indigo-700 text-sm">Places (-ko)</td>
+                                    <td class="p-4 font-bold text-xl text-indigo-900">ここ<br><span class="text-xs font-normal text-slate-500">Here</span></td>
+                                    <td class="p-4 font-bold text-xl text-indigo-900">そこ<br><span class="text-xs font-normal text-slate-500">There</span></td>
+                                    <td class="p-4 font-bold text-xl text-emerald-600 underline decoration-emerald-300">あそこ*<br><span class="text-xs font-normal text-slate-500">Over there</span></td>
+                                    <td class="p-4 font-bold text-xl text-indigo-900">どこ<br><span class="text-xs font-normal text-slate-500">Where?</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="bg-slate-900 p-4 rounded-xl text-white flex items-start gap-3">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+                        <p class="text-sm text-slate-300">
+                            *Notice the irregularity: We don't say "Ako". For places far away, we add "so" to make it <span class="text-emerald-400 font-bold">あそこ (Asoko)</span>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Asking "Where?" -->
+            <div class="step-content" data-title="Asking 'Where?'" data-subtitle="Target + wa + Doko desu ka?">
+                <div class="space-y-6">
+                    <div class="p-6 bg-slate-50 border-l-8 border-slate-800 rounded-r-2xl">
+                        <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Grammar Formula</p>
+                        <p class="text-3xl font-bold">Place/Item <span class="text-blue-600">は</span> どこ <span class="text-red-500">ですか</span>？</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-6 border border-slate-200 rounded-2xl bg-white logic-card">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Useful Vocab</p>
+                            <ul class="space-y-3 font-bold text-lg">
+                                <li class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-rose-500"></i> おてあらい <span class="text-sm text-slate-400 font-normal">(Restroom)</span></li>
+                                <li class="flex items-center gap-2"><i data-lucide="train" class="w-4 h-4 text-blue-500"></i> えき <span class="text-sm text-slate-400 font-normal">(Station)</span></li>
+                                <li class="flex items-center gap-2"><i data-lucide="building" class="w-4 h-4 text-emerald-500"></i> ぎんこう <span class="text-sm text-slate-400 font-normal">(Bank)</span></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="p-6 border border-slate-200 rounded-2xl bg-white logic-card flex flex-col justify-center">
+                            <p class="text-sm font-bold text-slate-500 mb-2">Example:</p>
+                            <p class="text-xl font-bold mb-4">おてあらい <span class="text-blue-600">は</span> どこ <span class="text-red-500">ですか</span>？</p>
+                            
+                            <p class="text-sm font-bold text-slate-500 mb-1">Answer:</p>
+                            <p class="text-xl font-bold">あそこ <span class="text-red-500">です</span>。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Quiz Time (Expanded) -->
+            <div class="step-content" data-title="Quiz Time" data-subtitle="Test your Ko-So-A-Do skills">
+                <div class="space-y-6">
+                    <p class="text-lg font-bold text-slate-700">Translate the following Q&A (Hover to Reveal):</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Q1 -->
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-slate-800 text-white text-[10px] px-2 py-1 rounded font-bold">Q1: THINGS</span>
+                            </div>
+                            <div class="mb-4 h-16">
+                                <p class="text-slate-700 font-bold text-sm">Q: "What is this?" <span class="text-xs text-slate-400 font-normal">(Holding an item)</span></p>
+                                <p class="text-slate-700 font-bold text-sm mt-1">A: "That is a pen."</p>
+                            </div>
+                            <div class="border-t border-slate-100 pt-3 relative">
+                                <div class="absolute inset-0 bg-white flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-base font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    <p>Q: <span class="text-rose-600">これ</span> は なん ですか？</p>
+                                    <p class="mt-1">A: <span class="text-blue-600">それ</span> は ペン です。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-slate-800 text-white text-[10px] px-2 py-1 rounded font-bold">Q2: LOCATIONS</span>
+                            </div>
+                            <div class="mb-4 h-16">
+                                <p class="text-slate-700 font-bold text-sm">Q: "Where is the bank?" <span class="text-xs text-slate-400 font-normal">(Bank = ぎんこう)</span></p>
+                                <p class="text-slate-700 font-bold text-sm mt-1">A: "It is over there."</p>
+                            </div>
+                            <div class="border-t border-slate-100 pt-3 relative">
+                                <div class="absolute inset-0 bg-white flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-base font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    <p>Q: ぎんこう は <span class="text-amber-600">どこ</span> ですか？</p>
+                                    <p class="mt-1">A: <span class="text-emerald-600">あそこ</span> です。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q3 -->
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-slate-800 text-white text-[10px] px-2 py-1 rounded font-bold">Q3: THINGS</span>
+                            </div>
+                            <div class="mb-4 h-16">
+                                <p class="text-slate-700 font-bold text-sm">Q: "Is that water?" <span class="text-xs text-slate-400 font-normal">(Near the listener)</span></p>
+                                <p class="text-slate-700 font-bold text-sm mt-1">A: "Yes, this is water."</p>
+                            </div>
+                            <div class="border-t border-slate-100 pt-3 relative">
+                                <div class="absolute inset-0 bg-white flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-base font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    <p>Q: <span class="text-blue-600">それ</span> は みず ですか？</p>
+                                    <p class="mt-1">A: はい、<span class="text-rose-600">これ</span> は みず です。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q4 -->
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-slate-800 text-white text-[10px] px-2 py-1 rounded font-bold">Q4: LOCATIONS</span>
+                            </div>
+                            <div class="mb-4 h-16">
+                                <p class="text-slate-700 font-bold text-sm">Q: "Where is the station?" <span class="text-xs text-slate-400 font-normal">(Station = えき)</span></p>
+                                <p class="text-slate-700 font-bold text-sm mt-1">A: "It is right here."</p>
+                            </div>
+                            <div class="border-t border-slate-100 pt-3 relative">
+                                <div class="absolute inset-0 bg-white flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-base font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    <p>Q: えき は <span class="text-amber-600">どこ</span> ですか？</p>
+                                    <p class="mt-1">A: <span class="text-rose-600">ここ</span> です。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-slate-800 rounded-2xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="map" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-emerald-400 uppercase tracking-widest text-sm">
+                            Homework / しゅくだい
+                        </h5>
+                        <ul class="text-sm space-y-3 font-medium text-slate-300">
+                            <li>1. Point at 5 things in your room and say Kore/Sore/Are.</li>
+                            <li>2. Memorize the 3 new places (Restroom, Station, Bank).</li>
+                            <li>3. Practice asking: "Where is my smartphone?"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-slate-800 hover:bg-white transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-slate-800 text-white hover:bg-slate-900 shadow-xl active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Jump Menu -->
+    <div class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('.step-content');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+            // Generate dots
+            steps.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-slate-800 w-12' : 'bg-slate-300 w-3'}`;
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                
+                const activeStep = steps[currentStep];
+                if (activeStep) {
+                    if (titleEl) titleEl.innerText = activeStep.getAttribute('data-title');
+                    if (subtitleEl) subtitleEl.innerText = activeStep.getAttribute('data-subtitle');
+                    if (currentStepNum) currentStepNum.innerText = currentStep + 1;
+                    if (progressBar) progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                }
+
+                prevBtn.disabled = (currentStep === 0);
+                
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                    nextBtn.classList.remove('bg-slate-800', 'hover:bg-slate-900');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                    nextBtn.classList.add('bg-slate-800', 'hover:bg-slate-900');
+                }
+
+                const dots = dotsContainer.querySelectorAll('button');
+                dots.forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-slate-800 w-12' : 'bg-slate-300 w-3'}`;
+                });
+
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
