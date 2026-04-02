@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 7 - Movement & Transport</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text { color: #0369a1; opacity: 1; }
+        .answer-reveal:hover .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        
+        /* Particle Colors */
+        .pt-he { @apply text-rose-600 bg-rose-50 border-rose-200; }
+        .pt-de { @apply text-sky-600 bg-sky-50 border-sky-200; }
+        .verb-move { @apply text-indigo-700 bg-indigo-50 border-indigo-300; }
+
+        /* Interactive Transport Styles */
+        .transport-btn { @apply p-4 border-2 rounded-2xl text-center bg-white transition-all cursor-pointer flex flex-col items-center gap-2; }
+        .transport-btn.active { @apply border-sky-500 bg-sky-50 shadow-md scale-105; }
+        .transport-btn.active i { @apply text-sky-600; }
+        .transport-btn:not(.active):hover { @apply border-slate-300 bg-slate-50; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+        
+        <!-- Header -->
+        <div class="bg-indigo-900 p-8 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-indigo-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Learning Module 107</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">Movement & Transport</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="map" class="w-5 h-5 text-indigo-200"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-indigo-500 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-indigo-500" style="width: 16.6%"></div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-indigo-700 mb-8 flex items-center gap-3"></h2>
+            
+            <!-- Step 1: Review -->
+            <div class="step-content active" data-title="Review" data-subtitle="Daily Actions Recap">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Quick check on your routine logic!</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="logic-card p-6 bg-slate-50 rounded-2xl border border-slate-200 answer-reveal cursor-help relative overflow-hidden">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Routine Logic 1</p>
+                            <p class="text-lg font-bold mb-4">"I drink coffee at 7:00."</p>
+                            <div class="border-t border-slate-200 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-slate-200 px-2 py-1 rounded text-slate-500 font-black uppercase">Hover to reveal</span>
+                                </div>
+                                <p class="text-base font-bold text-slate-800">7じ <span class="text-purple-600">に</span> コーヒー <span class="text-amber-600">を</span> のみます。</p>
+                            </div>
+                        </div>
+                        <div class="logic-card p-6 bg-slate-50 rounded-2xl border border-slate-200 answer-reveal cursor-help relative overflow-hidden">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Routine Logic 2</p>
+                            <p class="text-lg font-bold mb-4">"I sleep at 11:00."</p>
+                            <div class="border-t border-slate-200 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-slate-200 px-2 py-1 rounded text-slate-500 font-black uppercase">Hover to reveal</span>
+                                </div>
+                                <p class="text-base font-bold text-slate-800">11じ <span class="text-purple-600">に</span> ねます。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Movement Verbs -->
+            <div class="step-content" data-title="Movement Verbs" data-subtitle="The 3 Core Actions">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Today we learn 3 verbs to describe moving from A to B.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-6 border-2 verb-move rounded-2xl text-center logic-card">
+                            <i data-lucide="redo" class="w-8 h-8 mx-auto text-indigo-600 mb-2"></i>
+                            <p class="text-sm font-bold uppercase mb-1">To Go</p>
+                            <p class="text-2xl font-black">行きます</p>
+                            <p class="text-xs font-mono text-indigo-500">(Ikimasu)</p>
+                        </div>
+                        <div class="p-6 border-2 verb-move rounded-2xl text-center logic-card">
+                            <i data-lucide="undo" class="w-8 h-8 mx-auto text-indigo-600 mb-2"></i>
+                            <p class="text-sm font-bold uppercase mb-1">To Come</p>
+                            <p class="text-2xl font-black">来ます</p>
+                            <p class="text-xs font-mono text-indigo-500">(Kimasu)</p>
+                        </div>
+                        <div class="p-6 border-2 verb-move rounded-2xl text-center logic-card">
+                            <i data-lucide="home" class="w-8 h-8 mx-auto text-indigo-600 mb-2"></i>
+                            <p class="text-sm font-bold uppercase mb-1">To Return</p>
+                            <p class="text-2xl font-black">帰ります</p>
+                            <p class="text-xs font-mono text-indigo-500">(Kaerimasu)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-indigo-900 p-6 rounded-2xl text-white shadow-lg">
+                        <h4 class="font-bold flex items-center gap-2 mb-2"><i data-lucide="info" class="text-indigo-400"></i> The "Kaerimasu" Logic</h4>
+                        <p class="text-sm text-indigo-100 italic">
+                            "Return" is used specifically for going back to your **Base** (Home, Your Country, Your Office).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Particle HE (Direction) -->
+            <div class="step-content" data-title="Direction" data-subtitle="The Directional Marker: へ">
+                <div class="space-y-6 text-center">
+                    <p class="text-slate-600">To connect your destination to the verb, we use the Directional Particle.</p>
+                    
+                    <div class="flex justify-center items-center gap-6 text-2xl font-bold">
+                        <div class="bg-slate-100 px-6 py-4 rounded-xl border shadow-sm">Destination</div>
+                        <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-4xl shadow-md border border-rose-200">へ</div>
+                        <div class="bg-indigo-50 px-6 py-4 rounded-xl border border-indigo-200 text-indigo-700">Movement Verb</div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-rose-50 border-2 border-rose-100 rounded-2xl text-left">
+                        <h4 class="font-bold text-rose-900 mb-2 flex items-center gap-2"><i data-lucide="alert-circle"></i> Pronunciation Alert!</h4>
+                        <p class="text-rose-800 text-lg leading-relaxed">
+                            Written as <span class="font-black">へ (he)</span>, but as a particle, it is pronounced as <span class="font-black text-2xl">"e"</span>.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-left">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xl font-bold">ぎんこう <span class="text-rose-600">へ</span> いきます。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Ginkou e ikimasu (I go to the bank).</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xl font-bold">うち <span class="text-rose-600">へ</span> かえります。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Uchi e kaerimasu (I return home).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Particle DE (Means) INTERACTIVE -->
+            <div class="step-content" data-title="Means of Transport" data-subtitle="The Tool/Method Marker: で">
+                <div class="space-y-8">
+                    <p class="text-slate-600">Select a transport method to see the sentence logic.</p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="transport-grid">
+                        <div class="transport-btn active" data-method="でんしゃ" data-romaji="Densha" data-needs-de="true">
+                            <i data-lucide="train" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold">でんしゃ</span>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-tighter">Train</span>
+                        </div>
+                        <div class="transport-btn" data-method="バス" data-romaji="Basu" data-needs-de="true">
+                            <i data-lucide="bus" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold">バス</span>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-tighter">Bus</span>
+                        </div>
+                        <div class="transport-btn" data-method="タクシー" data-romaji="Takushii" data-needs-de="true">
+                            <i data-lucide="car" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold">タクシー</span>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-tighter">Taxi</span>
+                        </div>
+                        <div class="transport-btn" data-method="あるいて" data-romaji="Aruite" data-needs-de="false">
+                            <i data-lucide="footprints" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold">あるいて</span>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-tighter">Walking</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8 bg-sky-50 border-2 border-sky-100 rounded-3xl text-center shadow-inner">
+                        <p class="text-xs font-black text-sky-600 uppercase tracking-widest mb-4">Live Sentence Builder</p>
+                        <div class="flex justify-center items-center gap-4 text-3xl font-black">
+                            <span id="display-method" class="text-slate-800">でんしゃ</span>
+                            <span id="display-de" class="text-sky-600 underline decoration-4">で</span>
+                            <span class="text-indigo-700">いきます。</span>
+                        </div>
+                        <p id="display-romaji" class="text-slate-400 italic text-sm mt-4">Densha de ikimasu (I go by train).</p>
+                    </div>
+                    
+                    <div id="walking-note" class="hidden bg-amber-50 p-4 rounded-xl border border-amber-200 flex items-start gap-3">
+                        <i data-lucide="info" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+                        <p class="text-sm text-amber-800">
+                            <strong>Logic Alert:</strong> "Walking" (Aruite) is an action itself. You don't use "de" because it's not a separate tool!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Full Logic Synthesis -->
+            <div class="step-content" data-title="The Full Sentence" data-subtitle="Stacking the Blocks">
+                <div class="space-y-6">
+                    <p class="text-slate-600 font-bold">Combine Time, Means, and Direction in one sentence!</p>
+                    
+                    <div class="bg-slate-900 p-8 rounded-3xl text-white shadow-xl space-y-6">
+                        <div class="flex flex-wrap items-center gap-4 text-2xl font-bold">
+                            <div class="text-slate-400">9じ</div>
+                            <div class="text-purple-400">に</div>
+                            <div class="text-slate-400">バス</div>
+                            <div class="text-sky-400">で</div>
+                            <div class="text-slate-400">会社 (Kaisha)</div>
+                            <div class="text-rose-400">へ</div>
+                            <div class="text-indigo-400">いきます。</div>
+                        </div>
+                        <div class="h-px bg-slate-700 w-full"></div>
+                        <p class="text-slate-400 italic font-mono text-sm">
+                            "I go to the company by bus at 9:00."
+                        </p>
+                    </div>
+                    
+                    <div class="bg-amber-50 p-6 rounded-2xl border border-amber-200">
+                        <h4 class="font-bold text-amber-900 mb-2">Question: Where to?</h4>
+                        <p class="text-xl font-bold italic"><span class="text-amber-600">どこ へ</span> いきますか？</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Quiz Time -->
+            <div class="step-content" data-title="Quiz Time" data-subtitle="Test your Movement Logic">
+                <div class="space-y-6">
+                    <p class="text-lg font-bold text-slate-700">Translate the Following (Hover to Reveal):</p>
+                    
+                    <div class="space-y-4">
+                        <!-- Q1 -->
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">"I go to the station by train." <br><span class="text-xs text-slate-400 font-normal">(Station = えき / Train = でんしゃ)</span></p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-white flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    でんしゃ <span class="text-sky-600">で</span> えき <span class="text-rose-600">へ</span> いきます。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">"I return home at 7:00." <br><span class="text-xs text-slate-400 font-normal">(Home = うち / 7:00 = 7じ)</span></p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-white flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    7じ <span class="text-purple-600">に</span> うち <span class="text-rose-600">へ</span> かえります。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-indigo-900 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="train" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-amber-300 uppercase tracking-widest text-sm">Homework / しゅくだい</h5>
+                        <ul class="text-sm space-y-2 font-medium text-indigo-100">
+                            <li>1. Write: How do you go to your office or school? (Means + Destination)</li>
+                            <li>2. Record: "Doko e ikimasu ka?" (Where are you going?)</li>
+                            <li>3. Practice pronunciation: "he" as "e" in a sentence.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-indigo-600 transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-xl active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('.step-content');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+            steps.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-indigo-600 w-12' : 'bg-slate-300 w-3'}`;
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                const activeStep = steps[currentStep];
+                if (activeStep) {
+                    titleEl.innerText = activeStep.getAttribute('data-title');
+                    subtitleEl.innerText = activeStep.getAttribute('data-subtitle');
+                    currentStepNum.innerText = currentStep + 1;
+                    progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                }
+                prevBtn.disabled = (currentStep === 0);
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                }
+                document.querySelectorAll('#nav-dots button').forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-indigo-600 w-12' : 'bg-slate-300 w-3'}`;
+                });
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            // --- Interactive Transport Logic ---
+            const transportBtns = document.querySelectorAll('.transport-btn');
+            const displayMethod = document.getElementById('display-method');
+            const displayDe = document.getElementById('display-de');
+            const displayRomaji = document.getElementById('display-romaji');
+            const walkingNote = document.getElementById('walking-note');
+
+            transportBtns.forEach(btn => {
+                btn.onclick = () => {
+                    // Update Active State
+                    transportBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Extract Data
+                    const method = btn.dataset.method;
+                    const romaji = btn.dataset.romaji;
+                    const needsDe = btn.dataset.needsDe === 'true';
+
+                    // Update UI
+                    displayMethod.innerText = method;
+                    if (needsDe) {
+                        displayDe.innerText = 'で';
+                        displayDe.classList.remove('hidden');
+                        displayRomaji.innerText = `${romaji} de ikimasu (I go by ${method.toLowerCase()}).`;
+                        walkingNote.classList.add('hidden');
+                    } else {
+                        displayDe.innerText = '';
+                        displayDe.classList.add('hidden');
+                        displayRomaji.innerText = `Aruite ikimasu (I go by walking).`;
+                        walkingNote.classList.remove('hidden');
+                    }
+                    lucide.createIcons();
+                };
+            });
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
