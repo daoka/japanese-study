@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 8 - Particle Mastery</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text { color: #8b5cf6; opacity: 1; }
+        .answer-reveal:hover .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        
+        /* Category Colors */
+        .cat-flag { @apply text-blue-600 bg-blue-50 border-blue-200; }
+        .cat-glue { @apply text-emerald-600 bg-emerald-50 border-emerald-200; }
+        .cat-action { @apply text-rose-600 bg-rose-50 border-rose-200; }
+        
+        /* Particle Dropdown */
+        select.particle-select { 
+            @apply appearance-none bg-white border-2 border-dashed border-violet-300 text-violet-700 font-bold px-4 py-2 rounded-xl text-center cursor-pointer transition-all;
+        }
+        select.particle-select:focus { @apply border-violet-500 outline-none shadow-md; }
+        select.particle-select.correct { @apply border-solid border-green-500 bg-green-50 text-green-700; }
+        select.particle-select.wrong { @apply border-solid border-red-500 bg-red-50 text-red-700; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+        
+        <!-- Header -->
+        <div class="bg-violet-900 p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <i data-lucide="puzzle" class="w-64 h-64"></i>
+            </div>
+            <div class="flex justify-between items-center relative z-10">
+                <div>
+                    <p class="text-violet-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Learning Module 108</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">Particle Mastery</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="link" class="w-5 h-5 text-violet-200"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-violet-500 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-yellow-400" style="width: 16.6%"></div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-violet-700 mb-8 flex items-center gap-3"></h2>
+            
+            <!-- Step 1: Golden Rule -->
+            <div class="step-content active" data-title="The Golden Rule" data-subtitle="What is a Particle?">
+                <div class="space-y-8">
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Particles are the <strong>"Glue"</strong> of Japanese logic. They are small tags that tell you the <em>job</em> of the noun before them.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="p-6 bg-slate-100 rounded-2xl border-2 border-slate-200 text-center logic-card">
+                            <h3 class="font-bold text-slate-500 uppercase tracking-widest text-xs mb-4">English: Pre-position</h3>
+                            <div class="flex justify-center items-center gap-2 text-2xl font-bold">
+                                <span class="bg-rose-100 text-rose-600 px-3 py-1 rounded">to</span>
+                                <span>Kyoto</span>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-4 italic">The marker comes BEFORE the noun.</p>
+                        </div>
+
+                        <div class="p-6 bg-violet-50 rounded-2xl border-2 border-violet-200 text-center logic-card transform md:scale-110 shadow-md">
+                            <h3 class="font-bold text-violet-500 uppercase tracking-widest text-xs mb-4">Japanese: Post-position</h3>
+                            <div class="flex justify-center items-center gap-2 text-3xl font-bold">
+                                <span>きょうと</span>
+                                <span class="bg-violet-200 text-violet-700 px-4 py-2 rounded-lg shadow-sm">へ</span>
+                            </div>
+                            <p class="text-sm text-violet-600 mt-4 font-bold">The particle ALWAYS comes AFTER the noun.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: The Flags (wa / mo) -->
+            <div class="step-content" data-title="Category 1: Flags" data-subtitle="Setting the Topic">
+                <div class="space-y-6">
+                    <p class="text-slate-600">These particles act like a "Flag" to announce what the sentence is about.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 border-2 cat-flag rounded-2xl logic-card relative">
+                            <div class="absolute -top-4 -right-2"><i data-lucide="flag" class="w-8 h-8 text-blue-400"></i></div>
+                            <div class="text-4xl font-black mb-2">は <span class="text-lg font-mono text-blue-400">(wa)</span></div>
+                            <p class="font-bold text-blue-900 mb-2">The Topic Marker</p>
+                            <p class="text-sm text-blue-800 italic">"As for X..." or "Speaking of X..."</p>
+                            <div class="mt-4 p-3 bg-white rounded-lg text-sm font-bold shadow-sm">
+                                わたし <span class="text-blue-500">は</span> アメリカじんです。
+                            </div>
+                        </div>
+
+                        <div class="p-6 border-2 cat-flag rounded-2xl logic-card relative">
+                            <div class="absolute -top-4 -right-2"><i data-lucide="copy-plus" class="w-8 h-8 text-blue-400"></i></div>
+                            <div class="text-4xl font-black mb-2">も <span class="text-lg font-mono text-blue-400">(mo)</span></div>
+                            <p class="font-bold text-blue-900 mb-2">The Addition Marker</p>
+                            <p class="text-sm text-blue-800 italic">"X is ALSO..." or "Me TOO."</p>
+                            <div class="mt-4 p-3 bg-white rounded-lg text-sm font-bold shadow-sm">
+                                わたし <span class="text-blue-500">も</span> 学生(がくせい)です。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 text-white p-4 rounded-xl flex items-start gap-4">
+                        <i data-lucide="alert-triangle" class="text-yellow-400 mt-1"></i>
+                        <div>
+                            <p class="font-bold text-yellow-400">Rule of Exclusion</p>
+                            <p class="text-sm">You can only use ONE flag. Never say <span class="line-through text-red-400">"Watashi wa mo..."</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Noun Connectors (no / to) -->
+            <div class="step-content" data-title="Category 2: Connectors" data-subtitle="Gluing Nouns Together">
+                <div class="space-y-6">
+                    <p class="text-slate-600">These particles sit BETWEEN two nouns to connect them.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 border-2 cat-glue rounded-2xl logic-card relative">
+                            <div class="absolute -top-4 -right-2"><i data-lucide="paperclip" class="w-8 h-8 text-emerald-400"></i></div>
+                            <div class="text-4xl font-black mb-2">の <span class="text-lg font-mono text-emerald-400">(no)</span></div>
+                            <p class="font-bold text-emerald-900 mb-2">Possession & Attribute</p>
+                            <p class="text-sm text-emerald-800 italic">Like "'s" or "of". Modifies the noun.</p>
+                            <div class="mt-4 p-3 bg-white rounded-lg text-sm font-bold shadow-sm">
+                                わたし <span class="text-emerald-500">の</span> スマホ <span class="text-slate-400 font-normal">(My phone)</span>
+                            </div>
+                        </div>
+
+                        <div class="p-6 border-2 cat-glue rounded-2xl logic-card relative bg-emerald-100 border-emerald-300">
+                            <div class="absolute -top-3 -right-6 bg-yellow-400 text-slate-900 text-[10px] font-black px-2 py-1 rounded shadow-md transform rotate-12">NEW!</div>
+                            <div class="absolute -top-4 -right-2"><i data-lucide="users" class="w-8 h-8 text-emerald-500"></i></div>
+                            <div class="text-4xl font-black mb-2">と <span class="text-lg font-mono text-emerald-500">(to)</span></div>
+                            <p class="font-bold text-emerald-900 mb-2">"And" & "With"</p>
+                            <p class="text-sm text-emerald-800 italic">Lists items or shows a partner.</p>
+                            <div class="mt-4 space-y-2">
+                                <div class="p-2 bg-white rounded-lg text-sm font-bold shadow-sm">
+                                    すし <span class="text-emerald-600">と</span> ラーメン <span class="text-slate-400 font-normal">(Sushi and Ramen)</span>
+                                </div>
+                                <div class="p-2 bg-white rounded-lg text-sm font-bold shadow-sm">
+                                    ともだち <span class="text-emerald-600">と</span> 行きます <span class="text-slate-400 font-normal">(Go with a friend)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Action Directors -->
+            <div class="step-content" data-title="Category 3: Action Directors" data-subtitle="The Verb's Best Friends">
+                <div class="space-y-4">
+                    <p class="text-slate-600">These particles tell us the details of the ACTION (Verb) at the end.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- を -->
+                        <div class="p-4 border-2 cat-action rounded-xl flex items-center gap-4 logic-card">
+                            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm border border-rose-100">
+                                <i data-lucide="crosshair" class="w-6 h-6 text-rose-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-black mb-1">を <span class="text-sm font-mono text-rose-400">(o)</span></p>
+                                <p class="text-xs font-bold uppercase text-rose-800">Direct Object (Target)</p>
+                                <p class="text-sm font-bold mt-1 bg-white px-2 py-1 rounded inline-block">パン <span class="text-rose-500">を</span> 食べます</p>
+                            </div>
+                        </div>
+
+                        <!-- に -->
+                        <div class="p-4 border-2 cat-action rounded-xl flex items-center gap-4 logic-card">
+                            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm border border-rose-100">
+                                <i data-lucide="map-pin" class="w-6 h-6 text-rose-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-black mb-1">に <span class="text-sm font-mono text-rose-400">(ni)</span></p>
+                                <p class="text-xs font-bold uppercase text-rose-800">Pinpoint (Time/Arrival)</p>
+                                <p class="text-sm font-bold mt-1 bg-white px-2 py-1 rounded inline-block">7時 <span class="text-rose-500">に</span> 起きます</p>
+                            </div>
+                        </div>
+
+                        <!-- へ -->
+                        <div class="p-4 border-2 cat-action rounded-xl flex items-center gap-4 logic-card">
+                            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm border border-rose-100">
+                                <i data-lucide="navigation" class="w-6 h-6 text-rose-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-black mb-1">へ <span class="text-sm font-mono text-rose-400">(e)</span></p>
+                                <p class="text-xs font-bold uppercase text-rose-800">Direction (Arrow)</p>
+                                <p class="text-sm font-bold mt-1 bg-white px-2 py-1 rounded inline-block">会社 <span class="text-rose-500">へ</span> 行きます</p>
+                            </div>
+                        </div>
+
+                        <!-- で -->
+                        <div class="p-4 border-2 cat-action rounded-xl flex items-center gap-4 logic-card bg-rose-100 border-rose-300 relative">
+                            <div class="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-[9px] font-black px-2 py-1 rounded shadow-md">NEW RULE!</div>
+                            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm border border-rose-200">
+                                <i data-lucide="theater" class="w-6 h-6 text-rose-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-black mb-1">で <span class="text-sm font-mono text-rose-500">(de)</span></p>
+                                <p class="text-xs font-bold uppercase text-rose-900">Tool OR Action Theater</p>
+                                <div class="text-sm font-bold mt-1 space-y-1">
+                                    <div class="bg-white px-2 py-0.5 rounded">バス <span class="text-rose-600">で</span> (By tool)</div>
+                                    <div class="bg-white px-2 py-0.5 rounded border border-rose-300">レストラン <span class="text-rose-600">で</span> 食べる (At place)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Mega-Sentence Builder (INTERACTIVE) -->
+            <div class="step-content" data-title="Synthesis" data-subtitle="The Mega-Sentence Builder">
+                <div class="space-y-6">
+                    <p class="text-slate-600 font-bold text-center">Can you build a logical sentence with 5 particles?</p>
+                    <p class="text-sm text-center text-slate-500 italic mb-6">"As for me, at 9:00, with a friend, by train, to Kyoto, I go."</p>
+
+                    <div class="bg-violet-50 p-6 rounded-3xl border-2 border-violet-200 shadow-inner">
+                        <div class="flex flex-wrap items-center justify-center gap-y-6 gap-x-2 text-xl font-bold">
+                            <!-- Block 1 -->
+                            <div class="flex items-center gap-2">
+                                <span class="bg-white px-4 py-2 rounded-lg border shadow-sm">わたし</span>
+                                <select class="particle-select" data-answer="は">
+                                    <option value="">?</option>
+                                    <option value="は">は (wa)</option>
+                                    <option value="を">を (o)</option>
+                                    <option value="に">に (ni)</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Block 2 -->
+                            <div class="flex items-center gap-2">
+                                <span class="bg-white px-4 py-2 rounded-lg border shadow-sm">9時</span>
+                                <select class="particle-select" data-answer="に">
+                                    <option value="">?</option>
+                                    <option value="へ">へ (e)</option>
+                                    <option value="で">で (de)</option>
+                                    <option value="に">に (ni)</option>
+                                </select>
+                            </div>
+
+                            <!-- Block 3 -->
+                            <div class="flex items-center gap-2">
+                                <span class="bg-white px-4 py-2 rounded-lg border shadow-sm">ともだち</span>
+                                <select class="particle-select" data-answer="と">
+                                    <option value="">?</option>
+                                    <option value="と">と (to)</option>
+                                    <option value="も">も (mo)</option>
+                                    <option value="の">の (no)</option>
+                                </select>
+                            </div>
+
+                            <!-- Block 4 -->
+                            <div class="flex items-center gap-2">
+                                <span class="bg-white px-4 py-2 rounded-lg border shadow-sm">電車</span>
+                                <select class="particle-select" data-answer="で">
+                                    <option value="">?</option>
+                                    <option value="で">で (de)</option>
+                                    <option value="を">を (o)</option>
+                                    <option value="へ">へ (e)</option>
+                                </select>
+                            </div>
+
+                            <!-- Block 5 -->
+                            <div class="flex items-center gap-2">
+                                <span class="bg-white px-4 py-2 rounded-lg border shadow-sm">京都</span>
+                                <select class="particle-select" data-answer="へ">
+                                    <option value="">?</option>
+                                    <option value="へ">へ (e)</option>
+                                    <option value="に">に (ni)</option>
+                                    <option value="と">と (to)</option>
+                                </select>
+                            </div>
+
+                            <!-- Verb -->
+                            <div class="flex items-center ml-2">
+                                <span class="bg-violet-600 text-white px-6 py-2 rounded-xl shadow-md border-b-4 border-violet-800">行きます。</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="builder-feedback" class="text-center font-bold text-lg h-8 transition-all">
+                        <!-- JS injects feedback here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Quiz Time -->
+            <div class="step-content" data-title="Quiz Time" data-subtitle="Test your Particle Instincts">
+                <div class="space-y-6">
+                    <p class="text-lg font-bold text-slate-700">Choose the correct particle (Hover to Reveal):</p>
+                    
+                    <div class="space-y-4">
+                        <!-- Q1 -->
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q: "I eat ramen at a restaurant."</p>
+                            <p class="text-lg font-bold text-slate-400 mb-2">レストラン ( ? ) ラーメン を 食べます。</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-white flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-violet-100 text-violet-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    レストラン <span class="text-rose-600 underline decoration-2">で</span> ラーメン を 食べます。
+                                    <span class="text-xs text-slate-400 ml-2 font-normal">(Action Theater)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q: "I am going to Tokyo with John."</p>
+                            <p class="text-lg font-bold text-slate-400 mb-2">ジョンさん ( ? ) 東京 へ 行きます。</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-white flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-violet-100 text-violet-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    ジョンさん <span class="text-emerald-600 underline decoration-2">と</span> 東京 へ 行きます。
+                                    <span class="text-xs text-slate-400 ml-2 font-normal">("With" marker)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-violet-900 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="edit-3" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-yellow-400 uppercase tracking-widest text-sm">Homework / しゅくだい</h5>
+                        <ul class="text-sm space-y-2 font-medium text-violet-100 relative z-10">
+                            <li>1. Write your weekend plan using at least 4 particles.</li>
+                            <li>Example: 日曜日 <strong>に</strong> 家族 <strong>と</strong> レストラン <strong>で</strong> すし <strong>を</strong> 食べます。</li>
+                            <li>2. Explain to yourself the difference between "de" and "ni".</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-violet-700 transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-violet-700 text-white hover:bg-violet-800 shadow-xl active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Dots -->
+    <div class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('.step-content');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+            steps.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-violet-700 w-12' : 'bg-slate-300 w-3'}`;
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                const activeStep = steps[currentStep];
+                if (activeStep) {
+                    titleEl.innerText = activeStep.getAttribute('data-title');
+                    subtitleEl.innerText = activeStep.getAttribute('data-subtitle');
+                    currentStepNum.innerText = currentStep + 1;
+                    progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                }
+                prevBtn.disabled = (currentStep === 0);
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-yellow-500', 'text-violet-900', 'hover:bg-yellow-400');
+                    nextBtn.classList.remove('bg-violet-700', 'text-white', 'hover:bg-violet-800');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-yellow-500', 'text-violet-900', 'hover:bg-yellow-400');
+                    nextBtn.classList.add('bg-violet-700', 'text-white', 'hover:bg-violet-800');
+                }
+                document.querySelectorAll('#nav-dots button').forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-violet-700 w-12' : 'bg-slate-300 w-3'}`;
+                });
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            // --- Interactive Builder Logic ---
+            const selects = document.querySelectorAll('.particle-select');
+            const feedback = document.getElementById('builder-feedback');
+
+            function checkAllAnswers() {
+                let allCorrect = true;
+                let allFilled = true;
+
+                selects.forEach(select => {
+                    if (select.value === "") {
+                        allFilled = false;
+                        select.classList.remove('correct', 'wrong');
+                    } else if (select.value === select.dataset.answer) {
+                        select.classList.add('correct');
+                        select.classList.remove('wrong');
+                    } else {
+                        select.classList.add('wrong');
+                        select.classList.remove('correct');
+                        allCorrect = false;
+                    }
+                });
+
+                if (allFilled) {
+                    if (allCorrect) {
+                        feedback.innerHTML = '<span class="text-green-600 flex items-center justify-center gap-2"><i data-lucide="check-circle"></i> Perfect Mega-Sentence!</span>';
+                        lucide.createIcons();
+                    } else {
+                        feedback.innerHTML = '<span class="text-red-500 flex items-center justify-center gap-2"><i data-lucide="x-circle"></i> Almost! Check the red tags.</span>';
+                        lucide.createIcons();
+                    }
+                } else {
+                    feedback.innerHTML = '';
+                }
+            }
+
+            selects.forEach(select => {
+                select.addEventListener('change', checkAllAnswers);
+            });
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
