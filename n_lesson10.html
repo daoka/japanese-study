@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 10 - Restaurant Logic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text { color: #ea580c; opacity: 1; }
+        .answer-reveal:hover .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        
+        /* Interactive Menu Styles */
+        .menu-btn { @apply p-4 border-2 rounded-2xl text-center bg-white transition-all cursor-pointer flex flex-col items-center gap-2; }
+        .menu-btn.active { @apply border-orange-500 bg-orange-50 shadow-md scale-105; }
+        .menu-btn.active i { @apply text-orange-600; }
+        .menu-btn:not(.active):hover { @apply border-slate-300 bg-slate-50; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+        
+        <div class="bg-orange-800 p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <i data-lucide="utensils-crossed" class="w-64 h-64"></i>
+            </div>
+            <div class="flex justify-between items-center relative z-10">
+                <div>
+                    <p class="text-orange-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Travel Survival 201</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">Restaurant Logic</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="coffee" class="w-5 h-5 text-orange-200"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-orange-400 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-yellow-400" style="width: 16.6%"></div>
+        </div>
+
+        <div id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-orange-700 mb-8 flex items-center gap-3"></h2>
+            
+            <div class="step-content active" data-title="Mission Objective" data-subtitle="Survival Japanese in Real Life">
+                <div class="space-y-6">
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Welcome to the Travel Survival series! Now that you understand the logic of Japanese grammar, we will apply it to real-world situations. 
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-4 text-orange-600">
+                                <i data-lucide="crosshair" class="w-8 h-8"></i>
+                                <h3 class="font-black text-xl">Today's Target</h3>
+                            </div>
+                            <ul class="space-y-3 font-bold text-slate-700">
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> How to order food logically.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> How to count items (1, 2, 3).</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> How to say "I want...".</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="p-6 bg-slate-900 text-white border-2 border-slate-800 rounded-2xl logic-card flex flex-col justify-center">
+                            <p class="text-sm text-slate-400 font-bold uppercase mb-2">Particle Review</p>
+                            <p class="text-lg">What is the "Direct Object" particle?</p>
+                            <p class="text-3xl font-black text-rose-500 mt-2">を <span class="text-base text-rose-300 font-mono">(o)</span></p>
+                            <p class="text-sm text-slate-400 italic mt-2">We will use this a lot today!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-title="Ordering Food" data-subtitle="The 'Kudasai' Formula">
+                <div class="space-y-6">
+                    <p class="text-slate-600">You don't need complex verbs to order. Just use the ultimate command word: <strong>ください (Kudasai)</strong>.</p>
+                    
+                    <div class="p-6 bg-orange-50 border-l-8 border-orange-500 rounded-r-2xl shadow-sm">
+                        <p class="text-xs font-black text-orange-600 uppercase tracking-widest mb-2">The Plug-and-Play Formula</p>
+                        <div class="flex flex-wrap items-center gap-4 text-3xl font-bold">
+                            <div class="bg-white px-6 py-3 rounded-xl border shadow-sm">[ Item ]</div>
+                            <div class="text-rose-500">を</div>
+                            <div class="text-orange-700">ください。</div>
+                        </div>
+                        <p class="text-slate-500 italic mt-4 text-sm">"Please give me [Item]."</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-left">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-2xl font-bold">みず <span class="text-rose-500">を</span> ください。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Mizu o kudasai (Water, please).</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-2xl font-bold">メニュー <span class="text-rose-500">を</span> ください。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Menyuu o kudasai (Menu, please).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-title="Counting Logic" data-subtitle="The General Counters">
+                <div class="space-y-6">
+                    <div class="bg-slate-900 text-white p-4 rounded-xl flex items-start gap-4">
+                        <i data-lucide="info" class="text-sky-400 mt-1"></i>
+                        <div>
+                            <p class="font-bold text-sky-400">The Counter System</p>
+                            <p class="text-sm text-slate-300">In Japanese, we don't just say "Two sushi". We use specific counting words. For general items at a restaurant, memorize these 4 magic words.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl text-center logic-card">
+                            <p class="text-4xl font-black text-slate-300 mb-2">1</p>
+                            <p class="text-2xl font-bold text-orange-600">ひとつ</p>
+                            <p class="text-xs font-mono text-slate-500 mt-1">(Hitotsu)</p>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl text-center logic-card">
+                            <p class="text-4xl font-black text-slate-300 mb-2">2</p>
+                            <p class="text-2xl font-bold text-orange-600">ふたつ</p>
+                            <p class="text-xs font-mono text-slate-500 mt-1">(Futatsu)</p>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl text-center logic-card">
+                            <p class="text-4xl font-black text-slate-300 mb-2">3</p>
+                            <p class="text-2xl font-bold text-orange-600">みっつ</p>
+                            <p class="text-xs font-mono text-slate-500 mt-1">(Mittsu)</p>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl text-center logic-card">
+                            <p class="text-4xl font-black text-slate-300 mb-2">4</p>
+                            <p class="text-2xl font-bold text-orange-600">よっつ</p>
+                            <p class="text-xs font-mono text-slate-500 mt-1">(Yottsu)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-title="Order Builder" data-subtitle="Interactive Restaurant Roleplay">
+                <div class="space-y-6">
+                    <p class="text-slate-600 font-bold">Construct your order by selecting an item and an amount!</p>
+                    <p class="text-xs text-slate-400 mb-4 uppercase tracking-widest">Logic: [Item] + を(o) + [Amount] + ください(kudasai)</p>
+                    
+                    <div class="grid grid-cols-2 gap-4" id="item-grid">
+                        <div class="menu-btn active" data-type="item" data-val="すし" data-romaji="Sushi">
+                            <i data-lucide="fish" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">すし</span>
+                        </div>
+                        <div class="menu-btn" data-type="item" data-val="ビール" data-romaji="Biiru">
+                            <i data-lucide="beer" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">ビール</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 mt-4" id="amount-grid">
+                        <div class="menu-btn active" data-type="amount" data-val="ひとつ" data-romaji="hitotsu">
+                            <span class="font-black text-2xl text-slate-300">1</span>
+                            <span class="font-bold">ひとつ</span>
+                        </div>
+                        <div class="menu-btn" data-type="amount" data-val="ふたつ" data-romaji="futatsu">
+                            <span class="font-black text-2xl text-slate-300">2</span>
+                            <span class="font-bold">ふたつ</span>
+                        </div>
+                        <div class="menu-btn" data-type="amount" data-val="みっつ" data-romaji="mittsu">
+                            <span class="font-black text-2xl text-slate-300">3</span>
+                            <span class="font-bold">みっつ</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8 bg-orange-100 border-2 border-orange-200 rounded-3xl text-center shadow-inner mt-6">
+                        <p class="text-xs font-black text-orange-600 uppercase tracking-widest mb-4">Your Order</p>
+                        <div class="flex justify-center items-center gap-3 text-3xl font-black flex-wrap">
+                            <span id="display-item" class="text-slate-800">すし</span>
+                            <span class="text-rose-500">を</span>
+                            <span id="display-amount" class="text-orange-600">ひとつ</span>
+                            <span class="text-slate-800">ください。</span>
+                        </div>
+                        <p id="display-romaji" class="text-slate-500 italic text-base mt-4 font-mono">Sushi o hitotsu kudasai.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-title="Desires" data-subtitle="Saying 'I want...'">
+                <div class="space-y-6">
+                    <p class="text-slate-600">To say you <em>want</em> something, use the word <strong>ほしい (Hoshii)</strong>. But there is a logical trap!</p>
+
+                    <div class="bg-fuchsia-50 border-2 border-fuchsia-200 p-6 rounded-2xl logic-card relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-20 text-fuchsia-400"><i data-lucide="sparkles" class="w-32 h-32"></i></div>
+                        <h4 class="font-bold text-fuchsia-900 mb-2 relative z-10 flex items-center gap-2">
+                            <i data-lucide="alert-triangle"></i> The "Ga" Trap
+                        </h4>
+                        <p class="text-fuchsia-800 relative z-10 mb-4 text-sm">
+                            In Japanese, "Hoshii" (want) is treated as an <strong>Adjective</strong>, not a verb! Therefore, it cannot take the Object marker を (o). It must take the Spotlight marker <strong>が (ga)</strong>.
+                        </p>
+                        <div class="bg-white p-4 rounded-xl border border-fuchsia-100 relative z-10">
+                            <p class="text-2xl font-bold text-center">
+                                みず <span class="text-fuchsia-600 text-3xl mx-1">が</span> ほしい です。
+                            </p>
+                            <p class="text-center text-slate-500 text-sm mt-2 italic">Mizu ga hoshii desu (I want water).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-title="Quiz Time" data-subtitle="Survival Test">
+                <div class="space-y-6">
+                    <p class="text-lg font-bold text-slate-700">Translate the following (Hover to Reveal):</p>
+                    
+                    <div class="space-y-4">
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q1: "Please give me two beers." <br><span class="text-xs text-slate-400 font-normal">(Beer = ビール)</span></p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    ビール <span class="text-rose-500">を</span> ふたつ <span class="text-orange-600">ください</span>。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q2: "I want coffee." <br><span class="text-xs text-slate-400 font-normal">(Coffee = コーヒー)</span></p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    コーヒー <span class="text-fuchsia-600 font-black">が</span> ほしい です。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-orange-900 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="plane-takeoff" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-yellow-400 uppercase tracking-widest text-sm">Homework / しゅくだい</h5>
+                        <ul class="text-sm space-y-2 font-medium text-orange-50 relative z-10">
+                            <li>1. Practice ordering 3 different things out loud (e.g., "Menu o kudasai").</li>
+                            <li>2. Memorize the counters 1 to 3 (Hitotsu, Futatsu, Mittsu).</li>
+                            <li>3. Remember why "Hoshii" takes the "ga" particle!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-orange-700 transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-orange-600 text-white hover:bg-orange-700 shadow-xl active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('.step-content');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+            steps.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-orange-600 w-12' : 'bg-slate-300 w-3'}`;
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                const activeStep = steps[currentStep];
+                if (activeStep) {
+                    titleEl.innerText = activeStep.getAttribute('data-title');
+                    subtitleEl.innerText = activeStep.getAttribute('data-subtitle');
+                    currentStepNum.innerText = currentStep + 1;
+                    progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                }
+                prevBtn.disabled = (currentStep === 0);
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-yellow-500', 'text-orange-900', 'hover:bg-yellow-400');
+                    nextBtn.classList.remove('bg-orange-600', 'text-white', 'hover:bg-orange-700');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-yellow-500', 'text-orange-900', 'hover:bg-yellow-400');
+                    nextBtn.classList.add('bg-orange-600', 'text-white', 'hover:bg-orange-700');
+                }
+                document.querySelectorAll('#nav-dots button').forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-orange-600 w-12' : 'bg-slate-300 w-3'}`;
+                });
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            // --- Interactive Order Builder Logic ---
+            let selectedItem = "すし";
+            let selectedItemRomaji = "Sushi";
+            let selectedAmount = "ひとつ";
+            let selectedAmountRomaji = "hitotsu";
+
+            const updateOrderDisplay = () => {
+                document.getElementById('display-item').innerText = selectedItem;
+                document.getElementById('display-amount').innerText = selectedAmount;
+                document.getElementById('display-romaji').innerText = `${selectedItemRomaji} o ${selectedAmountRomaji} kudasai.`;
+            };
+
+            document.querySelectorAll('.menu-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const type = btn.dataset.type;
+                    
+                    // Remove active from peers
+                    document.querySelectorAll(`.menu-btn[data-type="${type}"]`).forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    if (type === 'item') {
+                        selectedItem = btn.dataset.val;
+                        selectedItemRomaji = btn.dataset.romaji;
+                    } else if (type === 'amount') {
+                        selectedAmount = btn.dataset.val;
+                        selectedAmountRomaji = btn.dataset.romaji;
+                    }
+                    
+                    updateOrderDisplay();
+                });
+            });
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
