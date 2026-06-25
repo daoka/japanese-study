@@ -23,6 +23,19 @@
 | 近い/遠いを聞き取る | `近いです。` / `遠いです。` |
 | もう一度頼む | `もう一度お願いします。` |
 
+## ふりがな付き主要表現
+
+| 表現 | 読み |
+|---|---|
+| <ruby>清水寺<rt>きよみずでら</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいです。 | きよみずでらにいきたいです |
+| <ruby>歩<rt>ある</rt></ruby>いて<ruby>行<rt>い</rt></ruby>けますか。 | あるいていけますか |
+| まっすぐ<ruby>行<rt>い</rt></ruby>ってください。 | まっすぐいってください |
+| <ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。 | みぎにまがってください |
+| <ruby>左<rt>ひだり</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。 | ひだりにまがってください |
+| 2つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby>で<ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。 | ふたつめのこうさてんでみぎにまがってください |
+| <ruby>近<rt>ちか</rt></ruby>いです。 / <ruby>遠<rt>とお</rt></ruby>いです。 | ちかいです / とおいです |
+| もう<ruby>一度<rt>いちど</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。 | もういちどおねがいします |
+
 ## 全体進行
 
 目安時間: 45〜60分
@@ -134,11 +147,11 @@ Students:
 |---|---|
 | `駅` | station |
 | `コンビニ` | convenience store |
-| `信号` | traffic light |
-| `バス停` | bus stop |
-| `交差点` | intersection |
-| `1つ目` | first one |
-| `2つ目` | second one |
+| <ruby>信号<rt>しんごう</rt></ruby> | traffic light |
+| バス<ruby>停<rt>てい</rt></ruby> | bus stop |
+| <ruby>交差点<rt>こうさてん</rt></ruby> | intersection |
+| 1つ<ruby>目<rt>め</rt></ruby> | first one |
+| 2つ<ruby>目<rt>め</rt></ruby> | second one |
 
 ### モデル発話
 

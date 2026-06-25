@@ -39,6 +39,8 @@
         .direction-btn:not(.active):hover, .landmark-btn:not(.active):hover { border-color: #94a3b8; background: #f8fafc; }
         .dialogue-line { display: flex; gap: 0.75rem; align-items: flex-start; }
         .speaker-badge { min-width: 5.5rem; text-align: center; }
+        ruby rt { font-size: 0.55em; font-weight: 700; color: #64748b; }
+        .bg-slate-900 ruby rt, .bg-cyan-900 ruby rt { color: #bae6fd; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
@@ -68,7 +70,7 @@
         <div id="content-area" class="flex-grow p-8 md:p-12">
             <h2 id="step-subtitle" class="text-xl font-bold text-cyan-700 mb-8 flex items-center gap-3"></h2>
 
-            <div class="step-content active" data-step data-title="Mission Objective" data-subtitle="京都で道案内を聞く">
+            <div class="step-content active" data-step data-title="Mission Objective" data-subtitle="京都で道案内を聞く" data-subtitle-html="<ruby>京都<rt>きょうと</rt></ruby>で<ruby>道案内<rt>みちあんない</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く">
                 <div class="space-y-6">
                     <p class="text-slate-600 leading-relaxed text-lg">
                         Last time, you arrived in Kyoto and heard simple words: straight, right, and left. Today you will hear real short directions, ask if you can walk, and ask someone to repeat.
@@ -91,9 +93,9 @@
                         <div class="p-6 bg-slate-900 text-white border-2 border-slate-800 rounded-2xl logic-card flex flex-col justify-center">
                             <p class="text-sm text-slate-400 font-bold uppercase mb-2">Review Stack</p>
                             <div class="space-y-2 font-bold">
-                                <p>清水寺に行きたいです。</p>
-                                <p>まっすぐです。右です。左です。</p>
-                                <p>2つ目の交差点で右に曲がってください。</p>
+                                <p><ruby>清水寺<rt>きよみずでら</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいです。</p>
+                                <p>まっすぐです。<ruby>右<rt>みぎ</rt></ruby>です。<ruby>左<rt>ひだり</rt></ruby>です。</p>
+                                <p>2つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby>で<ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
                                 <p>わかりました。ありがとうございます。</p>
                             </div>
                         </div>
@@ -101,7 +103,7 @@
                 </div>
             </div>
 
-            <div class="step-content" data-step data-title="Direction Upgrade" data-subtitle="行ってください・曲がってください">
+            <div class="step-content" data-step data-title="Direction Upgrade" data-subtitle="行ってください・曲がってください" data-subtitle-html="<ruby>行<rt>い</rt></ruby>ってください・<ruby>曲<rt>ま</rt></ruby>がってください">
                 <div class="space-y-6">
                     <p class="text-slate-600">Upgrade the three direction words from Week 13 into short instructions that you may hear while traveling.</p>
 
@@ -111,7 +113,7 @@
                                 <i data-lucide="arrow-up" class="w-6 h-6"></i>
                                 <p class="text-xs font-black uppercase">Straight</p>
                             </div>
-                            <p class="text-2xl font-bold">まっすぐ行ってください。</p>
+                            <p class="text-2xl font-bold">まっすぐ<ruby>行<rt>い</rt></ruby>ってください。</p>
                             <p class="text-sm text-slate-500 italic mt-1">Please go straight.</p>
                         </div>
                         <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
@@ -119,7 +121,7 @@
                                 <i data-lucide="corner-up-right" class="w-6 h-6"></i>
                                 <p class="text-xs font-black uppercase">Right</p>
                             </div>
-                            <p class="text-2xl font-bold">右に曲がってください。</p>
+                            <p class="text-2xl font-bold"><ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
                             <p class="text-sm text-slate-500 italic mt-1">Please turn right.</p>
                         </div>
                         <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
@@ -127,7 +129,7 @@
                                 <i data-lucide="corner-up-left" class="w-6 h-6"></i>
                                 <p class="text-xs font-black uppercase">Left</p>
                             </div>
-                            <p class="text-2xl font-bold">左に曲がってください。</p>
+                            <p class="text-2xl font-bold"><ruby>左<rt>ひだり</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
                             <p class="text-sm text-slate-500 italic mt-1">Please turn left.</p>
                         </div>
                     </div>
@@ -137,7 +139,7 @@
                             <i data-lucide="git-merge" class="w-6 h-6"></i>
                             <p class="text-xs font-black uppercase">Intersection</p>
                         </div>
-                        <p class="text-2xl font-bold">2つ目の交差点で右に曲がってください。</p>
+                        <p class="text-2xl font-bold">2つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby>で<ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
                         <p class="text-sm text-slate-500 italic mt-1">Please turn right at the second intersection.</p>
                     </div>
 
@@ -145,64 +147,64 @@
                         <i data-lucide="info" class="text-cyan-300 mt-1"></i>
                         <div>
                             <p class="font-bold text-cyan-300">Listening Focus</p>
-                            <p class="text-sm text-slate-300">If the sentence feels long, catch the key word first: まっすぐ, 右, 左, 1つ目, or 2つ目.</p>
+                            <p class="text-sm text-slate-300">If the sentence feels long, catch the key word first: まっすぐ, <ruby>右<rt>みぎ</rt></ruby>, <ruby>左<rt>ひだり</rt></ruby>, 1つ<ruby>目<rt>め</rt></ruby>, or 2つ<ruby>目<rt>め</rt></ruby>.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="step-content" data-step data-title="Landmark Builder" data-subtitle="目印を聞き取る">
+            <div class="step-content" data-step data-title="Landmark Builder" data-subtitle="目印を聞き取る" data-subtitle-html="<ruby>目印<rt>めじるし</rt></ruby>を<ruby>聞<rt>き</rt></ruby>き<ruby>取<rt>と</rt></ruby>る">
                 <div class="space-y-6">
                     <p class="text-slate-600 font-bold">Choose a landmark and direction. The sentence updates like a simple map instruction.</p>
                     <p class="text-xs text-slate-400 mb-4 uppercase tracking-widest">Logic: Straight = [Landmark] + まで / Turn = [Landmark] + で</p>
 
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="landmark-grid">
-                        <div class="landmark-btn active" data-landmark="信号" data-romaji="Shingou">
+                        <div class="landmark-btn active" data-landmark="信号" data-landmark-html="<ruby>信号<rt>しんごう</rt></ruby>" data-romaji="Shingou">
                             <i data-lucide="traffic-cone" class="w-8 h-8 text-slate-400"></i>
-                            <span class="font-bold text-lg">信号</span>
+                            <span class="font-bold text-lg"><ruby>信号<rt>しんごう</rt></ruby></span>
                             <span class="text-xs text-slate-500">traffic light</span>
                         </div>
-                        <div class="landmark-btn" data-landmark="コンビニ" data-romaji="Konbini">
+                        <div class="landmark-btn" data-landmark="コンビニ" data-landmark-html="コンビニ" data-romaji="Konbini">
                             <i data-lucide="shopping-bag" class="w-8 h-8 text-slate-400"></i>
                             <span class="font-bold text-lg">コンビニ</span>
                             <span class="text-xs text-slate-500">convenience store</span>
                         </div>
-                        <div class="landmark-btn" data-landmark="バス停" data-romaji="Basu-tei">
+                        <div class="landmark-btn" data-landmark="バス停" data-landmark-html="バス<ruby>停<rt>てい</rt></ruby>" data-romaji="Basu-tei">
                             <i data-lucide="bus-front" class="w-8 h-8 text-slate-400"></i>
-                            <span class="font-bold text-lg">バス停</span>
+                            <span class="font-bold text-lg">バス<ruby>停<rt>てい</rt></ruby></span>
                             <span class="text-xs text-slate-500">bus stop</span>
                         </div>
-                        <div class="landmark-btn" data-landmark="駅" data-romaji="Eki">
+                        <div class="landmark-btn" data-landmark="駅" data-landmark-html="<ruby>駅<rt>えき</rt></ruby>" data-romaji="Eki">
                             <i data-lucide="train-front" class="w-8 h-8 text-slate-400"></i>
-                            <span class="font-bold text-lg">駅</span>
+                            <span class="font-bold text-lg"><ruby>駅<rt>えき</rt></ruby></span>
                             <span class="text-xs text-slate-500">station</span>
                         </div>
-                        <div class="landmark-btn" data-landmark="1つ目の交差点" data-romaji="Hitotsu-me no kousaten">
+                        <div class="landmark-btn" data-landmark="1つ目の交差点" data-landmark-html="1つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby>" data-romaji="Hitotsu-me no kousaten">
                             <i data-lucide="git-merge" class="w-8 h-8 text-slate-400"></i>
-                            <span class="font-bold text-lg">1つ目の交差点</span>
+                            <span class="font-bold text-lg">1つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby></span>
                             <span class="text-xs text-slate-500">first intersection</span>
                         </div>
-                        <div class="landmark-btn" data-landmark="2つ目の交差点" data-romaji="Futatsu-me no kousaten">
+                        <div class="landmark-btn" data-landmark="2つ目の交差点" data-landmark-html="2つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby>" data-romaji="Futatsu-me no kousaten">
                             <i data-lucide="git-merge" class="w-8 h-8 text-slate-400"></i>
-                            <span class="font-bold text-lg">2つ目の交差点</span>
+                            <span class="font-bold text-lg">2つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby></span>
                             <span class="text-xs text-slate-500">second intersection</span>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="direction-grid">
-                        <div class="direction-btn active" data-direction="まっすぐ行ってください。" data-romaji="massugu itte kudasai">
+                        <div class="direction-btn active" data-direction="まっすぐ行ってください。" data-direction-html="まっすぐ<ruby>行<rt>い</rt></ruby>ってください。" data-romaji="massugu itte kudasai">
                             <i data-lucide="arrow-up" class="w-8 h-8 text-slate-400"></i>
                             <span class="font-bold text-lg">まっすぐ</span>
                             <span class="text-xs text-slate-500">go straight</span>
                         </div>
-                        <div class="direction-btn" data-direction="右に曲がってください。" data-romaji="migi ni magatte kudasai">
+                        <div class="direction-btn" data-direction="右に曲がってください。" data-direction-html="<ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。" data-romaji="migi ni magatte kudasai">
                             <i data-lucide="corner-up-right" class="w-8 h-8 text-slate-400"></i>
-                            <span class="font-bold text-lg">右</span>
+                            <span class="font-bold text-lg"><ruby>右<rt>みぎ</rt></ruby></span>
                             <span class="text-xs text-slate-500">turn right</span>
                         </div>
-                        <div class="direction-btn" data-direction="左に曲がってください。" data-romaji="hidari ni magatte kudasai">
+                        <div class="direction-btn" data-direction="左に曲がってください。" data-direction-html="<ruby>左<rt>ひだり</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。" data-romaji="hidari ni magatte kudasai">
                             <i data-lucide="corner-up-left" class="w-8 h-8 text-slate-400"></i>
-                            <span class="font-bold text-lg">左</span>
+                            <span class="font-bold text-lg"><ruby>左<rt>ひだり</rt></ruby></span>
                             <span class="text-xs text-slate-500">turn left</span>
                         </div>
                     </div>
@@ -210,24 +212,24 @@
                     <div class="p-8 bg-cyan-100 border-2 border-cyan-200 rounded-3xl text-center shadow-inner mt-6">
                         <p class="text-xs font-black text-cyan-700 uppercase tracking-widest mb-4">Your Direction</p>
                         <div class="flex justify-center items-center gap-3 text-3xl font-black flex-wrap">
-                            <span id="display-landmark" class="text-slate-800">信号</span>
+                            <span id="display-landmark" class="text-slate-800"><ruby>信号<rt>しんごう</rt></ruby></span>
                             <span id="display-particle" class="text-blue-500">まで</span>
-                            <span id="display-direction" class="text-cyan-700">まっすぐ行ってください。</span>
+                            <span id="display-direction" class="text-cyan-700">まっすぐ<ruby>行<rt>い</rt></ruby>ってください。</span>
                         </div>
                         <p id="display-romaji" class="text-slate-500 italic text-base mt-4 font-mono">Shingou made massugu itte kudasai.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="step-content" data-step data-title="Can I Walk?" data-subtitle="歩いて行けますか">
+            <div class="step-content" data-step data-title="Can I Walk?" data-subtitle="歩いて行けますか" data-subtitle-html="<ruby>歩<rt>ある</rt></ruby>いて<ruby>行<rt>い</rt></ruby>けますか">
                 <div class="space-y-6">
                     <p class="text-slate-600">Before following directions, ask whether walking is possible. Listen for close, far, or bus.</p>
 
                     <div class="p-6 bg-cyan-50 border-l-8 border-cyan-500 rounded-r-2xl shadow-sm">
                         <p class="text-xs font-black text-cyan-600 uppercase tracking-widest mb-2">Travel Question</p>
                         <div class="flex flex-wrap items-center gap-4 text-3xl font-bold">
-                            <div class="bg-white px-6 py-3 rounded-xl border shadow-sm">歩いて</div>
-                            <div class="text-cyan-700">行けますか。</div>
+                            <div class="bg-white px-6 py-3 rounded-xl border shadow-sm"><ruby>歩<rt>ある</rt></ruby>いて</div>
+                            <div class="text-cyan-700"><ruby>行<rt>い</rt></ruby>けますか。</div>
                         </div>
                         <p class="text-slate-500 italic mt-4 text-sm">"Can I walk there?"</p>
                     </div>
@@ -235,12 +237,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                         <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
                             <p class="text-xs font-black text-slate-400 uppercase mb-2">Close</p>
-                            <p class="text-2xl font-bold">はい、近いです。</p>
+                            <p class="text-2xl font-bold">はい、<ruby>近<rt>ちか</rt></ruby>いです。</p>
                             <p class="text-sm text-slate-500 italic mt-1">Yes, it is close.</p>
                         </div>
                         <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
                             <p class="text-xs font-black text-slate-400 uppercase mb-2">Far</p>
-                            <p class="text-2xl font-bold">いいえ、遠いです。</p>
+                            <p class="text-2xl font-bold">いいえ、<ruby>遠<rt>とお</rt></ruby>いです。</p>
                             <p class="text-sm text-slate-500 italic mt-1">No, it is far.</p>
                         </div>
                         <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
@@ -252,36 +254,36 @@
                 </div>
             </div>
 
-            <div class="step-content" data-step data-title="Listening Practice" data-subtitle="目印と方向を聞く">
+            <div class="step-content" data-step data-title="Listening Practice" data-subtitle="目印と方向を聞く" data-subtitle-html="<ruby>目印<rt>めじるし</rt></ruby>と<ruby>方向<rt>ほうこう</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く">
                 <div class="space-y-6">
                     <p class="text-slate-600">Listen for the landmark, number, and direction. If you miss it, ask politely for one more time.</p>
 
                     <div class="space-y-4">
                         <div class="dialogue-line p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black">案内</span>
+                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black"><ruby>案内<rt>あんない</rt></ruby></span>
                             <div>
-                                <p class="font-bold text-lg">信号までまっすぐ行ってください。</p>
+                                <p class="font-bold text-lg"><ruby>信号<rt>しんごう</rt></ruby>までまっすぐ<ruby>行<rt>い</rt></ruby>ってください。</p>
                                 <p class="text-sm text-slate-500 italic">Go straight to the traffic light.</p>
                             </div>
                         </div>
                         <div class="dialogue-line p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black">案内</span>
+                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black"><ruby>案内<rt>あんない</rt></ruby></span>
                             <div>
-                                <p class="font-bold text-lg">コンビニで右に曲がってください。</p>
+                                <p class="font-bold text-lg">コンビニで<ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
                                 <p class="text-sm text-slate-500 italic">Turn right at the convenience store.</p>
                             </div>
                         </div>
                         <div class="dialogue-line p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black">案内</span>
+                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black"><ruby>案内<rt>あんない</rt></ruby></span>
                             <div>
-                                <p class="font-bold text-lg">バス停で左に曲がってください。</p>
+                                <p class="font-bold text-lg">バス<ruby>停<rt>てい</rt></ruby>で<ruby>左<rt>ひだり</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
                                 <p class="text-sm text-slate-500 italic">Turn left at the bus stop.</p>
                             </div>
                         </div>
                         <div class="dialogue-line p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black">案内</span>
+                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black"><ruby>案内<rt>あんない</rt></ruby></span>
                             <div>
-                                <p class="font-bold text-lg">2つ目の交差点で右に曲がってください。</p>
+                                <p class="font-bold text-lg">2つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby>で<ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
                                 <p class="text-sm text-slate-500 italic">Turn right at the second intersection.</p>
                             </div>
                         </div>
@@ -289,13 +291,13 @@
 
                     <div class="p-6 bg-amber-100 border-2 border-amber-200 rounded-3xl text-center shadow-inner">
                         <p class="text-xs font-black text-amber-700 uppercase tracking-widest mb-4">When You Miss It</p>
-                        <p class="text-3xl font-black text-slate-800">もう一度お願いします。</p>
+                        <p class="text-3xl font-black text-slate-800">もう<ruby>一度<rt>いちど</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。</p>
                         <p class="text-slate-500 italic text-base mt-4 font-mono">Mou ichido onegai shimasu.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="step-content" data-step data-title="Full Roleplay" data-subtitle="道案内チャレンジ">
+            <div class="step-content" data-step data-title="Full Roleplay" data-subtitle="道案内チャレンジ" data-subtitle-html="<ruby>道案内<rt>みちあんない</rt></ruby>チャレンジ">
                 <div class="space-y-6">
                     <p class="text-lg font-bold text-slate-700">Practice the full direction sequence. Hover to reveal sample answers.</p>
 
@@ -307,7 +309,7 @@
                                     <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
                                 </div>
                                 <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
-                                    清水寺に行きたいです。
+                                    <ruby>清水寺<rt>きよみずでら</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいです。
                                 </div>
                             </div>
                         </div>
@@ -319,7 +321,7 @@
                                     <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
                                 </div>
                                 <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
-                                    歩いて行けますか。
+                                    <ruby>歩<rt>ある</rt></ruby>いて<ruby>行<rt>い</rt></ruby>けますか。
                                 </div>
                             </div>
                         </div>
@@ -331,7 +333,7 @@
                                     <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
                                 </div>
                                 <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
-                                    もう一度お願いします。
+                                    もう<ruby>一度<rt>いちど</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。
                                 </div>
                             </div>
                         </div>
@@ -343,9 +345,9 @@
                         </div>
                         <h5 class="font-bold flex items-center gap-2 mb-3 text-yellow-400 uppercase tracking-widest text-sm">Homework / しゅくだい</h5>
                         <ul class="text-sm space-y-2 font-medium text-cyan-50 relative z-10">
-                            <li>1. Practice: まっすぐ行ってください / 右に曲がってください / 左に曲がってください。</li>
-                            <li>2. Practice: 1つ目の交差点で左に曲がってください / 2つ目の交差点で右に曲がってください。</li>
-                            <li>3. Choose one Kyoto place and say: ___ に行きたいです。歩いて行けますか。</li>
+                            <li>1. Practice: まっすぐ<ruby>行<rt>い</rt></ruby>ってください / <ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください / <ruby>左<rt>ひだり</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</li>
+                            <li>2. Practice: 1つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby>で<ruby>左<rt>ひだり</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください / 2つ<ruby>目<rt>め</rt></ruby>の<ruby>交差点<rt>こうさてん</rt></ruby>で<ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</li>
+                            <li>3. Choose one Kyoto place and say: ___ に<ruby>行<rt>い</rt></ruby>きたいです。<ruby>歩<rt>ある</rt></ruby>いて<ruby>行<rt>い</rt></ruby>けますか。</li>
                         </ul>
                     </div>
                 </div>
@@ -391,7 +393,7 @@
                 const activeStep = steps[currentStep];
                 if (activeStep) {
                     titleEl.innerText = activeStep.getAttribute('data-title');
-                    subtitleEl.innerText = activeStep.getAttribute('data-subtitle');
+                    subtitleEl.innerHTML = activeStep.getAttribute('data-subtitle-html') || activeStep.getAttribute('data-subtitle');
                     currentStepNum.innerText = currentStep + 1;
                     progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
                 }
@@ -421,15 +423,17 @@
             nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
 
             let selectedLandmark = '信号';
+            let selectedLandmarkHtml = '<ruby>信号<rt>しんごう</rt></ruby>';
             let selectedLandmarkRomaji = 'Shingou';
             let selectedDirection = 'まっすぐ行ってください。';
+            let selectedDirectionHtml = 'まっすぐ<ruby>行<rt>い</rt></ruby>ってください。';
             let selectedDirectionRomaji = 'massugu itte kudasai';
 
             const updateDirectionDisplay = () => {
                 const effectiveParticle = selectedDirection.startsWith('まっすぐ') ? 'まで' : 'で';
-                document.getElementById('display-landmark').innerText = selectedLandmark;
+                document.getElementById('display-landmark').innerHTML = selectedLandmarkHtml;
                 document.getElementById('display-particle').innerText = effectiveParticle;
-                document.getElementById('display-direction').innerText = selectedDirection;
+                document.getElementById('display-direction').innerHTML = selectedDirectionHtml;
                 document.getElementById('display-romaji').innerText = `${selectedLandmarkRomaji} ${effectiveParticle === 'まで' ? 'made' : 'de'} ${selectedDirectionRomaji}.`;
             };
 
@@ -438,6 +442,7 @@
                     document.querySelectorAll('.landmark-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     selectedLandmark = btn.dataset.landmark;
+                    selectedLandmarkHtml = btn.dataset.landmarkHtml;
                     selectedLandmarkRomaji = btn.dataset.romaji;
                     updateDirectionDisplay();
                 });
@@ -448,6 +453,7 @@
                     document.querySelectorAll('.direction-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     selectedDirection = btn.dataset.direction;
+                    selectedDirectionHtml = btn.dataset.directionHtml;
                     selectedDirectionRomaji = btn.dataset.romaji;
                     updateDirectionDisplay();
                 });
