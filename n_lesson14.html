@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 14 - Asking for Directions in Kyoto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        [data-step] { display: none; }
+        [data-step].active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text { color: #0e7490; opacity: 1; }
+        .answer-reveal:hover .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        .direction-btn, .landmark-btn {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            text-align: center;
+            background: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .direction-btn.active, .landmark-btn.active {
+            border-color: #0e7490;
+            background: #ecfeff;
+            box-shadow: 0 8px 18px rgba(14, 116, 144, 0.15);
+            transform: scale(1.03);
+        }
+        .direction-btn.active i, .landmark-btn.active i { color: #0e7490; }
+        .direction-btn:not(.active):hover, .landmark-btn:not(.active):hover { border-color: #94a3b8; background: #f8fafc; }
+        .dialogue-line { display: flex; gap: 0.75rem; align-items: flex-start; }
+        .speaker-badge { min-width: 5.5rem; text-align: center; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+
+        <div class="bg-cyan-900 p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <i data-lucide="navigation" class="w-64 h-64"></i>
+            </div>
+            <div class="flex justify-between items-center relative z-10">
+                <div>
+                    <p class="text-cyan-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Travel Survival 205</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">Asking for Directions in Kyoto</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="map-pinned" class="w-5 h-5 text-cyan-200"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-cyan-400 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-yellow-400" style="width: 16.6%"></div>
+        </div>
+
+        <div id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-cyan-700 mb-8 flex items-center gap-3"></h2>
+
+            <div class="step-content active" data-step data-title="Mission Objective" data-subtitle="京都で道案内を聞く">
+                <div class="space-y-6">
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Last time, you arrived in Kyoto and heard simple words: straight, right, and left. Today you will hear real short directions, ask if you can walk, and ask someone to repeat.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-4 text-cyan-600">
+                                <i data-lucide="crosshair" class="w-8 h-8"></i>
+                                <h3 class="font-black text-xl">Today's Target</h3>
+                            </div>
+                            <ul class="space-y-3 font-bold text-slate-700">
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Ask if you can walk to a place.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Understand short directions with landmarks.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Catch first/second intersection directions.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Ask someone to repeat politely.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-6 bg-slate-900 text-white border-2 border-slate-800 rounded-2xl logic-card flex flex-col justify-center">
+                            <p class="text-sm text-slate-400 font-bold uppercase mb-2">Review Stack</p>
+                            <div class="space-y-2 font-bold">
+                                <p>清水寺に行きたいです。</p>
+                                <p>まっすぐです。右です。左です。</p>
+                                <p>2つ目の交差点で右に曲がってください。</p>
+                                <p>わかりました。ありがとうございます。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Direction Upgrade" data-subtitle="行ってください・曲がってください">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Upgrade the three direction words from Week 13 into short instructions that you may hear while traveling.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-cyan-600">
+                                <i data-lucide="arrow-up" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Straight</p>
+                            </div>
+                            <p class="text-2xl font-bold">まっすぐ行ってください。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Please go straight.</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-cyan-600">
+                                <i data-lucide="corner-up-right" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Right</p>
+                            </div>
+                            <p class="text-2xl font-bold">右に曲がってください。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Please turn right.</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-cyan-600">
+                                <i data-lucide="corner-up-left" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Left</p>
+                            </div>
+                            <p class="text-2xl font-bold">左に曲がってください。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Please turn left.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-cyan-50 border-2 border-cyan-200 rounded-2xl logic-card">
+                        <div class="flex items-center gap-2 mb-3 text-cyan-700">
+                            <i data-lucide="git-merge" class="w-6 h-6"></i>
+                            <p class="text-xs font-black uppercase">Intersection</p>
+                        </div>
+                        <p class="text-2xl font-bold">2つ目の交差点で右に曲がってください。</p>
+                        <p class="text-sm text-slate-500 italic mt-1">Please turn right at the second intersection.</p>
+                    </div>
+
+                    <div class="bg-slate-900 text-white p-4 rounded-xl flex items-start gap-4">
+                        <i data-lucide="info" class="text-cyan-300 mt-1"></i>
+                        <div>
+                            <p class="font-bold text-cyan-300">Listening Focus</p>
+                            <p class="text-sm text-slate-300">If the sentence feels long, catch the key word first: まっすぐ, 右, 左, 1つ目, or 2つ目.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Landmark Builder" data-subtitle="目印を聞き取る">
+                <div class="space-y-6">
+                    <p class="text-slate-600 font-bold">Choose a landmark and direction. The sentence updates like a simple map instruction.</p>
+                    <p class="text-xs text-slate-400 mb-4 uppercase tracking-widest">Logic: Straight = [Landmark] + まで / Turn = [Landmark] + で</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="landmark-grid">
+                        <div class="landmark-btn active" data-landmark="信号" data-romaji="Shingou">
+                            <i data-lucide="traffic-cone" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">信号</span>
+                            <span class="text-xs text-slate-500">traffic light</span>
+                        </div>
+                        <div class="landmark-btn" data-landmark="コンビニ" data-romaji="Konbini">
+                            <i data-lucide="shopping-bag" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">コンビニ</span>
+                            <span class="text-xs text-slate-500">convenience store</span>
+                        </div>
+                        <div class="landmark-btn" data-landmark="バス停" data-romaji="Basu-tei">
+                            <i data-lucide="bus-front" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">バス停</span>
+                            <span class="text-xs text-slate-500">bus stop</span>
+                        </div>
+                        <div class="landmark-btn" data-landmark="駅" data-romaji="Eki">
+                            <i data-lucide="train-front" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">駅</span>
+                            <span class="text-xs text-slate-500">station</span>
+                        </div>
+                        <div class="landmark-btn" data-landmark="1つ目の交差点" data-romaji="Hitotsu-me no kousaten">
+                            <i data-lucide="git-merge" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">1つ目の交差点</span>
+                            <span class="text-xs text-slate-500">first intersection</span>
+                        </div>
+                        <div class="landmark-btn" data-landmark="2つ目の交差点" data-romaji="Futatsu-me no kousaten">
+                            <i data-lucide="git-merge" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">2つ目の交差点</span>
+                            <span class="text-xs text-slate-500">second intersection</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="direction-grid">
+                        <div class="direction-btn active" data-direction="まっすぐ行ってください。" data-romaji="massugu itte kudasai">
+                            <i data-lucide="arrow-up" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">まっすぐ</span>
+                            <span class="text-xs text-slate-500">go straight</span>
+                        </div>
+                        <div class="direction-btn" data-direction="右に曲がってください。" data-romaji="migi ni magatte kudasai">
+                            <i data-lucide="corner-up-right" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">右</span>
+                            <span class="text-xs text-slate-500">turn right</span>
+                        </div>
+                        <div class="direction-btn" data-direction="左に曲がってください。" data-romaji="hidari ni magatte kudasai">
+                            <i data-lucide="corner-up-left" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">左</span>
+                            <span class="text-xs text-slate-500">turn left</span>
+                        </div>
+                    </div>
+
+                    <div class="p-8 bg-cyan-100 border-2 border-cyan-200 rounded-3xl text-center shadow-inner mt-6">
+                        <p class="text-xs font-black text-cyan-700 uppercase tracking-widest mb-4">Your Direction</p>
+                        <div class="flex justify-center items-center gap-3 text-3xl font-black flex-wrap">
+                            <span id="display-landmark" class="text-slate-800">信号</span>
+                            <span id="display-particle" class="text-blue-500">まで</span>
+                            <span id="display-direction" class="text-cyan-700">まっすぐ行ってください。</span>
+                        </div>
+                        <p id="display-romaji" class="text-slate-500 italic text-base mt-4 font-mono">Shingou made massugu itte kudasai.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Can I Walk?" data-subtitle="歩いて行けますか">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Before following directions, ask whether walking is possible. Listen for close, far, or bus.</p>
+
+                    <div class="p-6 bg-cyan-50 border-l-8 border-cyan-500 rounded-r-2xl shadow-sm">
+                        <p class="text-xs font-black text-cyan-600 uppercase tracking-widest mb-2">Travel Question</p>
+                        <div class="flex flex-wrap items-center gap-4 text-3xl font-bold">
+                            <div class="bg-white px-6 py-3 rounded-xl border shadow-sm">歩いて</div>
+                            <div class="text-cyan-700">行けますか。</div>
+                        </div>
+                        <p class="text-slate-500 italic mt-4 text-sm">"Can I walk there?"</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Close</p>
+                            <p class="text-2xl font-bold">はい、近いです。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Yes, it is close.</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Far</p>
+                            <p class="text-2xl font-bold">いいえ、遠いです。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">No, it is far.</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Better by bus</p>
+                            <p class="text-2xl font-bold">バスがいいです。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">The bus is better.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Listening Practice" data-subtitle="目印と方向を聞く">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Listen for the landmark, number, and direction. If you miss it, ask politely for one more time.</p>
+
+                    <div class="space-y-4">
+                        <div class="dialogue-line p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black">案内</span>
+                            <div>
+                                <p class="font-bold text-lg">信号までまっすぐ行ってください。</p>
+                                <p class="text-sm text-slate-500 italic">Go straight to the traffic light.</p>
+                            </div>
+                        </div>
+                        <div class="dialogue-line p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black">案内</span>
+                            <div>
+                                <p class="font-bold text-lg">コンビニで右に曲がってください。</p>
+                                <p class="text-sm text-slate-500 italic">Turn right at the convenience store.</p>
+                            </div>
+                        </div>
+                        <div class="dialogue-line p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black">案内</span>
+                            <div>
+                                <p class="font-bold text-lg">バス停で左に曲がってください。</p>
+                                <p class="text-sm text-slate-500 italic">Turn left at the bus stop.</p>
+                            </div>
+                        </div>
+                        <div class="dialogue-line p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="speaker-badge bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-black">案内</span>
+                            <div>
+                                <p class="font-bold text-lg">2つ目の交差点で右に曲がってください。</p>
+                                <p class="text-sm text-slate-500 italic">Turn right at the second intersection.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-amber-100 border-2 border-amber-200 rounded-3xl text-center shadow-inner">
+                        <p class="text-xs font-black text-amber-700 uppercase tracking-widest mb-4">When You Miss It</p>
+                        <p class="text-3xl font-black text-slate-800">もう一度お願いします。</p>
+                        <p class="text-slate-500 italic text-base mt-4 font-mono">Mou ichido onegai shimasu.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Full Roleplay" data-subtitle="道案内チャレンジ">
+                <div class="space-y-6">
+                    <p class="text-lg font-bold text-slate-700">Practice the full direction sequence. Hover to reveal sample answers.</p>
+
+                    <div class="space-y-4">
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q1: Say "I want to go to Kiyomizu Temple."</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    清水寺に行きたいです。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q2: Ask "Can I walk there?"</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    歩いて行けますか。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q3: Ask someone to repeat.</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    もう一度お願いします。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-cyan-900 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="badge-check" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-yellow-400 uppercase tracking-widest text-sm">Homework / しゅくだい</h5>
+                        <ul class="text-sm space-y-2 font-medium text-cyan-50 relative z-10">
+                            <li>1. Practice: まっすぐ行ってください / 右に曲がってください / 左に曲がってください。</li>
+                            <li>2. Practice: 1つ目の交差点で左に曲がってください / 2つ目の交差点で右に曲がってください。</li>
+                            <li>3. Choose one Kyoto place and say: ___ に行きたいです。歩いて行けますか。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-cyan-700 transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-cyan-600 text-white hover:bg-cyan-700 shadow-xl active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('[data-step]');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+            steps.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-cyan-600 w-12' : 'bg-slate-300 w-3'}`;
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                const activeStep = steps[currentStep];
+                if (activeStep) {
+                    titleEl.innerText = activeStep.getAttribute('data-title');
+                    subtitleEl.innerText = activeStep.getAttribute('data-subtitle');
+                    currentStepNum.innerText = currentStep + 1;
+                    progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                }
+                prevBtn.disabled = (currentStep === 0);
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-yellow-500', 'text-cyan-950', 'hover:bg-yellow-400');
+                    nextBtn.classList.remove('bg-cyan-600', 'text-white', 'hover:bg-cyan-700');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-yellow-500', 'text-cyan-950', 'hover:bg-yellow-400');
+                    nextBtn.classList.add('bg-cyan-600', 'text-white', 'hover:bg-cyan-700');
+                }
+                document.querySelectorAll('#nav-dots button').forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-cyan-600 w-12' : 'bg-slate-300 w-3'}`;
+                });
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            let selectedLandmark = '信号';
+            let selectedLandmarkRomaji = 'Shingou';
+            let selectedDirection = 'まっすぐ行ってください。';
+            let selectedDirectionRomaji = 'massugu itte kudasai';
+
+            const updateDirectionDisplay = () => {
+                const effectiveParticle = selectedDirection.startsWith('まっすぐ') ? 'まで' : 'で';
+                document.getElementById('display-landmark').innerText = selectedLandmark;
+                document.getElementById('display-particle').innerText = effectiveParticle;
+                document.getElementById('display-direction').innerText = selectedDirection;
+                document.getElementById('display-romaji').innerText = `${selectedLandmarkRomaji} ${effectiveParticle === 'まで' ? 'made' : 'de'} ${selectedDirectionRomaji}.`;
+            };
+
+            document.querySelectorAll('.landmark-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.landmark-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedLandmark = btn.dataset.landmark;
+                    selectedLandmarkRomaji = btn.dataset.romaji;
+                    updateDirectionDisplay();
+                });
+            });
+
+            document.querySelectorAll('.direction-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.direction-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedDirection = btn.dataset.direction;
+                    selectedDirectionRomaji = btn.dataset.romaji;
+                    updateDirectionDisplay();
+                });
+            });
+
+            updateDirectionDisplay();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
