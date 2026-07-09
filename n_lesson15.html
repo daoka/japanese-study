@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 15 - Cafe and Souvenir Shop in Kyoto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        [data-step] { display: none; }
+        [data-step].active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text { color: #a21caf; opacity: 1; }
+        .answer-reveal:hover .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        .shop-btn, .amount-btn {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            text-align: center;
+            background: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .shop-btn.active, .amount-btn.active {
+            border-color: #a21caf;
+            background: #fdf4ff;
+            box-shadow: 0 8px 18px rgba(162, 28, 175, 0.15);
+            transform: scale(1.03);
+        }
+        .shop-btn.active i, .amount-btn.active i { color: #a21caf; }
+        .shop-btn:not(.active):hover, .amount-btn:not(.active):hover { border-color: #94a3b8; background: #f8fafc; }
+        .dialogue-line { display: flex; gap: 0.75rem; align-items: flex-start; }
+        .speaker-badge { min-width: 5.5rem; text-align: center; }
+        ruby rt { font-size: 0.55em; font-weight: 700; color: #64748b; }
+        .bg-slate-900 ruby rt, .bg-fuchsia-900 ruby rt { color: #f5d0fe; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+
+        <div class="bg-fuchsia-900 p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <i data-lucide="shopping-bag" class="w-64 h-64"></i>
+            </div>
+            <div class="flex justify-between items-center relative z-10">
+                <div>
+                    <p class="text-fuchsia-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Travel Survival 206</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">Cafe and Souvenir Shop in Kyoto</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="store" class="w-5 h-5 text-fuchsia-200"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-fuchsia-400 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-yellow-400" style="width: 16.6%"></div>
+        </div>
+
+        <div id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-fuchsia-700 mb-8 flex items-center gap-3"></h2>
+
+            <div class="step-content active" data-step data-title="Mission Objective" data-subtitle="京都のお店で注文する" data-subtitle-html="<ruby>京都<rt>きょうと</rt></ruby>のお<ruby>店<rt>みせ</rt></ruby>で<ruby>注文<rt>ちゅうもん</rt></ruby>する">
+                <div class="space-y-6">
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Last time, you asked for directions in Kyoto. Today you arrive near a sightseeing place, enter a cafe or souvenir shop, ask what something is, ask the price, order, and ask if photos are okay.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-4 text-fuchsia-600">
+                                <i data-lucide="crosshair" class="w-8 h-8"></i>
+                                <h3 class="font-black text-xl">Today's Target</h3>
+                            </div>
+                            <ul class="space-y-3 font-bold text-slate-700">
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Ask what an item is.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Ask for a recommendation.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Ask the price and order politely.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Ask if taking a photo is okay.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-6 bg-slate-900 text-white border-2 border-slate-800 rounded-2xl logic-card flex flex-col justify-center">
+                            <p class="text-sm text-slate-400 font-bold uppercase mb-2">Review Stack</p>
+                            <div class="space-y-2 font-bold">
+                                <p><ruby>清水寺<rt>きよみずでら</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいです。</p>
+                                <p>これは<ruby>何<rt>なん</rt></ruby>ですか。</p>
+                                <p>おすすめは<ruby>何<rt>なん</rt></ruby>ですか。</p>
+                                <p>これをください。</p>
+                                <p>わかりました。ありがとうございます。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Shop Questions" data-subtitle="これは何ですか・おすすめは何ですか" data-subtitle-html="これは<ruby>何<rt>なん</rt></ruby>ですか・おすすめは<ruby>何<rt>なん</rt></ruby>ですか">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Use short questions first. You do not need long sentences to start a real shop conversation.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-fuchsia-600">
+                                <i data-lucide="help-circle" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">What is this?</p>
+                            </div>
+                            <p class="text-2xl font-bold">これは<ruby>何<rt>なん</rt></ruby>ですか。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">What is this?</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-fuchsia-600">
+                                <i data-lucide="sparkles" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Recommendation</p>
+                            </div>
+                            <p class="text-2xl font-bold">おすすめは<ruby>何<rt>なん</rt></ruby>ですか。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">What do you recommend?</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-fuchsia-600">
+                                <i data-lucide="smile" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Reaction</p>
+                            </div>
+                            <p class="text-2xl font-bold">いいですね。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">That is nice.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-fuchsia-50 border-2 border-fuchsia-200 rounded-2xl logic-card">
+                        <p class="text-xs font-black text-fuchsia-600 uppercase tracking-widest mb-3">Mini Dialogue</p>
+                        <div class="space-y-3">
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-fuchsia-100 text-fuchsia-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                <p class="font-bold">すみません。これは<ruby>何<rt>なん</rt></ruby>ですか。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black"><ruby>店員<rt>てんいん</rt></ruby></span>
+                                <p class="font-bold"><ruby>抹茶<rt>まっちゃ</rt></ruby>アイスです。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-fuchsia-100 text-fuchsia-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                <p class="font-bold">いいですね。</p>
+                            </div>
+                            <div class="h-px bg-fuchsia-200"></div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-fuchsia-100 text-fuchsia-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                <p class="font-bold">おすすめは<ruby>何<rt>なん</rt></ruby>ですか。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black"><ruby>店員<rt>てんいん</rt></ruby></span>
+                                <p class="font-bold">これです。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-fuchsia-100 text-fuchsia-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                <p class="font-bold">ありがとうございます。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Order Builder" data-subtitle="これをひとつください" data-subtitle-html="これを1つください">
+                <div class="space-y-6">
+                    <p class="text-slate-600 font-bold">Choose an item and amount. The order sentence updates automatically.</p>
+                    <p class="text-xs text-slate-400 mb-4 uppercase tracking-widest">Logic: [Item] + を + [Amount] + ください</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="shop-item-grid">
+                        <div class="shop-btn active" data-item="これ" data-item-html="これ" data-romaji="Kore">
+                            <i data-lucide="hand" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">これ</span>
+                            <span class="text-xs text-slate-500">this one</span>
+                        </div>
+                        <div class="shop-btn" data-item="抹茶アイス" data-item-html="<ruby>抹茶<rt>まっちゃ</rt></ruby>アイス" data-romaji="Matcha aisu">
+                            <i data-lucide="ice-cream-cone" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg"><ruby>抹茶<rt>まっちゃ</rt></ruby>アイス</span>
+                            <span class="text-xs text-slate-500">matcha ice cream</span>
+                        </div>
+                        <div class="shop-btn" data-item="お茶" data-item-html="お<ruby>茶<rt>ちゃ</rt></ruby>" data-romaji="Ocha">
+                            <i data-lucide="cup-soda" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">お<ruby>茶<rt>ちゃ</rt></ruby></span>
+                            <span class="text-xs text-slate-500">tea</span>
+                        </div>
+                        <div class="shop-btn" data-item="おみやげ" data-item-html="おみやげ" data-romaji="Omiyage">
+                            <i data-lucide="gift" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">おみやげ</span>
+                            <span class="text-xs text-slate-500">souvenir</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="amount-grid">
+                        <div class="amount-btn active" data-amount="ひとつ" data-amount-html="1つください" data-romaji="hitotsu">
+                            <i data-lucide="circle-dot" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">1つ</span>
+                            <span class="text-xs text-slate-500">ひとつ</span>
+                        </div>
+                        <div class="amount-btn" data-amount="ふたつ" data-amount-html="2つください" data-romaji="futatsu">
+                            <i data-lucide="circle-dot-dashed" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">2つ</span>
+                            <span class="text-xs text-slate-500">ふたつ</span>
+                        </div>
+                        <div class="amount-btn" data-amount="みっつ" data-amount-html="3つください" data-romaji="mittsu">
+                            <i data-lucide="badge-plus" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">3つ</span>
+                            <span class="text-xs text-slate-500">みっつ</span>
+                        </div>
+                    </div>
+
+                    <div class="p-8 bg-fuchsia-100 border-2 border-fuchsia-200 rounded-3xl text-center shadow-inner mt-6">
+                        <p class="text-xs font-black text-fuchsia-700 uppercase tracking-widest mb-4">Your Order</p>
+                        <div class="flex justify-center items-center gap-3 text-3xl font-black flex-wrap">
+                            <span id="display-item" class="text-slate-800">これ</span>
+                            <span class="text-rose-500">を</span>
+                            <span id="display-amount" class="text-fuchsia-700">1つください</span>
+                            <span class="text-slate-800">。</span>
+                        </div>
+                        <p id="display-romaji" class="text-slate-500 italic text-base mt-4 font-mono">Kore o hitotsu kudasai.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Price and Payment" data-subtitle="いくらですか・カードは使えますか" data-subtitle-html="いくらですか・カードは<ruby>使<rt>つか</rt></ruby>えますか">
+                <div class="space-y-6">
+                    <p class="text-slate-600">After choosing something, ask the price. If needed, ask whether a card can be used.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-fuchsia-600">
+                                <i data-lucide="badge-yen" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Price</p>
+                            </div>
+                            <p class="text-3xl font-bold">いくらですか。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">How much is it?</p>
+                        </div>
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-fuchsia-600">
+                                <i data-lucide="credit-card" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Payment</p>
+                            </div>
+                            <p class="text-3xl font-bold">カードは<ruby>使<rt>つか</rt></ruby>えますか。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">Can I use a card?</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Listen</p>
+                            <p class="text-2xl font-bold">500<ruby>円<rt>えん</rt></ruby>です。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">It is 500 yen.</p>
+                        </div>
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Yes</p>
+                            <p class="text-2xl font-bold">はい、<ruby>使<rt>つか</rt></ruby>えます。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Yes, you can use it.</p>
+                        </div>
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">No</p>
+                            <p class="text-2xl font-bold">すみません、<ruby>現金<rt>げんきん</rt></ruby>だけです。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Sorry, cash only.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-fuchsia-50 border-2 border-fuchsia-200 rounded-2xl logic-card">
+                        <p class="text-xs font-black text-fuchsia-600 uppercase tracking-widest mb-3">Mini Dialogue</p>
+                        <div class="space-y-3">
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-fuchsia-100 text-fuchsia-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                <p class="font-bold">いくらですか。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black"><ruby>店員<rt>てんいん</rt></ruby></span>
+                                <p class="font-bold">500<ruby>円<rt>えん</rt></ruby>です。</p>
+                            </div>
+                            <div class="h-px bg-fuchsia-200"></div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-fuchsia-100 text-fuchsia-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                <p class="font-bold">カードは<ruby>使<rt>つか</rt></ruby>えますか。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black"><ruby>店員<rt>てんいん</rt></ruby></span>
+                                <p class="font-bold">はい、<ruby>使<rt>つか</rt></ruby>えます。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Photo Permission" data-subtitle="写真を撮ってもいいですか" data-subtitle-html="<ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>ってもいいですか">
+                <div class="space-y-6">
+                    <p class="text-slate-600">At temples, cafes, and shops, ask before taking a photo. Treat this as one useful phrase.</p>
+
+                    <div class="p-6 bg-fuchsia-50 border-l-8 border-fuchsia-500 rounded-r-2xl shadow-sm">
+                        <p class="text-xs font-black text-fuchsia-600 uppercase tracking-widest mb-2">Permission Phrase</p>
+                        <div class="flex flex-wrap items-center gap-4 text-3xl font-bold">
+                            <div class="bg-white px-6 py-3 rounded-xl border shadow-sm"><ruby>写真<rt>しゃしん</rt></ruby>を</div>
+                            <div class="text-fuchsia-700"><ruby>撮<rt>と</rt></ruby>ってもいいですか。</div>
+                        </div>
+                        <p class="text-slate-500 italic mt-4 text-sm">May I take a photo?</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">OK</p>
+                            <p class="text-2xl font-bold">はい、いいですよ。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Yes, that is okay.</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Not OK</p>
+                            <p class="text-2xl font-bold">すみません、だめです。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Sorry, no.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 text-white p-4 rounded-xl flex items-start gap-4">
+                        <i data-lucide="info" class="text-fuchsia-300 mt-1"></i>
+                        <div>
+                            <p class="font-bold text-fuchsia-300">Conversation Focus</p>
+                            <p class="text-sm text-slate-300">If you hear いいですよ, you can take a photo. If you hear だめです, say わかりました and stop.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Full Roleplay" data-subtitle="カフェとお土産屋チャレンジ" data-subtitle-html="カフェとお<ruby>土産屋<rt>みやげや</rt></ruby>チャレンジ">
+                <div class="space-y-6">
+                    <p class="text-lg font-bold text-slate-700">Practice the full shop sequence. Hover to reveal sample answers.</p>
+
+                    <div class="space-y-4">
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q1: Ask "What is this?"</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-fuchsia-100 text-fuchsia-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    これは<ruby>何<rt>なん</rt></ruby>ですか。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q2: Ask "How much is it?"</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-fuchsia-100 text-fuchsia-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    いくらですか。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q3: Order "This one, please."</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-fuchsia-100 text-fuchsia-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    これをください。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden group">
+                            <p class="text-slate-700 font-bold mb-4">Q4: Ask "May I take a photo?"</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-fuchsia-100 text-fuchsia-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    <ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>ってもいいですか。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-fuchsia-900 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="badge-check" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-yellow-400 uppercase tracking-widest text-sm">Homework / しゅくだい</h5>
+                        <ul class="text-sm space-y-2 font-medium text-fuchsia-50 relative z-10">
+                            <li>1. Practice: これは<ruby>何<rt>なん</rt></ruby>ですか / おすすめは<ruby>何<rt>なん</rt></ruby>ですか / いくらですか。</li>
+                            <li>2. Make 3 orders: これを1つください / <ruby>抹茶<rt>まっちゃ</rt></ruby>アイスを1つください / おみやげを2つください。</li>
+                            <li>3. Practice: カードは<ruby>使<rt>つか</rt></ruby>えますか / <ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>ってもいいですか。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-fuchsia-700 transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-700 shadow-xl active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('[data-step]');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+            steps.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-fuchsia-600 w-12' : 'bg-slate-300 w-3'}`;
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                const activeStep = steps[currentStep];
+                if (activeStep) {
+                    titleEl.innerText = activeStep.getAttribute('data-title');
+                    subtitleEl.innerHTML = activeStep.getAttribute('data-subtitle-html') || activeStep.getAttribute('data-subtitle');
+                    currentStepNum.innerText = currentStep + 1;
+                    progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                }
+                prevBtn.disabled = (currentStep === 0);
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-yellow-500', 'text-fuchsia-950', 'hover:bg-yellow-400');
+                    nextBtn.classList.remove('bg-fuchsia-600', 'text-white', 'hover:bg-fuchsia-700');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-yellow-500', 'text-fuchsia-950', 'hover:bg-yellow-400');
+                    nextBtn.classList.add('bg-fuchsia-600', 'text-white', 'hover:bg-fuchsia-700');
+                }
+                document.querySelectorAll('#nav-dots button').forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-fuchsia-600 w-12' : 'bg-slate-300 w-3'}`;
+                });
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            let selectedItemHtml = 'これ';
+            let selectedItemRomaji = 'Kore';
+            let selectedAmountHtml = '1つください';
+            let selectedAmountRomaji = 'hitotsu';
+
+            const updateOrderDisplay = () => {
+                document.getElementById('display-item').innerHTML = selectedItemHtml;
+                document.getElementById('display-amount').innerHTML = selectedAmountHtml;
+                document.getElementById('display-romaji').innerText = `${selectedItemRomaji} o ${selectedAmountRomaji} kudasai.`;
+            };
+
+            document.querySelectorAll('.shop-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.shop-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedItemHtml = btn.dataset.itemHtml;
+                    selectedItemRomaji = btn.dataset.romaji;
+                    updateOrderDisplay();
+                });
+            });
+
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedAmountHtml = btn.dataset.amountHtml;
+                    selectedAmountRomaji = btn.dataset.romaji;
+                    updateOrderDisplay();
+                });
+            });
+
+            updateOrderDisplay();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
