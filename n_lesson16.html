@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 16 - Taking a Taxi Back to the Hotel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        [data-step] { display: none; }
+        [data-step].active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text,
+        .answer-reveal.revealed .answer-text { color: #92400e; opacity: 1; }
+        .answer-reveal:hover .answer-cover,
+        .answer-reveal.revealed .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        .destination-btn, .time-btn, .fare-btn {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            text-align: center;
+            background: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .destination-btn.active, .time-btn.active, .fare-btn.active {
+            border-color: #b45309;
+            background: #fffbeb;
+            box-shadow: 0 8px 18px rgba(180, 83, 9, 0.15);
+            transform: scale(1.03);
+        }
+        .destination-btn.active i, .time-btn.active i, .fare-btn.active i { color: #b45309; }
+        .destination-btn:not(.active):hover,
+        .time-btn:not(.active):hover,
+        .fare-btn:not(.active):hover { border-color: #94a3b8; background: #f8fafc; }
+        .dialogue-line { display: flex; gap: 0.75rem; align-items: flex-start; }
+        .speaker-badge { min-width: 5.5rem; text-align: center; }
+        ruby rt { font-size: 0.55em; font-weight: 700; color: #64748b; }
+        .bg-slate-900 ruby rt, .bg-amber-900 ruby rt { color: #fde68a; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <main class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+
+        <header class="bg-amber-900 p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <i data-lucide="car-taxi-front" class="w-64 h-64"></i>
+            </div>
+            <div class="flex justify-between items-center relative z-10">
+                <div>
+                    <p class="text-amber-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Travel Survival 207</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">Taking a Taxi Back to the Hotel</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="route" class="w-5 h-5 text-amber-200"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-amber-400 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </header>
+
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-yellow-400" style="width: 16.6%"></div>
+        </div>
+
+        <section id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-amber-700 mb-8 flex items-center gap-3"></h2>
+
+            <div class="step-content active" data-step data-title="Mission Objective" data-subtitle="タクシーでホテルに戻る" data-subtitle-html="タクシーでホテルに<ruby>戻<rt>もど</rt></ruby>る">
+                <div class="space-y-6">
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Last time, you ordered food and bought souvenirs in Kyoto. Today sightseeing is finished. Find a taxi, tell the driver where to go, ask about time and price, and pay when you arrive.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-4 text-amber-600">
+                                <i data-lucide="crosshair" class="w-8 h-8"></i>
+                                <h3 class="font-black text-xl">Today's Target</h3>
+                            </div>
+                            <ul class="space-y-3 font-bold text-slate-700">
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Find the taxi stand.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Tell the driver your destination.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Ask about travel time and price.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Stop, pay, and thank the driver.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-6 bg-slate-900 text-white border-2 border-slate-800 rounded-2xl logic-card flex flex-col justify-center">
+                            <p class="text-sm text-slate-400 font-bold uppercase mb-2">Review Stack</p>
+                            <div class="space-y-2 font-bold">
+                                <p>ホテルに<ruby>行<rt>い</rt></ruby>きたいです。</p>
+                                <p>ホテルまでお<ruby>願<rt>ねが</rt></ruby>いします。</p>
+                                <p>いくらですか。</p>
+                                <p>カードは<ruby>使<rt>つか</rt></ruby>えますか。</p>
+                                <p>わかりました。ありがとうございます。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Find a Taxi" data-subtitle="タクシー乗り場はどこですか" data-subtitle-html="タクシー<ruby>乗<rt>の</rt></ruby>り<ruby>場<rt>ば</rt></ruby>はどこですか">
+                <div class="space-y-6">
+                    <p class="text-slate-600">First, find the taxi stand. Reuse the familiar pattern <span class="font-bold">___ はどこですか</span>.</p>
+
+                    <div class="p-6 bg-amber-50 border-l-8 border-amber-500 rounded-r-2xl shadow-sm">
+                        <p class="text-xs font-black text-amber-700 uppercase tracking-widest mb-2">Travel Question</p>
+                        <p class="text-3xl font-black">タクシー<ruby>乗<rt>の</rt></ruby>り<ruby>場<rt>ば</rt></ruby>はどこですか。</p>
+                        <p class="text-slate-500 italic mt-3 text-sm">Where is the taxi stand?</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-amber-600">
+                                <i data-lucide="arrow-up" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Straight</p>
+                            </div>
+                            <p class="text-2xl font-bold">まっすぐ<ruby>行<rt>い</rt></ruby>ってください。</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-amber-600">
+                                <i data-lucide="corner-up-right" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Right</p>
+                            </div>
+                            <p class="text-2xl font-bold"><ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-amber-600">
+                                <i data-lucide="corner-up-left" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Left</p>
+                            </div>
+                            <p class="text-2xl font-bold"><ruby>左<rt>ひだり</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-amber-50 border-2 border-amber-200 rounded-2xl logic-card">
+                        <p class="text-xs font-black text-amber-700 uppercase tracking-widest mb-3">Mini Dialogue</p>
+                        <div class="space-y-3">
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                <p class="font-bold">すみません。タクシー<ruby>乗<rt>の</rt></ruby>り<ruby>場<rt>ば</rt></ruby>はどこですか。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span>
+                                <p class="font-bold">まっすぐ<ruby>行<rt>い</rt></ruby>ってください。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                <p class="font-bold">わかりました。ありがとうございます。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Destination Builder" data-subtitle="ホテルまでお願いします" data-subtitle-html="ホテルまでお<ruby>願<rt>ねが</rt></ruby>いします">
+                <div class="space-y-6">
+                    <p class="text-slate-600 font-bold">Choose a destination. The taxi sentence updates automatically.</p>
+                    <p class="text-xs text-slate-400 mb-4 uppercase tracking-widest">Logic: [Destination] + まで + お願いします</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="destination-grid">
+                        <button type="button" class="destination-btn active" data-destination-html="ホテル" data-romaji="Hoteru" aria-pressed="true">
+                            <i data-lucide="hotel" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">ホテル</span>
+                            <span class="text-xs text-slate-500">hotel</span>
+                        </button>
+                        <button type="button" class="destination-btn" data-destination-html="<ruby>京都駅<rt>きょうとえき</rt></ruby>" data-romaji="Kyouto-eki" aria-pressed="false">
+                            <i data-lucide="train-front" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg"><ruby>京都駅<rt>きょうとえき</rt></ruby></span>
+                            <span class="text-xs text-slate-500">Kyoto Station</span>
+                        </button>
+                        <button type="button" class="destination-btn" data-destination-html="この<ruby>住所<rt>じゅうしょ</rt></ruby>" data-romaji="Kono juusho" aria-pressed="false">
+                            <i data-lucide="map-pin-house" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg">この<ruby>住所<rt>じゅうしょ</rt></ruby></span>
+                            <span class="text-xs text-slate-500">this address</span>
+                        </button>
+                        <button type="button" class="destination-btn" data-destination-html="<ruby>清水寺<rt>きよみずでら</rt></ruby>" data-romaji="Kiyomizu-dera" aria-pressed="false">
+                            <i data-lucide="landmark" class="w-8 h-8 text-slate-400"></i>
+                            <span class="font-bold text-lg"><ruby>清水寺<rt>きよみずでら</rt></ruby></span>
+                            <span class="text-xs text-slate-500">Kiyomizu-dera</span>
+                        </button>
+                    </div>
+
+                    <div class="p-8 bg-amber-100 border-2 border-amber-200 rounded-3xl text-center shadow-inner mt-6">
+                        <p class="text-xs font-black text-amber-700 uppercase tracking-widest mb-4">Tell the Driver</p>
+                        <div class="flex justify-center items-center gap-3 text-3xl font-black flex-wrap">
+                            <span id="display-destination" class="text-slate-800">ホテル</span>
+                            <span class="text-rose-500">まで</span>
+                            <span class="text-amber-700">お<ruby>願<rt>ねが</rt></ruby>いします。</span>
+                        </div>
+                        <p id="destination-romaji" class="text-slate-500 italic text-base mt-4 font-mono">Hoteru made onegai shimasu.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2"><ruby>運転手<rt>うんてんしゅ</rt></ruby></p>
+                            <p class="text-2xl font-bold">どちらまでですか。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">Where are you going?</p>
+                        </div>
+                        <div class="p-5 bg-amber-50 border border-amber-200 rounded-xl">
+                            <p class="text-xs font-black text-amber-700 uppercase mb-2"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></p>
+                            <p class="text-2xl font-bold">この<ruby>住所<rt>じゅうしょ</rt></ruby>までお<ruby>願<rt>ねが</rt></ruby>いします。</p>
+                            <p class="text-sm text-slate-500 italic mt-1">To this address, please.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Time and Price" data-subtitle="どのくらいかかりますか" data-subtitle-html="どのくらいかかりますか">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Ask about time or an approximate price. Listen for the number and the final unit: <span class="font-bold">分</span> or <span class="font-bold">円</span>.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-amber-600">
+                                <i data-lucide="clock-3" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Time</p>
+                            </div>
+                            <p class="text-3xl font-bold">どのくらいかかりますか。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">About how long will it take?</p>
+                        </div>
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-amber-600">
+                                <i data-lucide="badge-yen" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Price</p>
+                            </div>
+                            <p class="text-3xl font-bold">いくらぐらいですか。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">About how much will it cost?</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Choose a time</p>
+                        <div class="grid grid-cols-3 gap-3" id="time-grid">
+                            <button type="button" class="time-btn" data-time-html="10<ruby>分<rt>ぷん</rt></ruby>" data-romaji="juppun" aria-pressed="false">
+                                <i data-lucide="timer" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">10<ruby>分<rt>ぷん</rt></ruby></span>
+                            </button>
+                            <button type="button" class="time-btn active" data-time-html="20<ruby>分<rt>ぷん</rt></ruby>" data-romaji="nijuppun" aria-pressed="true">
+                                <i data-lucide="timer" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">20<ruby>分<rt>ぷん</rt></ruby></span>
+                            </button>
+                            <button type="button" class="time-btn" data-time-html="30<ruby>分<rt>ぷん</rt></ruby>" data-romaji="sanjuppun" aria-pressed="false">
+                                <i data-lucide="timer" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">30<ruby>分<rt>ぷん</rt></ruby></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Choose a price</p>
+                        <div class="grid grid-cols-3 gap-3" id="fare-grid">
+                            <button type="button" class="fare-btn" data-fare-html="1,000<ruby>円<rt>えん</rt></ruby>" data-romaji="sen-en" aria-pressed="false">
+                                <i data-lucide="banknote" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">1,000<ruby>円<rt>えん</rt></ruby></span>
+                            </button>
+                            <button type="button" class="fare-btn active" data-fare-html="2,000<ruby>円<rt>えん</rt></ruby>" data-romaji="nisen-en" aria-pressed="true">
+                                <i data-lucide="banknote" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">2,000<ruby>円<rt>えん</rt></ruby></span>
+                            </button>
+                            <button type="button" class="fare-btn" data-fare-html="3,000<ruby>円<rt>えん</rt></ruby>" data-romaji="sanzen-en" aria-pressed="false">
+                                <i data-lucide="banknote" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">3,000<ruby>円<rt>えん</rt></ruby></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-6 bg-amber-100 border-2 border-amber-200 rounded-2xl text-center">
+                            <p class="text-xs font-black text-amber-700 uppercase mb-3">Time Answer</p>
+                            <p class="text-2xl font-black"><span id="display-time">20<ruby>分<rt>ぷん</rt></ruby></span>ぐらいです。</p>
+                            <p id="time-romaji" class="text-sm text-slate-500 italic mt-2">Nijuppun gurai desu.</p>
+                        </div>
+                        <div class="p-6 bg-slate-900 text-white rounded-2xl text-center">
+                            <p class="text-xs font-black text-amber-300 uppercase mb-3">Price Answer</p>
+                            <p class="text-2xl font-black"><span id="display-fare">2,000<ruby>円<rt>えん</rt></ruby></span>ぐらいです。</p>
+                            <p id="fare-romaji" class="text-sm text-slate-400 italic mt-2">Nisen-en gurai desu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Stop and Pay" data-subtitle="ここでお願いします" data-subtitle-html="ここでお<ruby>願<rt>ねが</rt></ruby>いします">
+                <div class="space-y-6">
+                    <p class="text-slate-600">When you arrive, ask the driver to stop, confirm the payment method, and finish with thanks.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-amber-600">
+                                <span class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center font-black">1</span>
+                                <p class="text-xs font-black uppercase">Stop</p>
+                            </div>
+                            <p class="text-2xl font-bold">ここでお<ruby>願<rt>ねが</rt></ruby>いします。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">Here is fine, please.</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-amber-600">
+                                <span class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center font-black">2</span>
+                                <p class="text-xs font-black uppercase">Check</p>
+                            </div>
+                            <p class="text-2xl font-bold">カードは<ruby>使<rt>つか</rt></ruby>えますか。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">Can I use a card?</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-amber-600">
+                                <span class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center font-black">3</span>
+                                <p class="text-xs font-black uppercase">Finish</p>
+                            </div>
+                            <p class="text-2xl font-bold">ありがとうございます。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">Thank you.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-6 bg-amber-50 border-2 border-amber-200 rounded-2xl">
+                            <p class="text-xs font-black text-amber-700 uppercase tracking-widest mb-3">Card</p>
+                            <div class="space-y-3">
+                                <div class="dialogue-line">
+                                    <span class="speaker-badge bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                    <p class="font-bold">カードは<ruby>使<rt>つか</rt></ruby>えますか。</p>
+                                </div>
+                                <div class="dialogue-line">
+                                    <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black"><ruby>運転手<rt>うんてんしゅ</rt></ruby></span>
+                                    <p class="font-bold">はい、<ruby>使<rt>つか</rt></ruby>えます。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl">
+                            <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-3">Cash Only</p>
+                            <div class="space-y-3">
+                                <div class="dialogue-line">
+                                    <span class="speaker-badge bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                    <p class="font-bold">カードは<ruby>使<rt>つか</rt></ruby>えますか。</p>
+                                </div>
+                                <div class="dialogue-line">
+                                    <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black"><ruby>運転手<rt>うんてんしゅ</rt></ruby></span>
+                                    <p class="font-bold">すみません、<ruby>現金<rt>げんきん</rt></ruby>だけです。</p>
+                                </div>
+                                <div class="dialogue-line">
+                                    <span class="speaker-badge bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span>
+                                    <p class="font-bold">わかりました。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-white border border-dashed border-amber-300 rounded-2xl flex items-center gap-4">
+                        <i data-lucide="receipt-text" class="w-8 h-8 text-amber-600"></i>
+                        <div>
+                            <p class="text-xs font-black text-amber-700 uppercase">Optional Phrase</p>
+                            <p class="text-xl font-bold"><ruby>領収書<rt>りょうしゅうしょ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</p>
+                            <p class="text-sm text-slate-500 italic">A receipt, please.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Full Roleplay" data-subtitle="タクシーチャレンジ" data-subtitle-html="タクシーチャレンジ">
+                <div class="space-y-6">
+                    <p class="text-slate-600 font-bold">Connect the full trip: find the taxi, give the destination, ask about time, stop, and pay.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="p-6 bg-amber-50 border-2 border-amber-200 rounded-2xl">
+                            <p class="text-xs font-black text-amber-700 uppercase tracking-widest mb-3">Scene 1 — Find and Ride</p>
+                            <div class="space-y-3 text-sm">
+                                <p><span class="font-black text-amber-800"><ruby>旅行者<rt>りょこうしゃ</rt></ruby>:</span> すみません。タクシー<ruby>乗<rt>の</rt></ruby>り<ruby>場<rt>ば</rt></ruby>はどこですか。</p>
+                                <p><span class="font-black text-slate-600">スタッフ:</span> まっすぐ<ruby>行<rt>い</rt></ruby>ってください。</p>
+                                <p><span class="font-black text-amber-800"><ruby>旅行者<rt>りょこうしゃ</rt></ruby>:</span> ホテルまでお<ruby>願<rt>ねが</rt></ruby>いします。</p>
+                                <p><span class="font-black text-slate-600"><ruby>運転手<rt>うんてんしゅ</rt></ruby>:</span> はい。</p>
+                                <p><span class="font-black text-amber-800"><ruby>旅行者<rt>りょこうしゃ</rt></ruby>:</span> どのくらいかかりますか。</p>
+                                <p><span class="font-black text-slate-600"><ruby>運転手<rt>うんてんしゅ</rt></ruby>:</span> 20<ruby>分<rt>ぷん</rt></ruby>ぐらいです。</p>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-slate-900 text-white rounded-2xl">
+                            <p class="text-xs font-black text-amber-300 uppercase tracking-widest mb-3">Scene 2 — Stop and Pay</p>
+                            <div class="space-y-3 text-sm">
+                                <p><span class="font-black text-amber-300"><ruby>旅行者<rt>りょこうしゃ</rt></ruby>:</span> ここでお<ruby>願<rt>ねが</rt></ruby>いします。</p>
+                                <p><span class="font-black text-slate-300"><ruby>運転手<rt>うんてんしゅ</rt></ruby>:</span> はい。2,100<ruby>円<rt>えん</rt></ruby>です。</p>
+                                <p><span class="font-black text-amber-300"><ruby>旅行者<rt>りょこうしゃ</rt></ruby>:</span> カードは<ruby>使<rt>つか</rt></ruby>えますか。</p>
+                                <p><span class="font-black text-slate-300"><ruby>運転手<rt>うんてんしゅ</rt></ruby>:</span> はい、<ruby>使<rt>つか</rt></ruby>えます。</p>
+                                <p><span class="font-black text-amber-300"><ruby>旅行者<rt>りょこうしゃ</rt></ruby>:</span> ありがとうございます。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="font-black text-sm text-slate-400 uppercase tracking-widest pt-2">Hover or tap to reveal</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: Where is the taxi stand?">
+                            <p class="text-slate-700 font-bold mb-4">Q1: Ask "Where is the taxi stand?"</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    タクシー<ruby>乗<rt>の</rt></ruby>り<ruby>場<rt>ば</rt></ruby>はどこですか。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: To the hotel, please.">
+                            <p class="text-slate-700 font-bold mb-4">Q2: Say "To the hotel, please."</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    ホテルまでお<ruby>願<rt>ねが</rt></ruby>いします。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: About how long will it take?">
+                            <p class="text-slate-700 font-bold mb-4">Q3: Ask "About how long will it take?"</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    どのくらいかかりますか。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: Here is fine, please.">
+                            <p class="text-slate-700 font-bold mb-4">Q4: Say "Here is fine, please."</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    ここでお<ruby>願<rt>ねが</rt></ruby>いします。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden md:col-span-2" tabindex="0" role="button" aria-label="Reveal answer: Can I use a card?">
+                            <p class="text-slate-700 font-bold mb-4">Q5: Ask "Can I use a card?"</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">
+                                    カードは<ruby>使<rt>つか</rt></ruby>えますか。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-amber-900 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="badge-check" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-yellow-400 uppercase tracking-widest text-sm">Homework / しゅくだい</h5>
+                        <ul class="text-sm space-y-2 font-medium text-amber-50 relative z-10">
+                            <li>1. Make 3 destination sentences with ホテル・<ruby>京都駅<rt>きょうとえき</rt></ruby>・この<ruby>住所<rt>じゅうしょ</rt></ruby>.</li>
+                            <li>2. Practice: どのくらいかかりますか / ここでお<ruby>願<rt>ねが</rt></ruby>いします / カードは<ruby>使<rt>つか</rt></ruby>えますか。</li>
+                            <li>3. Choose a destination, time, and price. Make one short taxi dialogue.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button type="button" id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-amber-700 transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button type="button" id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-amber-600 text-white hover:bg-amber-700 shadow-xl active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </footer>
+    </main>
+
+    <nav class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots" aria-label="Lesson steps"></nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('[data-step]');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            if (totalStepsNum) totalStepsNum.innerText = steps.length;
+
+            steps.forEach((step, idx) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-amber-600 w-12' : 'bg-slate-300 w-3'}`;
+                dot.setAttribute('aria-label', `Go to ${step.getAttribute('data-title')}`);
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                const activeStep = steps[currentStep];
+                if (activeStep) {
+                    titleEl.innerText = activeStep.getAttribute('data-title');
+                    subtitleEl.innerHTML = activeStep.getAttribute('data-subtitle-html') || activeStep.getAttribute('data-subtitle');
+                    currentStepNum.innerText = currentStep + 1;
+                    progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                }
+                prevBtn.disabled = (currentStep === 0);
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-yellow-500', 'text-amber-950', 'hover:bg-yellow-400');
+                    nextBtn.classList.remove('bg-amber-600', 'text-white', 'hover:bg-amber-700');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-yellow-500', 'text-amber-950', 'hover:bg-yellow-400');
+                    nextBtn.classList.add('bg-amber-600', 'text-white', 'hover:bg-amber-700');
+                }
+                document.querySelectorAll('#nav-dots button').forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-amber-600 w-12' : 'bg-slate-300 w-3'}`;
+                    dot.setAttribute('aria-current', idx === currentStep ? 'step' : 'false');
+                });
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            document.addEventListener('keydown', event => {
+                if (event.key === 'ArrowLeft' && currentStep > 0) goToStep(currentStep - 1);
+                if (event.key === 'ArrowRight' && currentStep < steps.length - 1) goToStep(currentStep + 1);
+            });
+
+            let selectedDestinationHtml = 'ホテル';
+            let selectedDestinationRomaji = 'Hoteru';
+            let selectedTimeHtml = '20<ruby>分<rt>ぷん</rt></ruby>';
+            let selectedTimeRomaji = 'nijuppun';
+            let selectedFareHtml = '2,000<ruby>円<rt>えん</rt></ruby>';
+            let selectedFareRomaji = 'nisen-en';
+
+            const capitalize = text => text.charAt(0).toUpperCase() + text.slice(1);
+
+            const updateDestinationDisplay = () => {
+                document.getElementById('display-destination').innerHTML = selectedDestinationHtml;
+                document.getElementById('destination-romaji').innerText = `${selectedDestinationRomaji} made onegai shimasu.`;
+            };
+
+            const updateTimeDisplay = () => {
+                document.getElementById('display-time').innerHTML = selectedTimeHtml;
+                document.getElementById('time-romaji').innerText = `${capitalize(selectedTimeRomaji)} gurai desu.`;
+            };
+
+            const updateFareDisplay = () => {
+                document.getElementById('display-fare').innerHTML = selectedFareHtml;
+                document.getElementById('fare-romaji').innerText = `${capitalize(selectedFareRomaji)} gurai desu.`;
+            };
+
+            function activateButton(selector, selectedButton) {
+                document.querySelectorAll(selector).forEach(button => {
+                    const isActive = button === selectedButton;
+                    button.classList.toggle('active', isActive);
+                    button.setAttribute('aria-pressed', String(isActive));
+                });
+            }
+
+            document.querySelectorAll('.destination-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    activateButton('.destination-btn', button);
+                    selectedDestinationHtml = button.dataset.destinationHtml;
+                    selectedDestinationRomaji = button.dataset.romaji;
+                    updateDestinationDisplay();
+                });
+            });
+
+            document.querySelectorAll('.time-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    activateButton('.time-btn', button);
+                    selectedTimeHtml = button.dataset.timeHtml;
+                    selectedTimeRomaji = button.dataset.romaji;
+                    updateTimeDisplay();
+                });
+            });
+
+            document.querySelectorAll('.fare-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    activateButton('.fare-btn', button);
+                    selectedFareHtml = button.dataset.fareHtml;
+                    selectedFareRomaji = button.dataset.romaji;
+                    updateFareDisplay();
+                });
+            });
+
+            document.querySelectorAll('.answer-reveal').forEach(card => {
+                const toggleReveal = () => card.classList.toggle('revealed');
+                card.addEventListener('click', toggleReveal);
+                card.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        toggleReveal();
+                    }
+                });
+            });
+
+            updateDestinationDisplay();
+            updateTimeDisplay();
+            updateFareDisplay();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
