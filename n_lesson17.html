@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 17 - Hotel Troubleshooting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        [data-step] { display: none; }
+        [data-step].active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .answer-reveal:hover .answer-text,
+        .answer-reveal.revealed .answer-text { color: #9f1239; opacity: 1; }
+        .answer-reveal:hover .answer-cover,
+        .answer-reveal.revealed .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        .room-btn {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            text-align: center;
+            background: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .room-btn.active {
+            border-color: #be123c;
+            background: #fff1f2;
+            box-shadow: 0 8px 18px rgba(190, 18, 60, 0.15);
+            transform: scale(1.03);
+        }
+        .room-btn.active i { color: #be123c; }
+        .room-btn:not(.active):hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+        .dialogue-line { display: flex; gap: 0.75rem; align-items: flex-start; }
+        .speaker-badge { min-width: 5.5rem; text-align: center; }
+        ruby rt { font-size: 0.55em; font-weight: 700; color: #64748b; }
+        .bg-slate-900 ruby rt, .bg-rose-900 ruby rt { color: #fecdd3; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <main class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+
+        <header class="bg-rose-900 p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <i data-lucide="key-round" class="w-64 h-64"></i>
+            </div>
+            <div class="flex justify-between items-center relative z-10">
+                <div>
+                    <p class="text-rose-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Travel Survival 208</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">Hotel Troubleshooting</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="life-buoy" class="w-5 h-5 text-rose-200"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-rose-300 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </header>
+
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-pink-400" style="width: 16.6%"></div>
+        </div>
+
+        <section id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-rose-700 mb-8 flex items-center gap-3"></h2>
+
+            <div class="step-content active" data-step data-title="Mission Objective" data-subtitle="ホテルで困ったとき" data-subtitle-html="ホテルで<ruby>困<rt>こま</rt></ruby>ったとき">
+                <div class="space-y-6">
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Last time, you took a taxi back to the hotel. Today, there is a problem: the auto-lock closed, and you left your key inside the room. You cannot enter. Go to the front desk and ask for help.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-4 text-rose-600">
+                                <i data-lucide="circle-alert" class="w-8 h-8"></i>
+                                <h3 class="font-black text-xl">Today's Target</h3>
+                            </div>
+                            <ul class="space-y-3 font-bold text-slate-700">
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Explain that you cannot enter.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Say that the key is inside.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Ask what to do.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i> Give your room number and name.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-6 bg-slate-900 text-white border-2 border-slate-800 rounded-2xl logic-card flex flex-col justify-center">
+                            <p class="text-sm text-slate-400 font-bold uppercase mb-2">Problem Stack</p>
+                            <div class="space-y-2 font-bold">
+                                <p>オートロックです。</p>
+                                <p>鍵は<ruby>部屋<rt>へや</rt></ruby>の<ruby>中<rt>なか</rt></ruby>です。</p>
+                                <p><ruby>部屋<rt>へや</rt></ruby>に<ruby>入<rt>はい</rt></ruby>れません。</p>
+                                <p>どうすればいいですか。</p>
+                                <p>502<ruby>号室<rt>ごうしつ</rt></ruby>です。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-rose-50 border-2 border-rose-200 rounded-2xl">
+                        <p class="text-xs font-black text-rose-700 uppercase tracking-widest mb-3">Situation</p>
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
+                            <div class="p-4 bg-white rounded-xl border border-rose-100 w-full md:w-1/2">
+                                <i data-lucide="key-round" class="w-8 h-8 mx-auto text-rose-500 mb-2"></i>
+                                <p class="font-bold">鍵は部屋の中</p>
+                            </div>
+                            <i data-lucide="arrow-right" class="w-6 h-6 text-rose-400 rotate-90 md:rotate-0"></i>
+                            <div class="p-4 bg-white rounded-xl border border-rose-100 w-full md:w-1/2">
+                                <i data-lucide="help-circle" class="w-8 h-8 mx-auto text-rose-500 mb-2"></i>
+                                <p class="font-bold">フロントに相談</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Locked Out: Explain the Problem" data-subtitle="鍵のトラブルを伝える" data-subtitle-html="<ruby>鍵<rt>かぎ</rt></ruby>のトラブルを<ruby>伝<rt>つた</rt></ruby>える">
+                <div class="space-y-6">
+                    <p class="text-slate-600">First, say that you cannot enter the room. Then explain that the key is inside and ask the front desk for help.</p>
+
+                    <div class="p-6 bg-rose-50 border-l-8 border-rose-500 rounded-r-2xl shadow-sm">
+                        <p class="text-xs font-black text-rose-700 uppercase tracking-widest mb-2">Emergency Phrase</p>
+                        <p class="text-3xl font-black"><ruby>部屋<rt>へや</rt></ruby>に<ruby>入<rt>はい</rt></ruby>れません。</p>
+                        <p class="text-slate-500 italic mt-3 text-sm">I cannot enter the room.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <div class="flex items-center gap-2 mb-3 text-rose-600">
+                                <i data-lucide="key-round" class="w-6 h-6"></i>
+                                <p class="text-xs font-black uppercase">Key</p>
+                            </div>
+                            <p class="text-2xl font-bold">鍵は<ruby>部屋<rt>へや</rt></ruby>の<ruby>中<rt>なか</rt></ruby>です。</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-rose-50 border-2 border-rose-200 rounded-2xl logic-card">
+                        <p class="text-xs font-black text-rose-700 uppercase tracking-widest mb-3">Mini Dialogue</p>
+                        <div class="space-y-3">
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-xs font-black">旅行者</span>
+                                <p class="font-bold">すみません。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span>
+                                <p class="font-bold">どうしましたか。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-xs font-black">旅行者</span>
+                                <p class="font-bold">オートロックです。<ruby>鍵<rt>かぎ</rt></ruby>を<ruby>部屋<rt>へや</rt></ruby>に<ruby>置<rt>お</rt></ruby>いてきてしまいました。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-white border border-dashed border-rose-300 rounded-2xl">
+                        <p class="text-xs font-black text-rose-700 uppercase tracking-widest mb-2">Short Version</p>
+                        <p class="text-xl font-bold"><ruby>鍵<rt>かぎ</rt></ruby>は<ruby>部屋<rt>へや</rt></ruby>の<ruby>中<rt>なか</rt></ruby>です。<ruby>部屋<rt>へや</rt></ruby>に<ruby>入<rt>はい</rt></ruby>れません。</p>
+                        <p class="text-sm text-slate-500 mt-2">If the longer sentence is difficult, this short version is enough.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Ask for Help" data-subtitle="どうすればいいですか" data-subtitle-html="どうすればいいですか">
+                <div class="space-y-6">
+                    <p class="text-slate-600">After explaining the problem, ask what to do. The staff may ask your name and room number.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-6 bg-white border-2 border-rose-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-3 text-rose-600">
+                                <i data-lucide="help-circle" class="w-7 h-7"></i>
+                                <p class="text-xs font-black uppercase">Ask for help</p>
+                            </div>
+                            <p class="text-3xl font-bold">どうすればいいですか。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">What should I do?</p>
+                        </div>
+                        <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-3 text-slate-600">
+                                <i data-lucide="door-open" class="w-7 h-7"></i>
+                                <p class="text-xs font-black uppercase">Room number</p>
+                            </div>
+                            <p class="text-2xl font-bold">お<ruby>部屋<rt>へや</rt></ruby><ruby>番号<rt>ばんごう</rt></ruby>は？</p>
+                            <p class="text-sm text-slate-500 italic mt-2">Your room number?</p>
+                        </div>
+                        <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-3 text-slate-600">
+                                <i data-lucide="user-round" class="w-7 h-7"></i>
+                                <p class="text-xs font-black uppercase">Name</p>
+                            </div>
+                            <p class="text-2xl font-bold">お<ruby>名前<rt>なまえ</rt></ruby>は？</p>
+                            <p class="text-sm text-slate-500 italic mt-2">Your name?</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Choose a room number</p>
+                        <div class="grid grid-cols-3 gap-3" id="room-grid">
+                            <button type="button" class="room-btn" data-room-html="501<ruby>号室<rt>ごうしつ</rt></ruby>" data-room-romaji="go-hyaku-ichi go-shitsu" aria-pressed="false">
+                                <i data-lucide="door-open" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">501号室</span>
+                            </button>
+                            <button type="button" class="room-btn active" data-room-html="502<ruby>号室<rt>ごうしつ</rt></ruby>" data-room-romaji="go-hyaku-ni go-shitsu" aria-pressed="true">
+                                <i data-lucide="door-open" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">502号室</span>
+                            </button>
+                            <button type="button" class="room-btn" data-room-html="503<ruby>号室<rt>ごうしつ</rt></ruby>" data-room-romaji="go-hyaku-san go-shitsu" aria-pressed="false">
+                                <i data-lucide="door-open" class="w-7 h-7 text-slate-400"></i>
+                                <span class="font-bold text-lg">503号室</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-white border border-dashed border-slate-300 rounded-2xl">
+                        <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Say your own name</p>
+                        <p class="text-2xl font-bold">お名前は？ → <span class="text-rose-700">自分の名前</span>です。</p>
+                        <p class="text-sm text-slate-500 italic mt-2">Example: マイクです。 Replace マイク with your own name.</p>
+                    </div>
+
+                    <div class="p-8 bg-rose-100 border-2 border-rose-200 rounded-3xl text-center">
+                        <p class="text-xs font-black text-rose-700 uppercase tracking-widest mb-4">Answer the Staff</p>
+                        <p class="text-3xl font-black"><span id="display-room">502<ruby>号室<rt>ごうしつ</rt></ruby></span>です。<span class="text-rose-700">（自分の名前）</span>です。</p>
+                        <p id="room-name-romaji" class="text-slate-500 italic text-base mt-3 font-mono">Go-hyaku-ni go-shitsu desu. [your name] desu.</p>
+                        <p class="text-sm text-slate-500 mt-2">マイク is an example. Say your own name.</p>
+                    </div>
+
+                    <div class="p-6 bg-rose-50 border-2 border-rose-200 rounded-2xl">
+                        <div class="space-y-3 font-bold">
+                            <p>旅行者: どうすればいいですか。</p>
+                            <p>スタッフ: お部屋番号は？</p>
+                            <p>旅行者: <span id="dialogue-room">502<ruby>号室<rt>ごうしつ</rt></ruby></span>です。</p>
+                            <p>スタッフ: お名前は？</p>
+                            <p>旅行者: <span class="text-rose-700">（自分の名前）</span>です。</p>
+                            <p>スタッフ: わかりました。少々お待ちください。</p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-white border border-dashed border-rose-300 rounded-2xl">
+                        <p class="text-xs font-black text-rose-700 uppercase tracking-widest mb-2">Follow-up Material</p>
+                        <p class="font-bold">スタッフは、本人確認のために <span class="text-rose-700">お部屋番号</span> と <span class="text-rose-700">お名前</span> を聞くことがあります。</p>
+                        <p class="text-sm text-slate-500 mt-2">Listen for お部屋番号は？ first, then お名前は？. Say your room number, then your own name.</p>
+                    </div>
+
+                    <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal phrase: Please say that again">
+                        <p class="text-slate-700 font-bold mb-4">If you did not hear the name or room number question, ask again.</p>
+                        <div class="border-t border-slate-100 pt-3 relative h-10">
+                            <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                            </div>
+                            <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">もう一度お願いします。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Listen and Respond" data-subtitle="スタッフの返答を聞く" data-subtitle-html="スタッフの<ruby>返答<rt>へんとう</rt></ruby>を<ruby>聞<rt>き</rt></ruby>く">
+                <div class="space-y-6">
+                    <p class="text-slate-600">You do not need to understand every word. Listen for short staff phrases and respond with thanks.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <i data-lucide="clock-3" class="w-7 h-7 text-rose-600 mb-3"></i>
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Staff</p>
+                            <p class="text-2xl font-bold">少々お待ちください。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">Please wait a moment.</p>
+                        </div>
+                        <div class="p-5 bg-white border border-slate-200 rounded-xl logic-card">
+                            <i data-lucide="search-check" class="w-7 h-7 text-rose-600 mb-3"></i>
+                            <p class="text-xs font-black text-slate-400 uppercase mb-2">Staff</p>
+                            <p class="text-2xl font-bold">確認します。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">I will check.</p>
+                        </div>
+                        <div class="p-5 bg-rose-50 border border-rose-200 rounded-xl logic-card">
+                            <i data-lucide="badge-check" class="w-7 h-7 text-rose-600 mb-3"></i>
+                            <p class="text-xs font-black text-rose-700 uppercase mb-2">Guest</p>
+                            <p class="text-2xl font-bold">わかりました。</p>
+                            <p class="text-sm text-slate-500 italic mt-2">I understand.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-rose-50 border-2 border-rose-200 rounded-2xl">
+                        <p class="text-xs font-black text-rose-700 uppercase tracking-widest mb-3">Listen for the response</p>
+                        <div class="space-y-4">
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span>
+                                <p class="font-bold">わかりました。少々お待ちください。</p>
+                            </div>
+                            <div class="dialogue-line">
+                                <span class="speaker-badge bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-xs font-black">旅行者</span>
+                                <p class="font-bold">ありがとうございます。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Full Roleplay" data-subtitle="ホテルのトラブルチャレンジ" data-subtitle-html="ホテルのトラブルチャレンジ">
+                <div class="space-y-6">
+                    <p class="text-slate-600 font-bold">Connect the full situation: arrive at the hotel, report the lockout, give your room number and name, and ask for help.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="p-6 bg-rose-50 border-2 border-rose-200 rounded-2xl">
+                            <p class="text-xs font-black text-rose-700 uppercase tracking-widest mb-3">Scene 1 — Locked Out</p>
+                            <div class="space-y-3 text-sm">
+                                <p><span class="font-black text-rose-800">旅行者:</span> すみません。オートロックです。</p>
+                                <p><span class="font-black text-rose-800">旅行者:</span> 鍵を部屋に置いてきてしまいました。部屋に入れません。</p>
+                                <p><span class="font-black text-slate-600">スタッフ:</span> どうしましたか。</p>
+                                <p><span class="font-black text-rose-800">旅行者:</span> どうすればいいですか。</p>
+                                <p><span class="font-black text-slate-600">スタッフ:</span> お部屋番号は？</p>
+                                <p><span class="font-black text-rose-800">旅行者:</span> 502号室です。</p>
+                                <p><span class="font-black text-slate-600">スタッフ:</span> お名前は？</p>
+                                <p><span class="font-black text-rose-800">旅行者:</span> （自分の名前）です。</p>
+                                <p><span class="font-black text-slate-600">スタッフ:</span> わかりました。少々お待ちください。</p>
+                                <p><span class="font-black text-rose-800">旅行者:</span> ありがとうございます。</p>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-slate-900 text-white rounded-2xl">
+                            <p class="text-xs font-black text-rose-300 uppercase tracking-widest mb-3">Scene 2 — Confirmation</p>
+                            <div class="space-y-3 text-sm">
+                                <p><span class="font-black text-slate-300">スタッフ:</span> お部屋番号は？</p>
+                                <p><span class="font-black text-rose-300">旅行者:</span> 501号室です。</p>
+                                <p><span class="font-black text-slate-300">スタッフ:</span> お名前は？</p>
+                                <p><span class="font-black text-rose-300">旅行者:</span> （自分の名前）です。</p>
+                                <p><span class="font-black text-slate-300">スタッフ:</span> 少々お待ちください。</p>
+                                <p><span class="font-black text-rose-300">旅行者:</span> ありがとうございます。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="font-black text-sm text-slate-400 uppercase tracking-widest pt-2">Hover or tap to reveal</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: I cannot enter the room">
+                            <p class="text-slate-700 font-bold mb-4">Q1: Say “I cannot enter the room.”</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">部屋に入れません。</div>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: The key is inside the room">
+                            <p class="text-slate-700 font-bold mb-4">Q2: Say “The key is inside the room.”</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">鍵は部屋の中です。</div>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: What should I do">
+                            <p class="text-slate-700 font-bold mb-4">Q3: Ask “What should I do?”</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">どうすればいいですか。</div>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: Room 502">
+                            <p class="text-slate-700 font-bold mb-4">Q4: Say “Room 502.”</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">502号室です。</div>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal answer: Say your own name">
+                            <p class="text-slate-700 font-bold mb-4">Q5: Say your own name.</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">（自分の名前）です。</div>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden md:col-span-2" tabindex="0" role="button" aria-label="Reveal answer: Please say that again">
+                            <p class="text-slate-700 font-bold mb-4">Q6: Ask “Please say that again.”</p>
+                            <div class="border-t border-slate-100 pt-3 relative h-10">
+                                <div class="absolute inset-0 bg-slate-50 flex items-center justify-start answer-cover transition-all duration-300 z-10">
+                                    <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-1 rounded font-black uppercase">Reveal Answer</span>
+                                </div>
+                                <div class="text-lg font-bold text-slate-800 answer-text italic opacity-0 transition-opacity duration-300">もう一度お願いします。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-rose-900 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="badge-check" class="w-32 h-32"></i>
+                        </div>
+                        <h5 class="font-bold flex items-center gap-2 mb-3 text-pink-300 uppercase tracking-widest text-sm">Homework / しゅくだい</h5>
+                        <ul class="text-sm space-y-2 font-medium text-rose-50 relative z-10">
+                            <li>1. Practice: 鍵は部屋の中です / 部屋に入れません / どうすればいいですか。</li>
+                            <li>2. Read 鍵を部屋に置いてきてしまいました three times.</li>
+                            <li>3. Practice answering in order: 502号室です / （自分の名前）です。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button type="button" id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-rose-700 transition-all disabled:opacity-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
+            </button>
+            <button type="button" id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-xl active:scale-95 transition-all">
+                Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </footer>
+    </main>
+
+    <nav class="max-w-4xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots" aria-label="Lesson steps"></nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            const steps = document.querySelectorAll('[data-step]');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepsNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            totalStepsNum.innerText = steps.length;
+
+            steps.forEach((step, idx) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-rose-600 w-12' : 'bg-slate-300 w-3'}`;
+                dot.setAttribute('aria-label', `Go to ${step.getAttribute('data-title')}`);
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                const activeStep = steps[currentStep];
+                titleEl.innerText = activeStep.getAttribute('data-title');
+                subtitleEl.innerHTML = activeStep.getAttribute('data-subtitle-html') || activeStep.getAttribute('data-subtitle');
+                currentStepNum.innerText = currentStep + 1;
+                progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                prevBtn.disabled = currentStep === 0;
+
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-pink-500', 'text-rose-950', 'hover:bg-pink-400');
+                    nextBtn.classList.remove('bg-rose-600', 'text-white', 'hover:bg-rose-700');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-pink-500', 'text-rose-950', 'hover:bg-pink-400');
+                    nextBtn.classList.add('bg-rose-600', 'text-white', 'hover:bg-rose-700');
+                }
+
+                document.querySelectorAll('#nav-dots button').forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-rose-600 w-12' : 'bg-slate-300 w-3'}`;
+                    dot.setAttribute('aria-current', idx === currentStep ? 'step' : 'false');
+                });
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+
+            document.addEventListener('keydown', event => {
+                if (event.key === 'ArrowLeft' && currentStep > 0) goToStep(currentStep - 1);
+                if (event.key === 'ArrowRight' && currentStep < steps.length - 1) goToStep(currentStep + 1);
+            });
+
+            function activateButton(selector, selectedButton) {
+                document.querySelectorAll(selector).forEach(button => {
+                    const isActive = button === selectedButton;
+                    button.classList.toggle('active', isActive);
+                    button.setAttribute('aria-pressed', String(isActive));
+                });
+            }
+
+            let selectedRoomHtml = '502<ruby>号室<rt>ごうしつ</rt></ruby>';
+            let selectedRoomRomaji = 'Go-hyaku-ni go-shitsu';
+
+            const updateRoomDisplay = () => {
+                document.getElementById('display-room').innerHTML = selectedRoomHtml;
+                document.getElementById('dialogue-room').innerHTML = selectedRoomHtml;
+                document.getElementById('room-name-romaji').innerText = `${selectedRoomRomaji} desu. [your name] desu.`;
+            };
+
+            document.querySelectorAll('.room-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    activateButton('.room-btn', button);
+                    selectedRoomHtml = button.dataset.roomHtml;
+                    selectedRoomRomaji = button.dataset.roomRomaji;
+                    updateRoomDisplay();
+                });
+            });
+
+            document.querySelectorAll('.answer-reveal').forEach(card => {
+                const toggleReveal = () => card.classList.toggle('revealed');
+                card.addEventListener('click', toggleReveal);
+                card.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        toggleReveal();
+                    }
+                });
+            });
+
+            updateRoomDisplay();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
