@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Lesson: Week 20 - At the Clinic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        [data-step] { display: none; }
+        [data-step].active { display: block; }
+        .logic-card { transition: all 0.3s ease; }
+        .logic-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.12); }
+        .choice-btn {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            background: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .choice-btn.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.14);
+            transform: scale(1.02);
+        }
+        .choice-btn:not(.active):hover { border-color: #93c5fd; background: #f8fafc; }
+        .answer-reveal:hover .answer-text,
+        .answer-reveal.revealed .answer-text { color: #2563eb; opacity: 1; }
+        .answer-reveal:hover .answer-cover,
+        .answer-reveal.revealed .answer-cover { opacity: 0; pointer-events: none; }
+        #progress-bar { transition: width 0.5s ease-in-out; }
+        .dialogue-line { display: flex; gap: 0.75rem; align-items: flex-start; }
+        .speaker-badge { min-width: 5.5rem; text-align: center; }
+        ruby rt { font-size: 0.55em; font-weight: 700; color: #64748b; }
+        .bg-slate-900 ruby rt, .bg-blue-900 ruby rt { color: #bfdbfe; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-10">
+
+    <main class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[720px] border border-slate-200">
+        <header class="bg-blue-900 p-8 text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <i data-lucide="stethoscope" class="w-64 h-64"></i>
+            </div>
+            <div class="flex justify-between items-center relative z-10">
+                <div>
+                    <p class="text-blue-300 text-xs font-black uppercase tracking-[0.2em] mb-1">Travel Survival 211</p>
+                    <h1 id="step-title" class="text-3xl font-extrabold tracking-tight">At the Clinic</h1>
+                </div>
+                <div class="bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/20 flex items-center gap-2">
+                    <i data-lucide="heart-pulse" class="w-5 h-5 text-amber-300"></i>
+                    <p class="text-2xl font-mono font-bold"><span id="current-step-num">1</span><span class="text-blue-300 mx-1">/</span><span id="total-steps-num">6</span></p>
+                </div>
+            </div>
+        </header>
+
+        <div class="h-1.5 w-full bg-slate-100">
+            <div id="progress-bar" class="h-full bg-amber-400" style="width: 16.7%"></div>
+        </div>
+
+        <section id="content-area" class="flex-grow p-8 md:p-12">
+            <h2 id="step-subtitle" class="text-xl font-bold text-blue-700 mb-8 flex items-center gap-3"></h2>
+
+            <div class="step-content active" data-step data-title="Mission Objective" data-subtitle-html="<ruby>病院<rt>びょういん</rt></ruby>の<ruby>受付<rt>うけつけ</rt></ruby>で<ruby>話<rt>はな</rt></ruby>す">
+                <div class="space-y-6">
+                    <p class="text-slate-600 leading-relaxed text-lg">You feel unwell during your trip. Go to a clinic, talk to the receptionist, explain one symptom, answer when it started, and wait.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 bg-blue-50 border-2 border-blue-200 rounded-2xl logic-card">
+                            <div class="flex items-center gap-3 mb-4 text-blue-700">
+                                <i data-lucide="target" class="w-8 h-8"></i>
+                                <h3 class="font-black text-xl">Today's Target</h3>
+                            </div>
+                            <ul class="space-y-3 font-bold text-slate-700">
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0"></i> Ask at reception.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0"></i> Say one symptom.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0"></i> Say when it started.</li>
+                                <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0"></i> Ask again and wait.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-6 bg-slate-900 text-white rounded-2xl logic-card">
+                            <p class="text-xs font-black text-blue-300 uppercase tracking-widest mb-4">Conversation Flow</p>
+                            <div class="space-y-3 font-bold">
+                                <p>1. <ruby>受付<rt>うけつけ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いする</p>
+                                <p>2. <ruby>症状<rt>しょうじょう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>える</p>
+                                <p>3. いつからか<ruby>答<rt>こた</rt></ruby>える</p>
+                                <p>4. <ruby>確認<rt>かくにん</rt></ruby>して<ruby>待<rt>ま</rt></ruby>つ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-amber-700 shrink-0 mt-0.5"></i>
+                            <div>
+                                <p class="font-black text-amber-900">Language practice only</p>
+                                <p class="text-sm text-amber-800 mt-1">This lesson practices a short conversation at reception. It does not teach diagnosis, treatment, or medical advice. Use the fictional information on the cards.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="At Reception" data-subtitle-html="<ruby>受付<rt>うけつけ</rt></ruby>で<ruby>声<rt>こえ</rt></ruby>をかける">
+                <div class="space-y-6">
+                    <div class="p-6 bg-blue-50 border-2 border-blue-200 rounded-2xl">
+                        <div class="flex items-center gap-3 text-blue-700 mb-3"><i data-lucide="clipboard-plus" class="w-8 h-8"></i><p class="text-xs font-black uppercase tracking-widest">Scene 1</p></div>
+                        <p class="text-lg font-bold">病院の<ruby>受付<rt>うけつけ</rt></ruby>に<ruby>来<rt>き</rt></ruby>ました。まず、<ruby>受付<rt>うけつけ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</p>
+                        <p class="text-slate-600 mt-2">You are at the clinic reception desk. Start the conversation politely.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl logic-card">
+                            <p class="text-xs font-black text-blue-600 uppercase tracking-widest mb-3">Must Say</p>
+                            <div class="space-y-3 text-xl font-bold"><p>すみません。</p><p><ruby>受付<rt>うけつけ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</p><p><ruby>具合<rt>ぐあい</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>いです。</p></div>
+                        </div>
+                        <div class="p-6 bg-slate-900 text-white rounded-2xl logic-card">
+                            <p class="text-xs font-black text-blue-300 uppercase tracking-widest mb-3">Listen For</p>
+                            <div class="space-y-3 font-bold text-lg"><p>はい、どうぞ。</p><p>どうしましたか。</p><p>こちらです。</p></div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-blue-50 border-2 border-blue-100 rounded-2xl">
+                        <p class="text-xs font-black text-blue-700 uppercase tracking-widest mb-3">Mini Dialogue</p>
+                        <div class="space-y-3 font-bold">
+                            <div class="dialogue-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p>すみません。<ruby>受付<rt>うけつけ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span><p>はい、どうぞ。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p><ruby>具合<rt>ぐあい</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>いです。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span><p>どうしましたか。</p></div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal the phrase used at reception">
+                        <p class="font-bold mb-3">Challenge: Say “I would like to check in at reception.”</p>
+                        <div class="border-t border-amber-100 pt-3 relative h-10"><div class="absolute inset-0 bg-amber-50 flex items-center answer-cover transition-all duration-300 z-10"><span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-1 rounded font-black uppercase">Reveal Answer</span></div><div class="text-lg font-bold answer-text italic opacity-0 transition-opacity duration-300"><ruby>受付<rt>うけつけ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Say the Symptom" data-subtitle-html="<ruby>症状<rt>しょうじょう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>える">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Start with <span class="font-bold"><ruby>具合<rt>ぐあい</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>いです</span>, then explain one symptom. Choose a card and read the sentence aloud.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="symptom-grid">
+                        <button type="button" class="choice-btn active text-left" data-symptom-html="<ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>いです。" aria-pressed="true">
+                            <i data-lucide="brain" class="w-8 h-8 text-blue-700 mb-3"></i>
+                            <p class="text-xl font-black"><ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>いです。</p>
+                            <p class="text-sm text-slate-500 mt-2">I have a headache.</p>
+                        </button>
+                        <button type="button" class="choice-btn text-left" data-symptom-html="のどが<ruby>痛<rt>いた</rt></ruby>いです。" aria-pressed="false">
+                            <i data-lucide="message-circle" class="w-8 h-8 text-blue-700 mb-3"></i>
+                            <p class="text-xl font-black">のどが<ruby>痛<rt>いた</rt></ruby>いです。</p>
+                            <p class="text-sm text-slate-500 mt-2">I have a sore throat.</p>
+                        </button>
+                        <button type="button" class="choice-btn text-left" data-symptom-html="せきが<ruby>出<rt>で</rt></ruby>ます。" aria-pressed="false">
+                            <i data-lucide="wind" class="w-8 h-8 text-blue-700 mb-3"></i>
+                            <p class="text-xl font-black">せきが<ruby>出<rt>で</rt></ruby>ます。</p>
+                            <p class="text-sm text-slate-500 mt-2">I have a cough.</p>
+                        </button>
+                    </div>
+
+                    <div class="p-8 bg-blue-100 border-2 border-blue-200 rounded-3xl text-center">
+                        <p class="text-xs font-black text-blue-700 uppercase tracking-widest mb-3">Say It</p>
+                        <p class="text-3xl font-black"><ruby>具合<rt>ぐあい</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>いです。<span id="selected-symptom"><ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>いです。</span></p>
+                    </div>
+
+                    <div class="p-5 bg-white border border-dashed border-slate-300 rounded-2xl">
+                        <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Key Pattern</p>
+                        <p class="text-2xl font-bold"><ruby>具合<rt>ぐあい</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>いです。<span class="text-blue-700">[症状]</span>。</p>
+                        <p class="text-sm text-slate-500 mt-2">Practice these symptom phrases as useful fixed expressions. A detailed medical explanation is not needed today.</p>
+                    </div>
+
+                    <div class="p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal the headache sentence">
+                        <p class="font-bold mb-3">Challenge: Say “I have a headache.”</p>
+                        <div class="border-t border-amber-100 pt-3 relative h-10"><div class="absolute inset-0 bg-amber-50 flex items-center answer-cover transition-all duration-300 z-10"><span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-1 rounded font-black uppercase">Reveal Answer</span></div><div class="text-lg font-bold answer-text italic opacity-0 transition-opacity duration-300"><ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>いです。</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Say When" data-subtitle-html="いつからか<ruby>答<rt>こた</rt></ruby>える">
+                <div class="space-y-6">
+                    <p class="text-slate-600">The receptionist asks when it started. Listen to the question, then choose an answer.</p>
+
+                    <div class="p-7 bg-blue-50 border-l-8 border-blue-500 rounded-r-2xl shadow-sm">
+                        <p class="text-xs font-black text-blue-700 uppercase tracking-widest mb-3">Listen For</p>
+                        <p class="text-4xl font-black">いつからですか。</p>
+                        <p class="text-slate-500 italic mt-3">When did it start?</p>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Choose a practice answer</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="onset-grid">
+                            <button type="button" class="choice-btn active text-center" data-onset-html="<ruby>今日<rt>きょう</rt></ruby>からです。" aria-pressed="true"><p class="text-2xl font-black"><ruby>今日<rt>きょう</rt></ruby>からです。</p><p class="text-xs text-slate-500 mt-1">since today</p></button>
+                            <button type="button" class="choice-btn text-center" data-onset-html="<ruby>昨日<rt>きのう</rt></ruby>からです。" aria-pressed="false"><p class="text-2xl font-black"><ruby>昨日<rt>きのう</rt></ruby>からです。</p><p class="text-xs text-slate-500 mt-1">since yesterday</p></button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="p-6 bg-slate-900 text-white rounded-2xl">
+                            <p class="text-xs font-black text-blue-300 uppercase tracking-widest mb-3">Mini Dialogue</p>
+                            <div class="space-y-3 font-bold text-lg"><p>スタッフ: いつからですか。</p><p>旅行者: <span id="selected-onset"><ruby>今日<rt>きょう</rt></ruby>からです。</span></p></div>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl">
+                            <p class="text-xs font-black text-blue-700 uppercase tracking-widest mb-3">Say It</p>
+                            <p class="text-2xl font-black">いつからですか。</p>
+                            <p class="text-xl font-bold mt-4"><span id="selected-onset-answer"><ruby>今日<rt>きょう</rt></ruby>からです。</span></p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal the answer since yesterday">
+                        <p class="font-bold mb-3">Challenge: Answer “since yesterday.”</p>
+                        <div class="border-t border-amber-100 pt-3 relative h-10"><div class="absolute inset-0 bg-amber-50 flex items-center answer-cover transition-all duration-300 z-10"><span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-1 rounded font-black uppercase">Reveal Answer</span></div><div class="text-lg font-bold answer-text italic opacity-0 transition-opacity duration-300"><ruby>昨日<rt>きのう</rt></ruby>からです。</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Confirm and Wait" data-subtitle-html="<ruby>確認<rt>かくにん</rt></ruby>して<ruby>待<rt>ま</rt></ruby>つ">
+                <div class="space-y-6">
+                    <p class="text-slate-600">After you answer, listen to the receptionist. If you do not hear the instruction, ask once more.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="p-6 bg-white border-2 border-slate-200 rounded-2xl logic-card">
+                            <p class="text-xs font-black text-blue-600 uppercase tracking-widest mb-3">Must Say</p>
+                            <div class="space-y-3 text-xl font-bold"><p>もう<ruby>一度<rt>いちど</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。</p><p>どうすればいいですか。</p><p>わかりました。</p></div>
+                        </div>
+                        <div class="p-6 bg-slate-900 text-white rounded-2xl logic-card">
+                            <p class="text-xs font-black text-blue-300 uppercase tracking-widest mb-3">Listen For</p>
+                            <div class="space-y-3 font-bold text-lg"><p>こちらでお<ruby>待<rt>ま</rt></ruby>ちください。</p><p><ruby>少々<rt>しょうしょう</rt></ruby>お<ruby>待<rt>ま</rt></ruby>ちください。</p><p>わかりました。</p></div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-blue-50 border-2 border-blue-100 rounded-2xl">
+                        <p class="text-xs font-black text-blue-700 uppercase tracking-widest mb-3">Mini Dialogue</p>
+                        <div class="space-y-3 font-bold">
+                            <div class="dialogue-line"><span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span><p>こちらでお<ruby>待<rt>ま</rt></ruby>ちください。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p>もう<ruby>一度<rt>いちど</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span><p>こちらでお<ruby>待<rt>ま</rt></ruby>ちください。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p>わかりました。ありがとうございます。</p></div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl answer-reveal cursor-help relative overflow-hidden" tabindex="0" role="button" aria-label="Reveal the phrase asking what to do">
+                        <p class="font-bold mb-3">Challenge: Ask “What should I do?”</p>
+                        <div class="border-t border-amber-100 pt-3 relative h-10"><div class="absolute inset-0 bg-amber-50 flex items-center answer-cover transition-all duration-300 z-10"><span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-1 rounded font-black uppercase">Reveal Answer</span></div><div class="text-lg font-bold answer-text italic opacity-0 transition-opacity duration-300">どうすればいいですか。</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-content" data-step data-title="Full Roleplay" data-subtitle-html="<ruby>受付<rt>うけつけ</rt></ruby>で<ruby>最後<rt>さいご</rt></ruby>まで<ruby>話<rt>はな</rt></ruby>す">
+                <div class="space-y-6">
+                    <p class="text-slate-600">Use the selected symptom and onset. First read the dialogue. Then hide the traveler side and try again.</p>
+
+                    <div class="p-6 bg-blue-50 border-2 border-blue-200 rounded-2xl">
+                        <div class="flex items-center justify-between gap-4 mb-5">
+                            <p class="text-xs font-black text-blue-700 uppercase tracking-widest">Complete Dialogue</p>
+                            <button type="button" id="toggle-traveler" class="px-4 py-2 rounded-xl bg-blue-700 text-white text-sm font-bold hover:bg-blue-800 transition-colors" aria-pressed="false">Hide Traveler</button>
+                        </div>
+                        <div class="space-y-3 font-bold" id="full-dialogue">
+                            <div class="dialogue-line traveler-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p>すみません。<ruby>受付<rt>うけつけ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span><p>はい、どうぞ。</p></div>
+                            <div class="dialogue-line traveler-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p><ruby>具合<rt>ぐあい</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>いです。<span id="roleplay-symptom"><ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>いです。</span></p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span><p>いつからですか。</p></div>
+                            <div class="dialogue-line traveler-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p id="roleplay-onset"><ruby>今日<rt>きょう</rt></ruby>からです。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span><p>こちらでお<ruby>待<rt>ま</rt></ruby>ちください。</p></div>
+                            <div class="dialogue-line traveler-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p>もう<ruby>一度<rt>いちど</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。</p></div>
+                            <div class="dialogue-line"><span class="speaker-badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-black">スタッフ</span><p>こちらでお<ruby>待<rt>ま</rt></ruby>ちください。</p></div>
+                            <div class="dialogue-line traveler-line"><span class="speaker-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-black"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><p>わかりました。ありがとうございます。</p></div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-white border-2 border-blue-200 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <i data-lucide="list-checks" class="w-7 h-7 text-blue-700"></i>
+                            <div>
+                                <p class="text-xs font-black text-blue-700 uppercase tracking-widest">Roleplay Checklist</p>
+                                <p class="text-sm text-slate-500 mt-1">会話中に、この4つができたか確認しましょう。</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-center"><i data-lucide="clipboard-plus" class="w-7 h-7 mx-auto text-blue-700 mb-2"></i><p class="text-xs font-black text-blue-600 uppercase tracking-widest">1. Start</p><p class="font-black mt-2"><ruby>受付<rt>うけつけ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</p><p class="text-xs text-slate-500 mt-2">受付で声をかける</p></div>
+                            <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-center"><i data-lucide="message-circle" class="w-7 h-7 mx-auto text-blue-700 mb-2"></i><p class="text-xs font-black text-blue-600 uppercase tracking-widest">2. Explain</p><p class="font-black mt-2"><ruby>具合<rt>ぐあい</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>いです。<br><span class="text-sm">＋症状</span></p><p class="text-xs text-slate-500 mt-2">症状を一つ伝える</p></div>
+                            <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-center"><i data-lucide="calendar-days" class="w-7 h-7 mx-auto text-blue-700 mb-2"></i><p class="text-xs font-black text-blue-600 uppercase tracking-widest">3. Answer</p><p class="font-black mt-2"><ruby>今日<rt>きょう</rt></ruby>／<ruby>昨日<rt>きのう</rt></ruby>からです。</p><p class="text-xs text-slate-500 mt-2">「いつから？」に答える</p></div>
+                            <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-center"><i data-lucide="ear" class="w-7 h-7 mx-auto text-blue-700 mb-2"></i><p class="text-xs font-black text-blue-600 uppercase tracking-widest">4. Repair &amp; Close</p><p class="font-black mt-2">もう一度お願いします。<br><span class="text-sm">わかりました。</span></p><p class="text-xs text-slate-500 mt-2">聞き返して会話を終える</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button type="button" id="prev-btn" class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-400 hover:text-blue-700 transition-all disabled:opacity-0"><i data-lucide="arrow-left" class="w-5 h-5"></i> Back</button>
+            <button type="button" id="next-btn" class="flex items-center gap-3 px-10 py-3 rounded-2xl font-bold bg-blue-700 text-white hover:bg-blue-800 shadow-xl active:scale-95 transition-all">Next <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
+        </footer>
+    </main>
+
+    <nav class="max-w-5xl mx-auto mt-8 flex justify-center gap-3" id="nav-dots" aria-label="Lesson steps"></nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 0;
+            let selectedSymptom = '<ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>いです。';
+            let selectedOnset = '<ruby>今日<rt>きょう</rt></ruby>からです。';
+            const steps = document.querySelectorAll('[data-step]');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const titleEl = document.getElementById('step-title');
+            const subtitleEl = document.getElementById('step-subtitle');
+            const currentStepNum = document.getElementById('current-step-num');
+            const totalStepNum = document.getElementById('total-steps-num');
+            const progressBar = document.getElementById('progress-bar');
+            const dotsContainer = document.getElementById('nav-dots');
+
+            totalStepNum.innerText = steps.length;
+
+            steps.forEach((step, idx) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-blue-700 w-12' : 'bg-slate-300 w-3'}`;
+                dot.setAttribute('aria-label', `Go to ${step.getAttribute('data-title')}`);
+                dot.onclick = () => goToStep(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            function updateText() {
+                ['selected-symptom', 'roleplay-symptom'].forEach(id => {
+                    document.getElementById(id).innerHTML = selectedSymptom;
+                });
+                ['selected-onset', 'selected-onset-answer', 'roleplay-onset'].forEach(id => {
+                    document.getElementById(id).innerHTML = selectedOnset;
+                });
+            }
+
+            document.querySelectorAll('#symptom-grid .choice-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#symptom-grid .choice-btn').forEach(item => {
+                        item.classList.remove('active');
+                        item.setAttribute('aria-pressed', 'false');
+                    });
+                    button.classList.add('active');
+                    button.setAttribute('aria-pressed', 'true');
+                    selectedSymptom = button.getAttribute('data-symptom-html');
+                    updateText();
+                    lucide.createIcons();
+                });
+            });
+
+            document.querySelectorAll('#onset-grid .choice-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#onset-grid .choice-btn').forEach(item => {
+                        item.classList.remove('active');
+                        item.setAttribute('aria-pressed', 'false');
+                    });
+                    button.classList.add('active');
+                    button.setAttribute('aria-pressed', 'true');
+                    selectedOnset = button.getAttribute('data-onset-html');
+                    updateText();
+                });
+            });
+
+            function updateUI() {
+                steps.forEach((step, idx) => step.classList.toggle('active', idx === currentStep));
+                const activeStep = steps[currentStep];
+                titleEl.innerText = activeStep.getAttribute('data-title');
+                subtitleEl.innerHTML = activeStep.getAttribute('data-subtitle-html');
+                currentStepNum.innerText = currentStep + 1;
+                progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                prevBtn.disabled = currentStep === 0;
+
+                if (currentStep === steps.length - 1) {
+                    nextBtn.innerHTML = 'Finish <i data-lucide="party-popper" class="w-5 h-5"></i>';
+                    nextBtn.classList.add('bg-amber-400', 'text-blue-950', 'hover:bg-amber-300');
+                    nextBtn.classList.remove('bg-blue-700', 'text-white', 'hover:bg-blue-800');
+                } else {
+                    nextBtn.innerHTML = 'Next <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+                    nextBtn.classList.remove('bg-amber-400', 'text-blue-950', 'hover:bg-amber-300');
+                    nextBtn.classList.add('bg-blue-700', 'text-white', 'hover:bg-blue-800');
+                }
+
+                document.querySelectorAll('#nav-dots button').forEach((dot, idx) => {
+                    dot.className = `h-1.5 rounded-full transition-all duration-500 ${idx === currentStep ? 'bg-blue-700 w-12' : 'bg-slate-300 w-3'}`;
+                    dot.setAttribute('aria-current', idx === currentStep ? 'step' : 'false');
+                });
+                lucide.createIcons();
+            }
+
+            function goToStep(idx) {
+                currentStep = idx;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            prevBtn.onclick = () => { if (currentStep > 0) goToStep(currentStep - 1); };
+            nextBtn.onclick = () => { if (currentStep < steps.length - 1) goToStep(currentStep + 1); };
+            document.addEventListener('keydown', event => {
+                if (event.key === 'ArrowLeft' && currentStep > 0) goToStep(currentStep - 1);
+                if (event.key === 'ArrowRight' && currentStep < steps.length - 1) goToStep(currentStep + 1);
+            });
+
+            document.querySelectorAll('.answer-reveal').forEach(card => {
+                const toggleReveal = () => card.classList.toggle('revealed');
+                card.addEventListener('click', toggleReveal);
+                card.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        toggleReveal();
+                    }
+                });
+            });
+
+            const toggleTraveler = document.getElementById('toggle-traveler');
+            toggleTraveler.addEventListener('click', () => {
+                const hidden = toggleTraveler.getAttribute('aria-pressed') === 'true';
+                document.querySelectorAll('.traveler-line p').forEach(line => {
+                    line.style.visibility = hidden ? 'visible' : 'hidden';
+                });
+                toggleTraveler.setAttribute('aria-pressed', hidden ? 'false' : 'true');
+                toggleTraveler.textContent = hidden ? 'Hide Traveler' : 'Show Traveler';
+            });
+
+            updateText();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
